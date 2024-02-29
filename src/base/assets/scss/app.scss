@@ -1,0 +1,140 @@
+::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: #b7b7b7;
+  box-shadow: inset 0px 0px 5px white;
+}
+
+::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: #b7b7b7;
+  /* min-height: 24px; */
+  /* min-width: 24px; */
+}
+
+::-webkit-scrollbar-thumb:focus,
+*::-webkit-scrollbar-thumb:focus {
+  background-color: #adadad;
+}
+
+::-webkit-scrollbar-thumb:active,
+*::-webkit-scrollbar-thumb:active {
+  background-color: #adadad;
+}
+
+::-webkit-scrollbar-thumb:hover,
+*::-webkit-scrollbar-thumb:hover {
+  background-color: #adadad;
+}
+
+::-webkit-scrollbar-corner,
+*::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
+.scroll-box {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+  overflow-y: auto !important;
+}
+
+.scroll-box::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera*/
+}
+
+.tx-gray-500 {
+  color: var(--color-gray-500);
+}
+
+.tx-primary {
+  color: var(--color-primary);
+}
+
+.process-wrap {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+  max-width: 100%;
+  // overflow-x: auto;
+
+  .process-item {
+    position: relative;
+    flex-basis: 0;
+    flex-grow: 1;
+    width: 100%;
+    max-width: 100%;
+    text-align: center;
+
+    &::before {
+      content: '';
+      position: relative;
+      top: 14px;
+      display: block;
+      width: 100%;
+      height: 3px;
+      background-color: var(--color-gray-200);
+    }
+
+    &:first-child,
+    &:last-child {
+      &::before {
+        width: 50%;
+      }
+    }
+    &:first-child {
+      &::before {
+        left: 50%;
+      }
+    }
+
+    > .process-item-btn {
+      position: relative;
+      padding: 0.375rem;
+      border-radius: 50%;
+      border: 0;
+      background-color: var(--color-gray-200);
+      line-height: 1em;
+      color: var(--color-gray-500);
+      z-index: 2;
+    }
+
+    .process-item-text {
+      margin-left: 0.625rem;
+      margin-right: 0.625rem;
+      white-space: nowrap;
+    }
+
+    &.current {
+      &::before {
+        background-color: var(--color-primary);
+      }
+      > .process-item-btn {
+        background-color: var(--color-primary);
+        color: var(--color-white);
+      }
+      .process-item-text {
+        color: var(--color-primary);
+        font-weight: 500;
+      }
+    }
+
+    &.done {
+      &::before {
+        background-color: var(--color-success);
+      }
+      > .process-item-btn {
+        background-color: var(--color-success);
+        color: var(--color-white);
+      }
+      .process-item-text {
+        color: var(--color-success);
+      }
+    }
+  }
+}
