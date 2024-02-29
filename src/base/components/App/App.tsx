@@ -17,6 +17,7 @@ import { RecoilRoot } from 'recoil';
 import { CircularProgress } from '@mui/material';
 import { routes } from '@base/routes';
 import LinearLoader from './LinearLoader';
+import ThemeCustomization from '@base/themes';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -51,14 +52,16 @@ function App() {
   return (
     <RecoilRoot>
       <BrowserRouter>
-        <QueryClientProvider client={queryClient}>
-          <Toaster position='top-right' reverseOrder={false} />
-          <LinearLoader />
-          <Suspense fallback={<CircularProgress />}>
-            <Routes>{getRoutes(routes)}</Routes>
-          </Suspense>
-          <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
+        <ThemeCustomization>
+          <QueryClientProvider client={queryClient}>
+            <Toaster position='top-right' reverseOrder={false} />
+            <LinearLoader />
+            <Suspense fallback={<CircularProgress />}>
+              <Routes>{getRoutes(routes)}</Routes>
+            </Suspense>
+            <ReactQueryDevtools initialIsOpen={false} />
+          </QueryClientProvider>
+        </ThemeCustomization>
       </BrowserRouter>
     </RecoilRoot>
   );
