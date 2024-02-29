@@ -1,6 +1,6 @@
 import { queryKeys } from '@base/config/queryKeys';
-import useMutationCustom from './useMutationCustom';
-import { useSnackBar } from './useSnackbar';
+import useMutationCustom from '../base/hooks/useMutationCustom';
+import { useSnackBar } from '../base/hooks/useSnackbar';
 
 export const useAuthMutation = () => {
   const { enqueueSuccessBar, enqueueErrorBar } = useSnackBar();

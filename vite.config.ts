@@ -9,6 +9,7 @@ export default defineConfig({
     alias: [
       { find: '@base', replacement: path.resolve(__dirname, 'src/base') },
       { find: '@pages', replacement: path.resolve(__dirname, 'src/pages') },
+      { find: '@hooks', replacement: path.resolve(__dirname, 'src/hooks') },
     ],
   },
 });
