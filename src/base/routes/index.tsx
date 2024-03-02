@@ -2,12 +2,17 @@ import React from 'react';
 
 import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
+import HomePage from '@pages/HomePage';
 const PageLayout = lazy(() => import('@base/PageLayout'));
 
 const SignIn = lazy(() => import('@pages/SignIn'));
 const SignUp = lazy(() => import('@pages/SignUp'));
 
 export const routes: RouteObject[] = [
+  {
+    path: '/home',
+    element: <HomePage />,
+  },
   {
     path: '*',
     element: <PageLayout />,
@@ -18,7 +23,14 @@ export const routes: RouteObject[] = [
       },
       {
         path: 'sign-in',
-        element: <SignIn />,
+        element: (
+          <SignIn
+            isOpen={false}
+            onClose={function (): void {
+              throw new Error('Function not implemented.');
+            }}
+          />
+        ),
       },
       {
         path: 'sign-up',
