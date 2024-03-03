@@ -18,6 +18,8 @@ import { CircularProgress } from '@mui/material';
 import { routes } from '@base/routes';
 import LinearLoader from './LinearLoader';
 import ThemeCustomization from '@base/themes';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -54,12 +56,14 @@ function App() {
       <BrowserRouter>
         <ThemeCustomization>
           <QueryClientProvider client={queryClient}>
-            <Toaster position='top-right' reverseOrder={false} />
-            <LinearLoader />
-            <Suspense fallback={<CircularProgress />}>
-              <Routes>{getRoutes(routes)}</Routes>
-            </Suspense>
-            <ReactQueryDevtools initialIsOpen={false} />
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              <Toaster position='top-right' reverseOrder={false} />
+              <LinearLoader />
+              <Suspense fallback={<CircularProgress />}>
+                <Routes>{getRoutes(routes)}</Routes>
+              </Suspense>
+              <ReactQueryDevtools initialIsOpen={false} />
+            </LocalizationProvider>
           </QueryClientProvider>
         </ThemeCustomization>
       </BrowserRouter>
