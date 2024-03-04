@@ -1,4 +1,4 @@
-import { IconButton, Avatar } from '@mui/material';
+import { IconButton, Avatar, Menu, MenuItem, List, ListItemButton, Button } from '@mui/material';
 import ClearAllOutlinedIcon from '@mui/icons-material/ClearAllOutlined';
 import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 import FolderOutlinedIcon from '@mui/icons-material/FolderOutlined';
@@ -6,46 +6,168 @@ import BarChartOutlinedIcon from '@mui/icons-material/BarChartOutlined';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import { deepOrange } from '@mui/material/colors';
+import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
+import LayersOutlinedIcon from '@mui/icons-material/LayersOutlined';
+import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
+import ViewDayOutlinedIcon from '@mui/icons-material/ViewDayOutlined';
+import DensitySmallOutlinedIcon from '@mui/icons-material/DensitySmallOutlined';
+import DensityMediumOutlinedIcon from '@mui/icons-material/DensityMediumOutlined';
+import DensityLargeOutlinedIcon from '@mui/icons-material/DensityLargeOutlined';
+import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
+import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import { deepOrange, grey } from '@mui/material/colors';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+const options = ['Schedule', 'Project Plan', 'Log Team'];
+const densityOptions = [
+  { leftIcon: <DensitySmallOutlinedIcon fontSize='small' />, label: 'Compact', value: 0 },
+  { leftIcon: <DensityMediumOutlinedIcon fontSize='small' />, label: 'Comfortable', value: 1 },
+  { leftIcon: <DensityLargeOutlinedIcon fontSize='small' />, label: 'Spacious', value: 2 },
+];
+const zoomOptions = [
+  { label: 'Days', value: 'day' },
+  { label: 'Weeks', value: 'week' },
+  { label: 'Months', value: 'month' },
+];
+const enum ViewTab {
+  schedule = 'schedule',
+  people = 'people',
+  project = 'project',
+  report = 'report',
+}
 
 const HomePage = () => {
+  const navigate = useNavigate();
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [zoomModeAnchorEl, setZoomModeAnchorEl] = useState<null | HTMLElement>(null);
+  const [densityAnchorEl, setDensityAnchorEl] = useState<null | HTMLElement>(null);
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedZoomMode, setSelectedZoomMode] = useState(0);
+  const [selectedDensity, setSelectedDensity] = useState(0);
+
+  const open = Boolean(anchorEl);
+  const openZoomModeMenu = Boolean(zoomModeAnchorEl);
+  const openDensityMenu = Boolean(densityAnchorEl);
+
+  const handleClickViewModeMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleSelectViewMode = (_e: React.MouseEvent<HTMLElement>, index: number) => {
+    setSelectedIndex(index);
+    setAnchorEl(null);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleClickZoomModeMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setZoomModeAnchorEl(event.currentTarget);
+  };
+
+  const handleSelectZoomMode = (_e: React.MouseEvent<HTMLElement>, index: number) => {
+    setSelectedZoomMode(index);
+    setZoomModeAnchorEl(null);
+  };
+
+  const handleCloseZoomModeMenu = () => {
+    setZoomModeAnchorEl(null);
+  };
+
+  const handleClickDensityMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setDensityAnchorEl(event.currentTarget);
+  };
+
+  const handleSelectDensity = (_e: React.MouseEvent<HTMLElement>, index: number) => {
+    setSelectedDensity(index);
+    setDensityAnchorEl(null);
+  };
+
+  const handleCloseDensityMenu = () => {
+    setDensityAnchorEl(null);
+  };
+
   return (
-    <div className=''>
+    <div className='flex'>
       {/* Side Nav Bar */}
       <div className='bg-gray-100 h-screen w-[68px] px-2 py-4 flex flex-col justify-between'>
         {/* Top Button Group */}
         <div className='flex flex-col gap-4 items-center'>
           {/* Schedule Button */}
-          <div className='w-full aspect-square flex flex-col items-center group hover:cursor-pointer gap-1'>
-            <IconButton aria-label='' onClick={() => {}} className='group-hover:bg-blue-200'>
-              <ClearAllOutlinedIcon sx={{ color: 'black' }} />
+          <div
+            className='w-full aspect-square flex flex-col items-center group hover:cursor-pointer gap-1'
+            onClick={(_e) => {
+              navigate('/home');
+            }}
+          >
+            <IconButton
+              aria-label=''
+              onClick={() => {}}
+              className='group-hover:bg-blue-200 rounded-md'
+            >
+              <ClearAllOutlinedIcon sx={{ color: grey[800] }} />
             </IconButton>
             <div className='text-[10px] flex-1 flex justify-center items-center'>
               <p>Schedule</p>
             </div>
           </div>
           {/* People Button */}
-          <div className='w-full aspect-square flex flex-col items-center group hover:cursor-pointer gap-1'>
-            <IconButton aria-label='' onClick={() => {}} className='group-hover:bg-blue-200'>
-              <PeopleOutlinedIcon sx={{ color: 'black' }} />
+          <div
+            className='w-full aspect-square flex flex-col items-center group hover:cursor-pointer gap-1'
+            onClick={(_e) => {
+              navigate('/people');
+            }}
+          >
+            <IconButton
+              aria-label=''
+              onClick={() => {}}
+              className='group-hover:bg-blue-200 rounded-md'
+            >
+              <PeopleOutlinedIcon sx={{ color: grey[800] }} />
             </IconButton>
             <div className='text-[10px] flex-1 flex justify-center items-center'>
               <p>People</p>
             </div>
           </div>
           {/* Project Button */}
-          <div className='w-full aspect-square flex flex-col items-center group hover:cursor-pointer gap-1'>
-            <IconButton aria-label='' onClick={() => {}} className='group-hover:bg-blue-200'>
-              <FolderOutlinedIcon sx={{ color: 'black' }} />
+          <div
+            className='w-full aspect-square flex flex-col items-center group hover:cursor-pointer gap-1'
+            onClick={(_e) => {
+              navigate('/project');
+            }}
+          >
+            <IconButton
+              aria-label=''
+              onClick={() => {}}
+              className='group-hover:bg-blue-200 rounded-md'
+            >
+              <FolderOutlinedIcon sx={{ color: grey[800] }} />
             </IconButton>
             <div className='text-[10px] flex-1 flex justify-center items-center'>
               <p>Project</p>
             </div>
           </div>
           {/* Report Button */}
-          <div className='w-full aspect-square flex flex-col items-center group hover:cursor-pointer gap-1'>
-            <IconButton aria-label='' onClick={() => {}} className='group-hover:bg-blue-200'>
-              <BarChartOutlinedIcon sx={{ color: 'black' }} />
+          <div
+            className='w-full aspect-square flex flex-col items-center group hover:cursor-pointer gap-1'
+            onClick={(_e) => {
+              navigate('/report');
+            }}
+          >
+            <IconButton
+              aria-label=''
+              onClick={() => {}}
+              className='group-hover:bg-blue-200 rounded-md'
+            >
+              <BarChartOutlinedIcon sx={{ color: grey[800] }} />
             </IconButton>
             <div className='text-[10px] flex-1 flex justify-center items-center'>
               <p>Report</p>
@@ -55,16 +177,16 @@ const HomePage = () => {
         {/* Bottom Button Group */}
         <div className='flex flex-col justify-end items-center gap-4'>
           {/* Setting Button */}
-          <IconButton aria-label='' onClick={() => {}} className='hover:bg-blue-200'>
-            <SettingsOutlinedIcon sx={{ color: 'black' }} />
+          <IconButton aria-label='' onClick={() => {}} className='hover:bg-blue-200 rounded-md'>
+            <SettingsOutlinedIcon sx={{ color: grey[800] }} />
           </IconButton>
           {/* Help Button */}
-          <IconButton aria-label='' onClick={() => {}} className='hover:bg-blue-200'>
-            <HelpOutlineOutlinedIcon sx={{ color: 'black' }} />
+          <IconButton aria-label='' onClick={() => {}} className='hover:bg-blue-200 rounded-md'>
+            <HelpOutlineOutlinedIcon sx={{ color: grey[800] }} />
           </IconButton>
           {/* Notification Button */}
-          <IconButton aria-label='' onClick={() => {}} className='hover:bg-blue-200'>
-            <NotificationsOutlinedIcon sx={{ color: 'black' }} />
+          <IconButton aria-label='' onClick={() => {}} className='hover:bg-blue-200 rounded-md'>
+            <NotificationsOutlinedIcon sx={{ color: grey[800] }} />
           </IconButton>
           {/* Personal Button */}
           <Avatar sx={{ bgcolor: deepOrange[500], fontSize: 16 }} className='w-8 h-8'>
@@ -73,7 +195,207 @@ const HomePage = () => {
         </div>
       </div>
       {/* Scheduler */}
-      <div></div>
+      <div className={`flex-1 bg-red-300 flex flex-col`}>
+        <div className='py-4 pl-2 pr-4 bg-gray-100'>
+          <div className='h-8 flex justify-between items-center'>
+            {/* Left Nav Content */}
+            <div className='flex gap-2 items-center'>
+              <div>
+                <List>
+                  <ListItemButton
+                    id='viewModeBtn'
+                    aria-controls='viewModeMenu'
+                    aria-expanded={open ? 'true' : undefined}
+                    onClick={handleClickViewModeMenu}
+                    className={`text-xl font-medium px-4 py-1 rounded-md ${open ? 'bg-blue-200' : ''}`}
+                  >
+                    {options[selectedIndex]}
+                    <ExpandMoreOutlinedIcon className='ms-2' fontSize='small' />
+                  </ListItemButton>
+                </List>
+                <Menu
+                  id='viewModeMenu'
+                  MenuListProps={{
+                    'aria-labelledby': 'viewModeBtn',
+                  }}
+                  anchorEl={anchorEl}
+                  open={open}
+                  onClose={handleClose}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  }}
+                  className='top-2'
+                >
+                  {options.map((option, index) => (
+                    <MenuItem
+                      key={option}
+                      selected={index === selectedIndex}
+                      onClick={(event) => handleSelectViewMode(event, index)}
+                      className={`flex justify-between min-w-36 mx-2 rounded-md ${index != options.length - 1 ? 'my-1' : ''}`}
+                    >
+                      {option}
+                      {selectedIndex == index ? (
+                        <div>
+                          <CheckOutlinedIcon sx={{ fontSize: 16 }} />
+                        </div>
+                      ) : null}
+                    </MenuItem>
+                  ))}
+                </Menu>
+              </div>
+              <IconButton
+                sx={{
+                  color: grey[800],
+                  border: 1,
+                  borderColor: grey[300],
+                }}
+                className='rounded-md'
+              >
+                <LayersOutlinedIcon fontSize='small' />
+              </IconButton>
+              <Button
+                variant='outlined'
+                className='rounded-md'
+                sx={{ borderColor: grey[300], color: grey[800] }}
+              >
+                <ManageSearchOutlinedIcon fontSize='small' className='me-2' />
+                Filter
+              </Button>
+            </div>
+            {/* Right Nav Content */}
+            <div className='flex gap-4'>
+              {/* Move And Today */}
+              <div className='flex gap-2 items-center'>
+                <div>
+                  <IconButton>
+                    <ChevronLeftIcon />
+                  </IconButton>
+                  <IconButton>
+                    <ChevronRightIcon />
+                  </IconButton>
+                </div>
+                <Button
+                  variant='outlined'
+                  className='rounded-md'
+                  sx={{ borderColor: grey[300], color: grey[800] }}
+                >
+                  Today
+                </Button>
+              </div>
+              {/* Zoom And Density */}
+              <div className='flex gap-2 items-center'>
+                <div>
+                  <Button
+                    id='zoomModeBtn'
+                    aria-controls={openZoomModeMenu ? 'zoomModeMenu' : undefined}
+                    aria-haspopup='true'
+                    aria-expanded={openZoomModeMenu ? 'true' : undefined}
+                    onClick={handleClickZoomModeMenu}
+                    variant='outlined'
+                    className='rounded-md flex items-center '
+                    sx={{ borderColor: grey[300], color: grey[800] }}
+                  >
+                    <CalendarTodayOutlinedIcon sx={{ fontSize: 16 }} className='me-2' />
+                    {zoomOptions[selectedZoomMode].label}
+                    <ExpandMoreOutlinedIcon className='ms-2' fontSize='small' />
+                  </Button>
+                  <Menu
+                    id='zoomModeMenu'
+                    anchorEl={zoomModeAnchorEl}
+                    open={openZoomModeMenu}
+                    onClose={handleCloseZoomModeMenu}
+                    MenuListProps={{
+                      'aria-labelledby': 'zoomModeBtn',
+                    }}
+                    className='top-1 rounded-md'
+                  >
+                    {zoomOptions.map((option, index) => (
+                      <MenuItem
+                        key={option.value}
+                        onClick={(event) => handleSelectZoomMode(event, index)}
+                        selected={selectedZoomMode == index}
+                        className={`flex justify-between min-w-32 mx-2 rounded-md ${index != options.length - 1 ? 'my-1' : ''}`}
+                      >
+                        {option.label}
+                        {selectedZoomMode == index ? (
+                          <div>
+                            <CheckOutlinedIcon sx={{ fontSize: 16 }} />
+                          </div>
+                        ) : null}
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                </div>
+                <div>
+                  <Button
+                    id='densityBtn'
+                    aria-controls={open ? 'densityMenu' : undefined}
+                    aria-haspopup='true'
+                    aria-expanded={open ? 'true' : undefined}
+                    variant='outlined'
+                    className='rounded-md flex items-center h-9 aspect-square p-0'
+                    sx={{ borderColor: grey[300], color: grey[800], padding: 0, minWidth: 0 }}
+                    onClick={handleClickDensityMenu}
+                  >
+                    <ViewDayOutlinedIcon fontSize='small' />
+                  </Button>
+                  <Menu
+                    id='densityMenu'
+                    anchorEl={densityAnchorEl}
+                    open={openDensityMenu}
+                    onClose={handleCloseDensityMenu}
+                    MenuListProps={{
+                      'aria-labelledby': 'densityBtn',
+                    }}
+                    className='top-1 rounded-md'
+                  >
+                    {densityOptions.map((option, index) => (
+                      <MenuItem
+                        key={option.value}
+                        onClick={(event) => handleSelectDensity(event, index)}
+                        selected={selectedDensity == index}
+                        className={`flex justify-between min-w-48 mx-2 rounded-md ${index != options.length - 1 ? 'my-1' : ''}`}
+                      >
+                        <div className='flex items-center gap-4'>
+                          {option.leftIcon}
+                          <div className='py-1'>{option.label}</div>
+                        </div>
+                        {selectedDensity == index ? (
+                          <div>
+                            <CheckOutlinedIcon sx={{ fontSize: 16 }} />
+                          </div>
+                        ) : null}
+                      </MenuItem>
+                    ))}
+                  </Menu>
+                </div>
+              </div>
+              {/* Share & Add */}
+              <div className='flex gap-2 items-center'>
+                <IconButton
+                  sx={{
+                    color: grey[800],
+                    border: 1,
+                    borderColor: grey[300],
+                  }}
+                  className='rounded-md'
+                >
+                  <ShareOutlinedIcon fontSize='small' />
+                </IconButton>
+                <Button
+                  variant='outlined'
+                  className='rounded-md flex items-center h-9 aspect-square p-0 bg-blue-600 text-white'
+                  sx={{ border: 0, padding: 0, minWidth: 0 }}
+                >
+                  <AddOutlinedIcon fontSize='small' />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className='flex-1 bg-gray-300'>{}</div>
+      </div>
     </div>
   );
 };
