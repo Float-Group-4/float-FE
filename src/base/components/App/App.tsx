@@ -20,6 +20,7 @@ import LinearLoader from './LinearLoader';
 import ThemeCustomization from '@base/themes';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 // Create a client
 const queryClient = new QueryClient({

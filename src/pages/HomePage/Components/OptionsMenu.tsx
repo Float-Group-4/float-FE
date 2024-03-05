@@ -1,11 +1,11 @@
-import { Box, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, colors } from '@mui/material';
+import { Box, IconButton, ListItemIcon, ListItemText, Menu, MenuItem } from '@mui/material';
 import { useState, ReactNode, MouseEvent } from 'react';
 
 interface Option {
   label: string;
   icon?: ReactNode;
   action?: () => void;
-  color?: string;
+  color?: string; 
 }
 
 interface OptionMenuProps {
@@ -16,7 +16,7 @@ interface OptionMenuProps {
 
 const ITEM_HEIGHT = 60;
 
-function OptionMenu({ options = [], actionIcon, onClick}: OptionMenuProps) {
+function OptionMenu({ options = [], actionIcon, onClick}: Readonly<OptionMenuProps>) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
