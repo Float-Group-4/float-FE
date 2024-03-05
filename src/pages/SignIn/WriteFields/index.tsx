@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Control, FieldErrorsImpl, UseFormSetValue, UseFormWatch } from 'react-hook-form';
 
-import { Stack } from '@mui/material';
+import { Grid, Stack } from '@mui/material';
 
 import WriteField from '@base/components/WriteField';
 import { WriteFieldItem } from '@base/types/common';
@@ -22,7 +22,7 @@ const WriteFields = (props: WriteFieldsProps) => {
   const { fields, watch, setValue, control, errors, updateData } = props;
 
   return (
-    <Stack spacing={1}>
+    <Grid container spacing={3}>
       {fields.map((_field: WriteFieldItem) => {
         return (
           <WriteField
@@ -34,7 +34,7 @@ const WriteFields = (props: WriteFieldsProps) => {
           />
         );
       })}
-    </Stack>
+    </Grid>
   );
 };
 

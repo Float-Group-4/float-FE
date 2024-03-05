@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { Box, Button, Grid, Stack, useTheme } from '@mui/material';
+import { Box, Button, Grid, Stack, Typography, useTheme } from '@mui/material';
 import { useQueryClient } from '@tanstack/react-query';
 
 import writeConfig from './config';
@@ -14,6 +14,7 @@ import MiModal from '@base/components/MiModal';
 import LoadingButton from '@base/components/LoadingButton';
 import { useAuthMutation } from '@hooks/useAuthMutation';
 import { queryKeys } from '@base/config/queryKeys';
+import signInBackgroundUrl from '@base/assets/imgs/signIn-background.svg';
 
 interface WritePageProps {
   title?: string;
@@ -76,38 +77,58 @@ const WritePage = (props: WritePageProps) => {
 
   const Footer = useMemo(() => {
     return (
-      <Stack direction='row' spacing={2} alignItems='center'>
+      <Stack spacing={3} alignItems='center' mt={3}>
         <LoadingButton
-          size='medium'
+          size='large'
           variant='contained'
           loading={mSignIn.isPending}
           onClick={() => {
             handleSubmit((data) => onSubmit(data), onError)();
           }}
-          sx={{ width: '100%' }}
+          sx={{ width: '100%', fontWeight: 500 }}
         >
-          Đăng nhập
+          Sign In
         </LoadingButton>
+
+        <Stack direction='row' spacing={1} mt={3}>
+          <Typography sx={{ fontSize: 12 }}>Forgot your password?</Typography>
+          <Typography
+            sx={{ fontSize: 12, textDecoration: 'underlined', color: theme.palette.primary.main }}
+          >
+            Reset
+          </Typography>
+        </Stack>
       </Stack>
     );
   }, [reset, isValid]);
 
   return (
-    <Box sx={{ border, borderRadius: 4, maxWidth: 400, margin: 'auto', p: 2 }}>
+    <Box
+      sx={{
+        boxShadow: '0 6px 30px #0000001f',
+        border,
+        borderRadius: 2,
+        width: 464,
+        margin: 'auto',
+        p: 4,
+        // backgroundImage: `url(${signInBackgroundUrl})`
+      }}
+    >
+      <Typography sx={{ fontSize: 24, fontWeight: 700, textAlign: 'center', mb: 3 }}>
+        Sign in
+      </Typography>
       <form>
         <Suspense fallback={<></>}>
-          <Stack spacing={2}>
-            <WriteFields
-              fields={fields}
-              watch={watch}
-              setValue={setValue}
-              control={control}
-              errors={errors}
-              isEdit={!!updateData}
-              updateData={updateData}
-            />
-            {Footer}
-          </Stack>
+          <WriteFields
+            fields={fields}
+            watch={watch}
+            setValue={setValue}
+            control={control}
+            errors={errors}
+            isEdit={!!updateData}
+            updateData={updateData}
+          />
+          {Footer}
         </Suspense>
       </form>
     </Box>

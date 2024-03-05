@@ -86,12 +86,12 @@ const WriteField = (props: WriteFieldProps) => {
   //render
   return (
     <Grid item xs={getGridCol()} sx={{ display: isHidden ? 'none' : 'block', ...itemSx }}>
-      <Grid container spacing={isHorizontal ? 0 : 0.5}>
+      <Grid container spacing={isHorizontal ? 0 : 0.25}>
         {!hideTitle && (
           <Grid item xs={12} md={isHorizontal ? ratio?.label : 12}>
             <Stack spacing={1} direction="row" alignItems="center">
               <InputLabel sx={{ display: 'flex', alignItems: 'center' }}>
-                <Typography sx={{ fontWeight: theme.typography.fontWeightMedium, ...titleSx }}>
+                <Typography sx={{ fontWeight: theme.typography.fontWeightMedium, fontSize: 12 ,...titleSx }}>
                   {languageKey || ''}
                 </Typography>
                 {validate && requiredAsterisk && (
