@@ -19,6 +19,16 @@ import { routes } from '@base/routes';
 import LinearLoader from './LinearLoader';
 import ThemeCustomization from '@base/themes';
 
+import {
+  experimental_extendTheme as materialExtendTheme,
+  Experimental_CssVarsProvider as MaterialCssVarsProvider,
+  THEME_ID as MATERIAL_THEME_ID,
+} from '@mui/material/styles';
+import { CssVarsProvider as JoyCssVarsProvider } from '@mui/joy/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+const materialTheme = materialExtendTheme();
+
 // Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -52,16 +62,20 @@ function App() {
   return (
     <RecoilRoot>
       <BrowserRouter>
-        <ThemeCustomization>
-          <QueryClientProvider client={queryClient}>
-            <Toaster position='top-right' reverseOrder={false} />
-            <LinearLoader />
-            <Suspense fallback={<CircularProgress />}>
-              <Routes>{getRoutes(routes)}</Routes>
-            </Suspense>
-            <ReactQueryDevtools initialIsOpen={false} />
-          </QueryClientProvider>
-        </ThemeCustomization>
+        <MaterialCssVarsProvider theme={{ [MATERIAL_THEME_ID]: materialTheme }}>
+          <JoyCssVarsProvider>
+            <ThemeCustomization>
+              <QueryClientProvider client={queryClient}>
+                <Toaster position='top-right' reverseOrder={false} />
+                <LinearLoader />
+                <Suspense fallback={<CircularProgress />}>
+                  <Routes>{getRoutes(routes)}</Routes>
+                </Suspense>
+                <ReactQueryDevtools initialIsOpen={false} />
+              </QueryClientProvider>
+            </ThemeCustomization>{' '}
+          </JoyCssVarsProvider>
+        </MaterialCssVarsProvider>
       </BrowserRouter>
     </RecoilRoot>
   );
