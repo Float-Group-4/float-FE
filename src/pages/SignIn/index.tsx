@@ -16,15 +16,9 @@ import { useAuthMutation } from '@hooks/useAuthMutation';
 import { queryKeys } from '@base/config/queryKeys';
 import signInBackgroundUrl from '@base/assets/imgs/signIn-background.svg';
 
-interface WritePageProps {
-  title?: string;
-  isOpen: boolean;
-  onClose: () => void;
-  updateData?: any;
-}
+interface LoginProps {}
 
-const WritePage = (props: WritePageProps) => {
-  const { title, isOpen, onClose, updateData } = props;
+const Login = (props: LoginProps) => {
   const theme = useTheme();
   const queryClient = useQueryClient();
   const layoutFields: string[] = [
@@ -91,9 +85,17 @@ const WritePage = (props: WritePageProps) => {
         </LoadingButton>
 
         <Stack direction='row' spacing={1} mt={3}>
-          <Typography sx={{ fontSize: 12 }}>Forgot your password?</Typography>
+          <Typography color='secondary' sx={{ fontSize: 12 }}>
+            Forgot your password?
+          </Typography>
           <Typography
-            sx={{ fontSize: 12, textDecoration: 'underlined', color: theme.palette.primary.main }}
+            sx={{
+              fontSize: 12,
+              textDecoration: 'underline',
+              color: theme.palette.primary.main,
+              fontWeight: 500,
+              cursor: 'pointer',
+            }}
           >
             Reset
           </Typography>
@@ -125,8 +127,6 @@ const WritePage = (props: WritePageProps) => {
             setValue={setValue}
             control={control}
             errors={errors}
-            isEdit={!!updateData}
-            updateData={updateData}
           />
           {Footer}
         </Suspense>
@@ -135,4 +135,4 @@ const WritePage = (props: WritePageProps) => {
   );
 };
 
-export default WritePage;
+export default Login;
