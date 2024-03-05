@@ -86,23 +86,33 @@ const WriteField = (props: WriteFieldProps) => {
   //render
   return (
     <Grid item xs={getGridCol()} sx={{ display: isHidden ? 'none' : 'block', ...itemSx }}>
-      <Grid container spacing={isHorizontal ? 0 : 0.5}>
+      <Grid container spacing={isHorizontal ? 0 : 0.25}>
         {!hideTitle && (
           <Grid item xs={12} md={isHorizontal ? ratio?.label : 12}>
-            <Stack spacing={1} direction="row" alignItems="center">
+            <Stack spacing={1} direction='row' alignItems='center'>
               <InputLabel sx={{ display: 'flex', alignItems: 'center' }}>
-                <Typography sx={{ fontWeight: theme.typography.fontWeightMedium, ...titleSx }}>
+                <Typography
+                  color='secondary'
+                  sx={{ fontWeight: theme.typography.fontWeightMedium, fontSize: 12, ...titleSx }}
+                >
                   {languageKey || ''}
                 </Typography>
                 {validate && requiredAsterisk && (
-                  <Box component="span" sx={{ ml: 1, color: 'error.main' }}>
+                  <Box component='span' sx={{ ml: 1, color: 'error.main' }}>
                     *
                   </Box>
                 )}
               </InputLabel>
               {tooltipShow && (
-                <Tooltip arrow title={<RawHTML>{tooltipText.tooltipLangKey || ''}</RawHTML>} placement="top">
-                  <InfoOutlined htmlColor={theme.palette.text.secondary} sx={{ fontSize: 16, cursor: 'pointer' }} />
+                <Tooltip
+                  arrow
+                  title={<RawHTML>{tooltipText.tooltipLangKey || ''}</RawHTML>}
+                  placement='top'
+                >
+                  <InfoOutlined
+                    htmlColor={theme.palette.text.secondary}
+                    sx={{ fontSize: 16, cursor: 'pointer' }}
+                  />
                 </Tooltip>
               )}
             </Stack>
@@ -110,11 +120,14 @@ const WriteField = (props: WriteFieldProps) => {
         )}
         {componentProps?.replaceTitle && (
           <Grid item xs={12} md={isHorizontal ? ratio?.label : 12}>
-            <Stack direction="row" sx={{ mb: 1 }}>
-              <Box component="span" sx={{ mr: 1, px: 2, py: 1, color: 'common.white', bgcolor: 'primary.main' }}>
+            <Stack direction='row' sx={{ mb: 1 }}>
+              <Box
+                component='span'
+                sx={{ mr: 1, px: 2, py: 1, color: 'common.white', bgcolor: 'primary.main' }}
+              >
                 {componentProps?.replaceTitle.step}
               </Box>
-              <Box component="span" sx={{ width: '100%', pt: 1 }}>
+              <Box component='span' sx={{ width: '100%', pt: 1 }}>
                 {componentProps?.replaceTitle.text}
               </Box>
             </Stack>
@@ -152,7 +165,10 @@ const WriteField = (props: WriteFieldProps) => {
           <Grid item>{'Empty'}</Grid>
         )}
         {errors?.[keyName] && (
-          <Typography variant="h6" sx={{ color: 'error.main', pt: 0.5, pl: isHorizontal ? 0 : 0.5 }}>
+          <Typography
+            variant='h6'
+            sx={{ color: 'error.main', pt: 0.5, pl: isHorizontal ? 0 : 0.5 }}
+          >
             {errors?.[keyName]?.message}
           </Typography>
         )}

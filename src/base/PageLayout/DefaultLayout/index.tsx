@@ -1,15 +1,14 @@
 import React from 'react';
-import { Stack } from '@mui/material';
+import { Button, Stack } from '@mui/material';
 import { Outlet } from 'react-router';
 import Header from './Header';
 import { CONTAINER_PADDING_X, HEADER_HEIGHT } from '@base/config/constants';
+import { useMatch } from 'react-router-dom';
 
-import DefaultLayout from './DefaultLayout';
-import NotAuthLayout from './NotAuthLayout';
+const DefaultLayout = () => {
+  const isHome = useMatch('/');
+  const isLogin = useMatch('/login');
 
-interface PageLayoutProps {}
-
-  const [isOpen, setIsOpen] = useState(true);
   return (
     <Stack>
       {!isLogin && <Header />}
@@ -23,12 +22,6 @@ interface PageLayoutProps {}
       </Stack>
     </Stack>
   );
-
-const PageLayout = (props: PageLayoutProps) => {
-  // change condition login here
-  const isLogin = false;
-  return <>{isLogin ? <DefaultLayout /> : <NotAuthLayout />}</>;
-
 };
 
-export default PageLayout;
+export default DefaultLayout;
