@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom';
 import SideNavbar from './SideNavbar';
 import TopBar from './TopBar';
 
-const HomePage = () => {
+const AuthLayout = () => {
   return (
     <div className='flex'>
       <SideNavbar />
@@ -23,4 +23,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default AuthLayout;

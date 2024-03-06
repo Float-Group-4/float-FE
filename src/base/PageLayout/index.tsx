@@ -1,5 +1,5 @@
 import React from 'react';
-import DefaultLayout from './DefaultLayout';
+import AuthLayout from './AuthLayout';
 import NotAuthLayout from './NotAuthLayout';
 
 interface PageLayoutProps {}
@@ -7,7 +7,7 @@ interface PageLayoutProps {}
 const PageLayout = (props: PageLayoutProps) => {
   // change condition login here
   const isLogin = true;
-  return <>{isLogin ? <DefaultLayout /> : <NotAuthLayout />}</>;
+  return <>{isLogin ? <AuthLayout /> : <NotAuthLayout />}</>;
 };
 
 export default PageLayout;
