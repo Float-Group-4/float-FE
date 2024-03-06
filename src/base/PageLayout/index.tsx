@@ -1,10 +1,9 @@
 import React from 'react';
 import { Stack } from '@mui/material';
 import { Outlet } from 'react-router';
-import Header from './Header';
 import { CONTAINER_PADDING_X, HEADER_HEIGHT } from '@base/config/constants';
 
-import DefaultLayout from './DefaultLayout';
+import AuthLayout from './AuthLayout';
 import NotAuthLayout from './NotAuthLayout';
 
 interface PageLayoutProps {}
@@ -26,9 +25,8 @@ interface PageLayoutProps {}
 
 const PageLayout = (props: PageLayoutProps) => {
   // change condition login here
-  const isLogin = false;
-  return <>{isLogin ? <DefaultLayout /> : <NotAuthLayout />}</>;
-
+  const isLogin = true;
+  return <>{isLogin ? <AuthLayout /> : <NotAuthLayout />}</>;
 };
 
 export default PageLayout;
