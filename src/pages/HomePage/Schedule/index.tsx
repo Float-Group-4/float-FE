@@ -1,5 +1,10 @@
-import React from 'react';
+import Board from './Board';
 
 export default function Schedule() {
-  return <div>Schedule</div>;
+  return (
+    <div className='bg-gray-100 flex-1 h-full relative'>
+      {/* <Sidebar /> */}
+      <Board />
+    </div>
+  );
 }
