@@ -28,14 +28,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: 'sign-in',
-        element: (
-          <SignIn
-            isOpen={false}
-            onClose={function (): void {
-              throw new Error('Function not implemented.');
-            }}
-          />
-        ),
+        element: <SignIn />,
       },
       {
         path: 'sign-up',
