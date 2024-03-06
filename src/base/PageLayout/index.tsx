@@ -6,7 +6,7 @@ interface PageLayoutProps {}
 
 const PageLayout = (props: PageLayoutProps) => {
   // change condition login here
-  const isLogin = false;
+  const isLogin = true;
   return <>{isLogin ? <DefaultLayout /> : <NotAuthLayout />}</>;
 };
 

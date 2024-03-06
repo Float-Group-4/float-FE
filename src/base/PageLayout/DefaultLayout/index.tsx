@@ -1,27 +1,26 @@
-import React from 'react';
-import { Button, Stack } from '@mui/material';
-import { Outlet } from 'react-router';
-import Header from './Header';
-import { CONTAINER_PADDING_X, HEADER_HEIGHT } from '@base/config/constants';
-import { useMatch } from 'react-router-dom';
+import { Outlet } from 'react-router-dom';
+import SideNavbar from './SideNavbar';
+import TopBar from './TopBar';
 
-const DefaultLayout = () => {
-  const isHome = useMatch('/');
-  const isLogin = useMatch('/login');
-
+const HomePage = () => {
   return (
-    <Stack>
-      {!isLogin && <Header />}
-      <Stack
-        height={`calc(100vh - ${HEADER_HEIGHT}px)`}
-        width='100%'
-        margin='auto'
-        px={CONTAINER_PADDING_X}
-      >
-        <Outlet />
-      </Stack>
-    </Stack>
+    <div className='flex'>
+      <SideNavbar />
+      <div className='flex-1'>
+        <div className='flex flex-col h-screen'>
+          {/* Top Bar */}
+          <TopBar />
+          {/* Schedule Board */}
+          <div className='bg-gray-100 flex-1 h-full relative'>
+            {/* <Sidebar /> */}
+            <div className='bg-gray-500 flex-1 h-full'>
+              <Outlet />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
-export default DefaultLayout;
+export default HomePage;
