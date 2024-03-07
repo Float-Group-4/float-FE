@@ -40,6 +40,7 @@ function getColorStyle({ variant, color, theme }: ButtonStyleProps) {
         '&:hover': {
           backgroundColor: dark,
         },
+        backgroundColor: `${main} !important`,
         ...commonShadow,
       };
     case 'shadow':
@@ -154,12 +155,28 @@ export default function Button(theme: Theme) {
         dashed: {
           border: '1px dashed',
           ...primaryDashed,
-          '&.MuiButton-dashedPrimary': getColorStyle({ variant: 'dashed', color: 'primary', theme }),
-          '&.MuiButton-dashedSecondary': getColorStyle({ variant: 'dashed', color: 'secondary', theme }),
+          '&.MuiButton-dashedPrimary': getColorStyle({
+            variant: 'dashed',
+            color: 'primary',
+            theme,
+          }),
+          '&.MuiButton-dashedSecondary': getColorStyle({
+            variant: 'dashed',
+            color: 'secondary',
+            theme,
+          }),
           '&.MuiButton-dashedError': getColorStyle({ variant: 'dashed', color: 'error', theme }),
-          '&.MuiButton-dashedSuccess': getColorStyle({ variant: 'dashed', color: 'success', theme }),
+          '&.MuiButton-dashedSuccess': getColorStyle({
+            variant: 'dashed',
+            color: 'success',
+            theme,
+          }),
           '&.MuiButton-dashedInfo': getColorStyle({ variant: 'dashed', color: 'info', theme }),
-          '&.MuiButton-dashedWarning': getColorStyle({ variant: 'dashed', color: 'warning', theme }),
+          '&.MuiButton-dashedWarning': getColorStyle({
+            variant: 'dashed',
+            color: 'warning',
+            theme,
+          }),
           '&.Mui-disabled': {
             color: `${theme.palette.grey[300]} !important`,
             borderColor: `${theme.palette.grey[400]} !important`,
@@ -168,12 +185,28 @@ export default function Button(theme: Theme) {
         },
         shadow: {
           ...primaryShadow,
-          '&.MuiButton-shadowPrimary': getColorStyle({ variant: 'shadow', color: 'primary', theme }),
-          '&.MuiButton-shadowSecondary': getColorStyle({ variant: 'shadow', color: 'secondary', theme }),
+          '&.MuiButton-shadowPrimary': getColorStyle({
+            variant: 'shadow',
+            color: 'primary',
+            theme,
+          }),
+          '&.MuiButton-shadowSecondary': getColorStyle({
+            variant: 'shadow',
+            color: 'secondary',
+            theme,
+          }),
           '&.MuiButton-shadowError': getColorStyle({ variant: 'shadow', color: 'error', theme }),
-          '&.MuiButton-shadowSuccess': getColorStyle({ variant: 'shadow', color: 'success', theme }),
+          '&.MuiButton-shadowSuccess': getColorStyle({
+            variant: 'shadow',
+            color: 'success',
+            theme,
+          }),
           '&.MuiButton-shadowInfo': getColorStyle({ variant: 'shadow', color: 'info', theme }),
-          '&.MuiButton-shadowWarning': getColorStyle({ variant: 'shadow', color: 'warning', theme }),
+          '&.MuiButton-shadowWarning': getColorStyle({
+            variant: 'shadow',
+            color: 'warning',
+            theme,
+          }),
           '&.Mui-disabled': {
             color: `${theme.palette.grey[300]} !important`,
             borderColor: `${theme.palette.grey[400]} !important`,

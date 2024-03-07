@@ -1,23 +1,12 @@
 import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
 import HomePage from '@pages/HomePage';
-import UserLayout from '@base/layout/UserLayout';
 const PageLayout = lazy(() => import('@base/PageLayout'));
 
 const SignIn = lazy(() => import('@pages/SignIn'));
 const SignUp = lazy(() => import('@pages/SignUp'));
 
 export const routes: RouteObject[] = [
-  {
-    path: '/home',
-    element: <UserLayout />,
-    children: [
-      {
-        index: true,
-        element: <HomePage />,
-      },
-    ],
-  },
   {
     path: '*',
     element: <PageLayout />,
@@ -27,15 +16,12 @@ export const routes: RouteObject[] = [
         element: <p>Home</p>,
       },
       {
+        path: 'home',
+        element: <HomePage />,
+      },
+      {
         path: 'sign-in',
-        element: (
-          <SignIn
-            isOpen={false}
-            onClose={function (): void {
-              throw new Error('Function not implemented.');
-            }}
-          />
-        ),
+        element: <SignIn />,
       },
       {
         path: 'sign-up',
