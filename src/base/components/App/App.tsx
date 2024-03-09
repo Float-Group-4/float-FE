@@ -18,6 +18,9 @@ import { CircularProgress } from '@mui/material';
 import { routes } from '@base/routes';
 import LinearLoader from './LinearLoader';
 import ThemeCustomization from '@base/themes';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import {
   experimental_extendTheme as materialExtendTheme,
@@ -62,16 +65,19 @@ function App() {
   return (
     <RecoilRoot>
       <BrowserRouter>
+
         <MaterialCssVarsProvider theme={{ [MATERIAL_THEME_ID]: materialTheme }}>
           <JoyCssVarsProvider>
             <ThemeCustomization>
               <QueryClientProvider client={queryClient}>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <Toaster position='top-right' reverseOrder={false} />
                 <LinearLoader />
                 <Suspense fallback={<CircularProgress />}>
                   <Routes>{getRoutes(routes)}</Routes>
                 </Suspense>
                 <ReactQueryDevtools initialIsOpen={false} />
+                </LocalizationProvider>
               </QueryClientProvider>
             </ThemeCustomization>{' '}
           </JoyCssVarsProvider>
