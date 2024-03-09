@@ -29,12 +29,12 @@ export const MIMODAL_ANCHOR_RIGHT: string = 'right';
 
 export type MiModalAnchor = typeof MIMODAL_ANCHOR_CENTER | typeof MIMODAL_ANCHOR_RIGHT;
 
-interface MiModalProps {
+export interface MiModalProps {
   title: string | React.ReactElement;
   isOpen: boolean;
   size: Breakpoint | false;
   fullScreen?: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   footer?: React.ReactNode;
   onClose: (value: any) => void;
   onScroll?: (e: any) => void;
