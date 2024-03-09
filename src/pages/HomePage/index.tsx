@@ -1,3 +1,4 @@
+import ActionButton from './ActionButton';
 import Schedule from './Schedule';
 import TopBar from './TopBar';
 
@@ -8,6 +9,8 @@ const HomePage = () => {
       <TopBar />
       {/* Schedule Board */}
       <Schedule />
+      {/* Action Button */}
+      <ActionButton />
     </div>
   );
 };
