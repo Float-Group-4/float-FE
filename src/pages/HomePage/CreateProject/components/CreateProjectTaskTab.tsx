@@ -13,18 +13,19 @@ import {
   Chip,
 } from '@mui/material';
 import { useState } from 'react';
-import { ProjectTask } from '../../models';
-import OptionMenu from '../OptionsMenu';
+import { ProjectTask } from '../models';
+import OptionMenu from './OptionsMenu';
+import React from 'react';
 
 interface TaskProp {
   tasks: ProjectTask[] | null;
-  setTasks: (team: ProjectTask[] | null) => void;
+  setTasks: (team: any | null) => void;
 }
 
 const TaskListSubBody: React.FC<TaskProp> = ({ tasks, setTasks }) => {
   const [currentName, setCurrentName] = useState<string>('');
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
-  const [checkedTasks, setCheckedTasks] = useState<{ [key: number]: ProjectTask }>({});
+  const [checkedTasks, setCheckedTasks] = useState<ProjectTask[]>([]);
 
   const setBillable = (index: number) => {
     if (tasks === null) return;
@@ -49,13 +50,13 @@ const TaskListSubBody: React.FC<TaskProp> = ({ tasks, setTasks }) => {
   };
 
   const handleMultipleDelete = () => {
-    setTasks((prevTasks: ProjectTask[]) => {
+    setTasks((prevTasks: any) => {
       const tempCheckedTasks = [...checkedTasks];
       const tempTasks = [...prevTasks];
 
-      const filterList = tempTasks.filter(item => !tempCheckedTasks.includes(item));
+      const filterList = tempTasks.filter((item: any) => !tempCheckedTasks.includes(item));
 
-      setCheckedTasks({});
+      setCheckedTasks([]);
 
       return filterList;
     });
@@ -75,8 +76,8 @@ const TaskListSubBody: React.FC<TaskProp> = ({ tasks, setTasks }) => {
   ];
 
   const addToProcessList = (taskId: number) => {
-    setCheckedTasks(prevCheckedTasks => {
-      const taskExists = !!prevCheckedTasks[taskId];
+    setCheckedTasks((prevCheckedTasks : any) => {
+      const taskExists = !prevCheckedTasks[taskId];
       const updatedCheckedTasks = { ...prevCheckedTasks };
 
       if (taskExists) {
@@ -97,7 +98,7 @@ const TaskListSubBody: React.FC<TaskProp> = ({ tasks, setTasks }) => {
   const addNewTask = () => {
     if (!currentName.trim()) return;
 
-    setTasks(prevTasks => {
+    setTasks((prevTasks: string | any[]) => {
       const newTask: ProjectTask = {
         id: prevTasks && prevTasks.length > 0 ? prevTasks[prevTasks.length - 1].id + 1 : 1,
         name: currentName,
@@ -168,7 +169,7 @@ const TaskListSubBody: React.FC<TaskProp> = ({ tasks, setTasks }) => {
                   <Checkbox
                     sx={{ p: 0, my: 0, mr: 1, ml: 0 }}
                     onChange={() => addToProcessList(task.id)}
-                    checked={!!checkedTasks[task.id]}
+                    checked={checkedTasks.find(t => t.id === task.id) !== null}
                   />
                   <ListItemText primary={task.name} />
                   {!task.isBillable && <Chip label="non-billable" variant="outlined" />}
