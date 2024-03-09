@@ -21,6 +21,7 @@ export const SIDE_BAR_MINI_WIDTH = 60;
 export const SIDE_BAR_ITEM_HEIGHT = 32;
 // Top menu items
 export const HEADER_HEIGHT = 60;
+export const HEADER_HEIGHT_NOT_AUTH = 112;
 export const TOP_MENU_HEIGHT = 50;
 export const TOP_MENU_WIDTH = 60;
 export const TOP_MENU_LENGTH = 6;

@@ -4,6 +4,7 @@ import React from 'react';
 
 import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
+import HomePage from '@pages/HomePage';
 const PageLayout = lazy(() => import('@base/PageLayout'));
 
 const SignIn = lazy(() => import('@pages/SignIn'));
@@ -17,6 +18,10 @@ export const routes: RouteObject[] = [
       {
         index: true,
         element: <p>Home</p>,
+      },
+      {
+        path: 'home',
+        element: <HomePage />,
       },
       {
         path: 'sign-in',
