@@ -3,16 +3,15 @@ import React from 'react';
 import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
 import HomePage from '@pages/HomePage';
-const PageLayout = lazy(() => import('@base/PageLayout'));
-
 const SignIn = lazy(() => import('@pages/SignIn'));
 const SignUp = lazy(() => import('@pages/SignUp'));
 const TeamSetupModal = lazy(() => import('@pages/TeamSetupModal'));
+const Layouts = lazy(() => import('@layouts/index'));
 
 export const routes: RouteObject[] = [
   {
     path: '*',
-    element: <PageLayout />,
+    element: <Layouts />,
     children: [
       {
         index: true,

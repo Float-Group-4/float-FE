@@ -12,7 +12,7 @@ const UserList = (props: UserListProps) => {
     <Stack divider={<Divider />}>
       {dummyData.map((user, i) => {
         return (
-          <Box sx={{ height: USER_CELL_HEIGHT, p: 1 }}>
+          <Box key={user?.id} sx={{ height: USER_CELL_HEIGHT, p: 1 }}>
             <Stack direction='row' alignItems='center' justifyContent='space-between'>
               <Stack direction='row' alignItems='center' spacing={1}>
                 <BackgroundLetterAvatar>{user?.name}</BackgroundLetterAvatar>

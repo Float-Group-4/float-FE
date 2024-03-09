@@ -15,20 +15,15 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RecoilRoot } from 'recoil';
 import { CircularProgress } from '@mui/material';
-import { routes } from '@base/routes';
+import { routes } from '@routes/index';
 import LinearLoader from './LinearLoader';
 import ThemeCustomization from '@base/themes';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import {
   experimental_extendTheme as materialExtendTheme,
   Experimental_CssVarsProvider as MaterialCssVarsProvider,
   THEME_ID as MATERIAL_THEME_ID,
 } from '@mui/material/styles';
-import { CssVarsProvider as JoyCssVarsProvider } from '@mui/joy/styles';
-import CssBaseline from '@mui/material/CssBaseline';
 
 const materialTheme = materialExtendTheme();
 
