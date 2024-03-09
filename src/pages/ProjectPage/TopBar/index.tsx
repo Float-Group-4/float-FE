@@ -11,6 +11,7 @@ import AccessAlarmOutlinedIcon from '@mui/icons-material/AccessAlarmOutlined';
 import CreateNewFolderOutlinedIcon from '@mui/icons-material/CreateNewFolderOutlined';
 import MoreTimeOutlinedIcon from '@mui/icons-material/MoreTimeOutlined';
 import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
+import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 
 import {
   Button,
@@ -117,7 +118,7 @@ export default function TopBar() {
                 aria-expanded={open ? 'true' : undefined}
                 className={`text-xl font-medium px-4 py-1 rounded-md`}
               >
-                {2} People
+                {1} Project
               </ListItemButton>
             </List>
             <Menu
@@ -157,6 +158,16 @@ export default function TopBar() {
         {/* Right Nav Content */}
         <div className='flex gap-2'>
           {/* Move And Today */}
+          <div className='flex gap-2 items-center'>
+            <Button
+              variant='outlined'
+              className='rounded-md'
+              sx={{ borderColor: grey[300], color: grey[800] }}
+            >
+              <ContentCopyOutlinedIcon fontSize='small' className='me-2' />
+              Manage Templates
+            </Button>
+          </div>
           <div className='flex gap-2 items-center'>
             <Button
               variant='outlined'
