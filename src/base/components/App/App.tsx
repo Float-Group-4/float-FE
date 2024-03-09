@@ -65,23 +65,16 @@ function App() {
   return (
     <RecoilRoot>
       <BrowserRouter>
-
-        <MaterialCssVarsProvider theme={{ [MATERIAL_THEME_ID]: materialTheme }}>
-          <JoyCssVarsProvider>
-            <ThemeCustomization>
-              <QueryClientProvider client={queryClient}>
-                <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <Toaster position='top-right' reverseOrder={false} />
-                <LinearLoader />
-                <Suspense fallback={<CircularProgress />}>
-                  <Routes>{getRoutes(routes)}</Routes>
-                </Suspense>
-                <ReactQueryDevtools initialIsOpen={false} />
-                </LocalizationProvider>
-              </QueryClientProvider>
-            </ThemeCustomization>{' '}
-          </JoyCssVarsProvider>
-        </MaterialCssVarsProvider>
+        <ThemeCustomization>
+          <QueryClientProvider client={queryClient}>
+            <Toaster position='top-right' reverseOrder={false} />
+            <LinearLoader />
+            <Suspense fallback={<CircularProgress />}>
+              <Routes>{getRoutes(routes)}</Routes>
+            </Suspense>
+            <ReactQueryDevtools initialIsOpen={false} />
+          </QueryClientProvider>
+        </ThemeCustomization>
       </BrowserRouter>
     </RecoilRoot>
   );

@@ -1,5 +1,3 @@
-
-import { TeamSetup } from '@pages/modals/CreateTeamModal';
 import React from 'react';
 
 import { lazy } from 'react';
@@ -9,6 +7,7 @@ const PageLayout = lazy(() => import('@base/PageLayout'));
 
 const SignIn = lazy(() => import('@pages/SignIn'));
 const SignUp = lazy(() => import('@pages/SignUp'));
+const TeamSetupModal = lazy(() => import('@pages/TeamSetupModal'));
 
 export const routes: RouteObject[] = [
   {
@@ -33,8 +32,8 @@ export const routes: RouteObject[] = [
       },
       {
         path: 'team-setup',
-        element: <TeamSetup/>
-      }
+        element: <TeamSetupModal isOpen={true} setIsOpen={() => {}} />,
+      },
     ],
   },
 ];
