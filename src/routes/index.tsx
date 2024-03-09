@@ -29,10 +29,6 @@ export const routes: RouteObject[] = [
         path: 'sign-up',
         element: <SignUp />,
       },
-      {
-        path: 'team-setup',
-        element: <TeamSetupModal isOpen={true} setIsOpen={() => {}} />,
-      },
     ],
   },
 ];

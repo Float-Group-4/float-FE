@@ -9,6 +9,7 @@ import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import { Avatar } from '@mui/material';
 import { deepOrange, grey } from '@mui/material/colors';
 import { useNavigate } from 'react-router-dom';
+import SettingButton from './SettingButton';
 
 export default function SideNavbar() {
   const navigate = useNavigate();
@@ -92,9 +93,7 @@ export default function SideNavbar() {
       {/* Bottom Button Group */}
       <div className='flex flex-col justify-end items-center gap-4'>
         {/* Setting Button */}
-        <IconButton aria-label='' onClick={() => {}} className='hover:bg-blue-200 rounded-md'>
-          <SettingsOutlinedIcon sx={{ color: grey[800] }} />
-        </IconButton>
+        <SettingButton />
         {/* Help Button */}
         <IconButton aria-label='' onClick={() => {}} className='hover:bg-blue-200 rounded-md'>
           <HelpOutlineOutlinedIcon sx={{ color: grey[800] }} />

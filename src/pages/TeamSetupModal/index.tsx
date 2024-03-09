@@ -33,63 +33,53 @@ import {
   THEME_ID as MATERIAL_THEME_ID,
 } from '@mui/material/styles';
 import { CssVarsProvider as JoyCssVarsProvider } from '@mui/joy/styles';
+import MiModal from '@base/components/MiModal';
 
 const materialTheme = materialExtendTheme();
 
 interface TeamSetupModalProp {
   isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  onClose: () => void;
 }
 
-const TeamSetupModal: React.FC<TeamSetupModalProp> = ({ isOpen, setIsOpen }) => {
+const TeamSetupModal = (props: TeamSetupModalProp) => {
+  const { isOpen, onClose } = props;
   const navigate = useNavigate();
 
   const [isStepperOpen, setIsStepperOpen] = useState(false);
   const openTeamSetupModal = (e: React.MouseEvent<HTMLElement>) => {
     localStorage.setItem('teamName', teamName);
-    setIsOpen(false);
     navigate('team-setup');
   };
 
   const [teamName, setTeamName] = useState(localStorage.getItem('teamName') ?? '');
 
-  const handleClose: DialogProps['onClose'] = (event, reason) => {
-    // if (reason && reason === "backdropClick && "escapeKeyDown"")
-    //     return;
-    setIsOpen(false);
-  };
+  const Footer = (
+    <Button variant='contained' onClick={openTeamSetupModal}>
+      Continue
+    </Button>
+  );
 
   return (
-    <MaterialCssVarsProvider theme={{ [MATERIAL_THEME_ID]: materialTheme }}>
-      <JoyCssVarsProvider>
-        <Dialog open={isOpen} maxWidth='xl' onClose={handleClose}>
-          <DialogContent sx={{ display: 'flex', flexDirection: 'column', alignContent: 'center' }}>
-            <div>
-              <Typography variant='h3' sx={{ p: 3 }}>
-                Pick a name for your team
-              </Typography>
-            </div>
-            <div>
-              <Typography variant='h5' sx={{ fontWeight: 300, pb: 3 }}>
-                You can always change it later in team settings
-              </Typography>
-            </div>
-            <Typography variant='body1'>Team name</Typography>
-            <TextField
-              onChange={(v) => setTeamName(v.target.value)}
-              placeholder='E.g., Razor Angency'
-              fullWidth
-              value={teamName}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button variant='contained' fullWidth onClick={openTeamSetupModal}>
-              Continue
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </JoyCssVarsProvider>
-    </MaterialCssVarsProvider>
+    <MiModal title='Create team' isOpen={isOpen} onClose={onClose} size='xs' footer={Footer}>
+      <Box p={2}>
+        <Typography sx={{ textAlign: 'center', fontSize: 24, fontWeight: 700 }}>
+          Pick a name for your team
+        </Typography>
+
+        <Typography sx={{ textAlign: 'center', fontWeight: 400, fontSize: 16, my: 2.5 }}>
+          You can always change it later in team settings
+        </Typography>
+
+        <Typography variant='body1'>Team name</Typography>
+        <TextField
+          onChange={(v) => setTeamName(v.target.value)}
+          placeholder='E.g., Razor Angency'
+          fullWidth
+          value={teamName}
+        />
+      </Box>
+    </MiModal>
   );
 };
 
