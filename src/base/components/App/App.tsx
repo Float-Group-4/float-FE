@@ -22,6 +22,16 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
+import {
+  experimental_extendTheme as materialExtendTheme,
+  Experimental_CssVarsProvider as MaterialCssVarsProvider,
+  THEME_ID as MATERIAL_THEME_ID,
+} from '@mui/material/styles';
+import { CssVarsProvider as JoyCssVarsProvider } from '@mui/joy/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+const materialTheme = materialExtendTheme();
+
 // Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -55,18 +65,23 @@ function App() {
   return (
     <RecoilRoot>
       <BrowserRouter>
-        <ThemeCustomization>
-          <QueryClientProvider client={queryClient}>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <Toaster position='top-right' reverseOrder={false} />
-              <LinearLoader />
-              <Suspense fallback={<CircularProgress />}>
-                <Routes>{getRoutes(routes)}</Routes>
-              </Suspense>
-              <ReactQueryDevtools initialIsOpen={false} />
-            </LocalizationProvider>
-          </QueryClientProvider>
-        </ThemeCustomization>
+
+        <MaterialCssVarsProvider theme={{ [MATERIAL_THEME_ID]: materialTheme }}>
+          <JoyCssVarsProvider>
+            <ThemeCustomization>
+              <QueryClientProvider client={queryClient}>
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <Toaster position='top-right' reverseOrder={false} />
+                <LinearLoader />
+                <Suspense fallback={<CircularProgress />}>
+                  <Routes>{getRoutes(routes)}</Routes>
+                </Suspense>
+                <ReactQueryDevtools initialIsOpen={false} />
+                </LocalizationProvider>
+              </QueryClientProvider>
+            </ThemeCustomization>{' '}
+          </JoyCssVarsProvider>
+        </MaterialCssVarsProvider>
       </BrowserRouter>
     </RecoilRoot>
   );

@@ -1,3 +1,7 @@
+
+import { TeamSetup } from '@pages/modals/CreateTeamModal';
+import React from 'react';
+
 import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
 import HomePage from '@pages/HomePage';
@@ -27,6 +31,10 @@ export const routes: RouteObject[] = [
         path: 'sign-up',
         element: <SignUp />,
       },
+      {
+        path: 'team-setup',
+        element: <TeamSetup/>
+      }
     ],
   },
 ];

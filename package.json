@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "check": "tsc",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
@@ -17,6 +18,8 @@
     "@fontsource/roboto": "^5.0.8",
     "@heroicons/react": "^2.1.1",
     "@mui/icons-material": "^5.15.11",
+    "@mui/joy": "^5.0.0-beta.29",
+    "@mui/lab": "^5.0.0-alpha.167",
     "@mui/material": "^5.15.11",
     "@mui/x-date-pickers": "^6.19.6",
     "@tanstack/react-query": "^5.22.2",
@@ -36,7 +39,9 @@
     "react-quill": "^0.0.2",
     "react-router-dom": "^6.22.1",
     "recoil": "^0.7.7",
-    "sort-by": "^0.0.2"
+
+    "sort-by": "^1.2.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.20.1",
@@ -44,6 +49,7 @@
     "@types/node": "^20.11.23",
     "@types/react": "^18.2.56",
     "@types/react-dom": "^18.2.19",
+    "@types/uuid": "^9.0.8",
     "@typescript-eslint/eslint-plugin": "^7.0.2",
     "@typescript-eslint/parser": "^7.0.2",
     "@vitejs/plugin-react-swc": "^3.5.0",
