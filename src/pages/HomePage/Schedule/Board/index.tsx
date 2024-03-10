@@ -1,3 +1,13 @@
+import { ScheduleContextWrapper } from '../ScheduleContext';
+import { BoardContainer } from './components/BoardContainer';
+import { ScrollWrapper } from './components/ScrollWrapper';
+
 export default function Board() {
-  return <div className='flex-1 h-full'>Board</div>;
+  return (
+    <ScheduleContextWrapper>
+      <ScrollWrapper>
+        <BoardContainer />
+      </ScrollWrapper>
+    </ScheduleContextWrapper>
+  );
 }
