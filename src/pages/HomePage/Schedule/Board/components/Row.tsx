@@ -7,6 +7,7 @@ import { ITEM_MIN_HEIGHT, MARGIN_TOP, WORKLOAD_ROW_HEIGHT } from '../common/cons
 import { dayIndexToDay, getActualRowHeight } from '../common/helper';
 import { SideCell } from './Cells/SideCell';
 import { ItemCard } from './Items/ItemCard';
+import { NonWorkItem } from './Items/NonWorkingItem';
 
 export default memo(function Row({ userId, className }: { userId: string; className: string }) {
   const {
@@ -45,7 +46,7 @@ export default memo(function Row({ userId, className }: { userId: string; classN
 
   // const defaultHour = useDefaultHour();
   //Select schedule for user
-  const defaultHours = 8;
+  const defaultHours = [0, 8, 8, 8, 8, 8, 0];
   const isHovering = () => (rowHoverId === userId ? true : false);
 
   const handleOnMouseDown = (e: MouseEvent) => {};
@@ -75,7 +76,7 @@ export default memo(function Row({ userId, className }: { userId: string; classN
               <div
                 ref={hoverRef}
                 id={`${userId}`}
-                className='!absolute bg-primary top-0 !z-[-1] opacity-20'
+                className='!absolute bg-gray-400 top-0 !z-[-1] opacity-20'
               ></div>
             )}
 
@@ -83,7 +84,7 @@ export default memo(function Row({ userId, className }: { userId: string; classN
               <>
                 <SideCell userId={userId} />
                 <div
-                  className={`relative w-full h-full border-b border-uiBorderOnSecondary`}
+                  className={`relative w-full h-full border-b border-gray-200`}
                   onMouseDown={handleOnMouseDown}
                   onPointerDown={(e) => e.stopPropagation()}
                   style={{
@@ -93,12 +94,12 @@ export default memo(function Row({ userId, className }: { userId: string; classN
                   {isCreating && (
                     <div
                       ref={selectionRef}
-                      className='absolute h-full bg-primaryOnSecondary opacity-30'
+                      className='absolute h-full bg-blue-500 opacity-30'
                       style={{
                         width: `${cellWidth}px`,
                         height: `${heightCalculated}px`,
                         // @ts-ignore
-                        left: `${cellWidth * dragInfo.current?.dayIndex}px`,
+                        left: `${cellWidth * dragInfo.current?.dayIndex + 1}px`,
                       }}
                     />
                   )}
@@ -150,6 +151,27 @@ export default memo(function Row({ userId, className }: { userId: string; classN
                           return <React.Fragment key={dayIndex} />;
                         }
                       })}
+                    {isOffWeekend &&
+                      displayingWeeks.map((weekIdx: number) => (
+                        <React.Fragment key={weekIdx}>
+                          {/* Default Schedule */}
+                          {/* <NonWorkItem x={weekIdx * 7 + 6} />
+                            <NonWorkItem x={weekIdx * 7 + 7} /> */}
+                          {/* Global Schedule */}
+                          {defaultHours.map((dayCapacity: number, index: number) => {
+                            const quantity = 7;
+                            const dayIndex =
+                              index == 0
+                                ? weekIdx * quantity + quantity
+                                : weekIdx * quantity + index;
+                            const _isNonWorking = isNonWorkingDay(dayIndex);
+                            console.log(dayCapacity, _isNonWorking);
+                            if (dayCapacity == 0) {
+                              return <NonWorkItem x={dayIndex} key={dayIndex} />;
+                            }
+                          })}
+                        </React.Fragment>
+                      ))}
                   </div>
                 </div>
               </>

@@ -45,7 +45,3 @@ export const MIN_DAYS_AVATAR_DISPLAY = {
 };
 
 export const WORKLOAD_ROW_HEIGHT = 80;
-export const API_PREFIX = '/api/v1';
-export const BOARD_ID = Number(
-  new URLSearchParams(window.location.search).get('boardId') as string,
-);

@@ -7,6 +7,7 @@ import {
   MARGIN_BOTTOM,
   MARGIN_TOP,
 } from '@pages/HomePage/Schedule/Board/common/constant';
+import { USER_CELL_HEIGHT } from '@constants/home';
 
 interface ScheduleMeasurementState {
   viewType: ViewType;
@@ -34,7 +35,8 @@ const initialState: ScheduleMeasurementState = {
   cellWidth: 90,
   cornerCellWidth: 270,
   heightPerHour: 8,
-  cellBaseHeight: 8 * DEFAULT_MIN_HOURS + MARGIN_TOP + MARGIN_BOTTOM,
+  // cellBaseHeight: 8 * DEFAULT_MIN_HOURS + MARGIN_TOP + MARGIN_BOTTOM,
+  cellBaseHeight: USER_CELL_HEIGHT,
   isCollapsed: false,
   isCollapseShow: false,
   timeRange: null,

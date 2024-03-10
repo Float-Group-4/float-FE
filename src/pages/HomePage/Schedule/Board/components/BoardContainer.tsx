@@ -149,7 +149,7 @@ export const BoardContainer = () => {
 
   return (
     <div
-      className='relative flex bg-gray-100'
+      className='relative flex bg-white'
       style={{
         height: `${boardHeight + CALENDAR_BAR_HEIGHT}px`,
         width: `${boardWidth}px`,
@@ -166,7 +166,7 @@ export const BoardContainer = () => {
       <DateCell />
       <div
         ref={boardRef}
-        className='absolute w-full '
+        className='absolute w-full'
         style={{ top: `${CALENDAR_BAR_HEIGHT}px`, height: `${boardHeight}px` }}
       >
         <DraggableWrapper>
@@ -178,16 +178,14 @@ export const BoardContainer = () => {
         <div
           className='absolute top-0 w-full h-full -z-40'
           style={{
-            backgroundImage:
-              'linear-gradient(to right, var(--placeholder-color-with-opacity) 1px, transparent 1px)',
+            backgroundImage: 'linear-gradient(to right, #9ca3af 1px, transparent 1px)',
             backgroundSize: `${cellWidth}px ${cellWidth}px`,
           }}
         />
         <div
-          className='absolute top-0 w-full h-full bg-secondaryBg -z-50'
+          className='absolute top-0 w-full h-full bg-black -z-50'
           style={{
-            backgroundImage:
-              'linear-gradient(to right, var(--ui-border-on-secondary-color) 1px, transparent 1px)',
+            backgroundImage: 'linear-gradient(to right, #9ca3af 1px, transparent 1px)',
             backgroundSize: `${mainCellWidth}px ${mainCellWidth}px`,
           }}
         />

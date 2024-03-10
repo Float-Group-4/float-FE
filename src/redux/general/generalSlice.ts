@@ -131,6 +131,7 @@ const generalSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(buildRows.fulfilled, (state, action: PayloadAction<any>) => {
       const rows = action.payload;
+      console.log(rows);
       rows.forEach((r: any) => (state.rowMap[r.id] = r));
     });
   },

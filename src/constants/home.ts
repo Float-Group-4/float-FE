@@ -2,14 +2,6 @@ export const CORNER_CELL_HEIGHT = 48;
 export const PROJECT_CELL_HEIGHT = 88;
 export const USER_CELL_HEIGHT = 152;
 
-export const WHATS_NEW_VERSION = 3;
-
-export const MONDAY_API_ENDPOINT = 'https://api.monday.com/v2';
-
-export const TOPBAR_HEIGHT = 65;
-
-export const BLANK_STATUS_LABEL = 'Blank';
-
 export const DICTIONARY_FUNCTION_KEY_MAC: Map<string, string> = new Map<string, string>([
   ['meta', '⌘'],
   ['ctrl', '⌃'],

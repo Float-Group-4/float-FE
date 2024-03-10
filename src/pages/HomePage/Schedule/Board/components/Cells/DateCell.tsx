@@ -1,4 +1,3 @@
-import { TOPBAR_HEIGHT } from '@constants/home';
 import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
 import { useScheduleContext } from '@pages/HomePage/Schedule/ScheduleContext';
 import { memo, useCallback, useRef, useState } from 'react';
@@ -292,7 +291,7 @@ export default function DateCell() {
       {/*Highlight DateCell Based on Hovering*/}
       <div
         ref={hoverRelatedDateCellRef}
-        className='absolute w-[160px] top-[50px] border-b-2 border-b-primary'
+        className='absolute w-[160px] top-[50px] border-b-2 border-b-black'
       ></div>
       {timeRange && (
         <div
@@ -367,7 +366,7 @@ const Cells = memo(() => {
               left: `${left}px`,
             }}
           >
-            <div className='flex items-center border-primary h-[30px]'>
+            <div className='flex items-center border-black h-[30px]'>
               <div className='pl-3 '>
                 <JumpCell weekIndex={weekIndex} type={'week'} label={weekOfYear} />
               </div>
@@ -382,7 +381,7 @@ const Cells = memo(() => {
                   </span>
                 )}
               </div>
-              <div className='h-3 w-[1px] bg-primary'></div>
+              <div className='h-3 w-[1px] bg-black'></div>
             </div>
             <div className='flex text-xs h-[24px]'>
               {days.map((d) => {
@@ -464,11 +463,11 @@ const HolidayDot = memo(({ day }: { day: string }) => {
 
   return (
     <div
-      className={`relative border-primary flex ${viewType === ViewType.months ? 'pl-1' : 'pl-3'} gap-1 items-center ${
+      className={`relative border-red-500 flex ${viewType === ViewType.months ? 'pl-1' : 'pl-3'} gap-1 items-center ${
         isToday && 'text-primary font-medium '
-      } ${isInRange && 'bg-primaryBgHover  '}
-                ${isLeftEdge && 'bg-primaryBgHover   rounded-tl-md'}
-                ${isRightEdge && 'bg-primaryBgHover  rounded-tr-md'} `}
+      } ${isInRange && 'bg-gray-400  '}
+                ${isLeftEdge && 'bg-gray-400   rounded-tl-md'}
+                ${isRightEdge && 'bg-gray-400  rounded-tr-md'} `}
       style={{ width: `${cellWidth}px` }}
     >
       <span className='relative flex items-center h-full gap-1 px-1 hover:bg-primary hover:text-textOnPrimary rounded-t-medium'>

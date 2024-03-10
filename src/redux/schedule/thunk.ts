@@ -103,6 +103,7 @@ export const buildRows = createAsyncThunk(
       row.items.forEach((tid: number, idx: number, items: any) => {
         const item = itemsById[tid];
         const { x, w } = getHorizontalDimensions({ from: item.startDate, to: item.endDate });
+        console.log(x, w);
         /* ---------------------------- Calculate height ---------------------------- */
         for (let i = x; i < x + w; i++) {
           const hour = standardizeHour(item, defaultHour, 1);
