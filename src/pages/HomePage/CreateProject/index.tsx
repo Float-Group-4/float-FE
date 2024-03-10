@@ -1,29 +1,21 @@
-import {
-  MIMODAL_ANCHOR_CENTER,
-  MIMODAL_ANCHOR_RIGHT,
-  MiModalProps,
-} from '@base/components/MiModal';
+import MiModal from '@base/components/MiModal';
 import {
   useTheme,
-  Dialog,
-  DialogTitle,
   Typography,
-  DialogContent,
   TextField,
   Box,
   Tabs,
   Tab,
-  DialogActions,
   Button,
   Stack,
+  Breakpoint,
 } from '@mui/material';
 import React, { useState } from 'react';
-import { drawerWidth, headerHeight } from '@base/config/config';
-import { ProjectInfo, ProjectMileStone, ProjectTask, ProjectTeam } from '../models';
-import InfoSubBody from './CreateProjectInfoTab';
-import MilestoneSubBody from './CreateProjectMilestoneTab';
-import TeamSubBody from './CreateProjectTeamTab';
-import TaskListSubBody from './CreateProjectTaskTab';
+import { ProjectInfo, ProjectMileStone, ProjectTask, ProjectTeam } from './models';
+import InfoSubBody from './components/CreateProjectInfoTab';
+import MilestoneSubBody from './components/CreateProjectMilestoneTab';
+import TeamSubBody from './components/CreateProjectTeamTab';
+import TaskListSubBody from './components/CreateProjectTaskTab';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -74,12 +66,6 @@ const ModalFooter: React.FC<ModalFooterProps> = ({ handleSave, handleClose }) =>
     </Stack>
   );
 };
-
-interface StyledTabsProps {
-  children?: React.ReactNode;
-  value: number;
-  onChange: (event: React.SyntheticEvent, newValue: number) => void;
-}
 
 interface ModalBodyProps {
   info: ProjectInfo;
@@ -171,8 +157,20 @@ const ModalBody: React.FC<ModalBodyProps> = ({
   );
 };
 
-const CreateProjectModal = (props: MiModalProps) => {
+interface CreateProjectModalProps {
+   isOpen: boolean,
+   setIsOpen: (isOpen: boolean) => void,
+   size?: Breakpoint | false
+}
+
+const CreateProjectModal = (props: CreateProjectModalProps) => {
   const theme = useTheme();
+
+  const {
+    size,
+    isOpen,
+    setIsOpen
+  } = props
 
   const defaultColor = '#ff0000';
   const defaultProjectInfo: ProjectInfo = {
@@ -198,88 +196,17 @@ const CreateProjectModal = (props: MiModalProps) => {
   const [mileStoneData, setMileStoneData] = useState<ProjectMileStone[] | null>(null);
   const [taskData, setTaskData] = useState<ProjectTask[] | null>(demoForTasks);
 
-  const {
-    isOpen,
-    size,
-    fullScreen = false,
-    onClose,
-    onScroll,
-    anchor = MIMODAL_ANCHOR_CENTER,
-    disablePortal = false,
-  } = props;
-
-  //state
-  const [miState, setMiState] = useState({
-    isShrink: false,
-    isMinimize: false,
-    isFullScreen: fullScreen,
-    anchor: anchor,
-  });
-
-  const handleOnClose = (e: any) => {
-    onClose && onClose(e);
+  const handleSave = () => {
+    setIsOpen(false);
   };
 
-  let isMobile = false;
+  const handleOnClose = () => {
+     setIsOpen(false)
+  };
 
   return (
-    <Dialog
-      disablePortal={disablePortal}
-      maxWidth={size}
-      fullScreen={miState.isFullScreen || isMobile || miState.anchor === MIMODAL_ANCHOR_RIGHT}
-      keepMounted
-      onClose={handleOnClose}
-      open={isOpen}
-      sx={
-        miState.isMinimize
-          ? {
-              width: 700,
-              top: 'auto',
-              left: 'auto',
-              bottom: 0,
-              transform: 'none',
-              pointerEvents: 'all',
-            }
-          : {
-              '& .MuiDialog-paper': {
-                p: 0,
-                overflowY: 'hidden',
-                ...(isMobile
-                  ? {
-                      mx: 0,
-                      width: '100%',
-                      maxHeight: '100%',
-                      borderBottomLeftRadius: 0,
-                      borderBottomRightRadius: 0,
-                    }
-                  : {}),
-                ...(miState.anchor === MIMODAL_ANCHOR_RIGHT && {
-                  mx: 0,
-                  width: 'auto',
-                  maxWidth: 1000,
-                  minWidth: drawerWidth,
-                  maxHeight: '100%',
-                  borderBottomLeftRadius: 0,
-                  borderBottomRightRadius: 0,
-                }),
-              },
-              '& .MuiDialog-container': {
-                justifyContent: miState.anchor === MIMODAL_ANCHOR_RIGHT ? 'flex-end' : 'center',
-              },
-              top: 0,
-              '.MuiBackdrop-root': { bgcolor: 'rgba(15,21,32,.5)' },
-            }
-      }
-      hideBackdrop={miState.isMinimize}
-    >
-      <DialogTitle
-        sx={{
-          mx: 1,
-          mt: 1,
-          // bgcolor: miState.anchor === MIMODAL_ANCHOR_RIGHT ? 'primary.main' : theme.palette.header,
-          height: headerHeight - 10,
-        }}
-      >
+    <MiModal
+      title={
         <TextField
           id='project-title'
           name='projectTitle'
@@ -293,44 +220,26 @@ const CreateProjectModal = (props: MiModalProps) => {
             sx: { fontSize: '22px' },
           }}
         />
-      </DialogTitle>
-      {!miState.isMinimize && (
-        <>
-          <DialogContent
-            onScroll={onScroll}
-            sx={{ p: 0, bgcolor: theme.palette.background.paper }}
-            className='dialog-content-print scroll-box'
-            id='write-grapes'
-          >
-            <ModalBody
-              info={infoData}
-              team={teamData}
-              mileStone={mileStoneData}
-              task={taskData}
-              setInfo={setInfoData}
-              setTeam={setTeamData}
-              setMileStone={setMileStoneData}
-              setTask={setTaskData}
-            />
-          </DialogContent>
-          <DialogActions
-            sx={{
-              p: 1,
-              ml: 3,
-              bgcolor: theme.palette.background.paper,
-              justifyContent: 'flex-start',
-            }}
-          >
-            <ModalFooter handleSave={handleOnClose} handleClose={handleOnClose} />
-          </DialogActions>
-        </>
-      )}
-    </Dialog>
+      }
+      isOpen={isOpen}
+      size={size ?? 'xs'}
+      onClose={handleOnClose}
+      children={
+        <ModalBody
+          info={infoData}
+          team={teamData}
+          mileStone={mileStoneData}
+          task={taskData}
+          setInfo={setInfoData}
+          setTeam={setTeamData}
+          setMileStone={setMileStoneData}
+          setTask={setTaskData}
+        />
+      }
+      footer={<ModalFooter handleSave={handleSave} handleClose={handleOnClose} />}
+      isCloseByBackdrop={false}
+    />
   );
 };
 
 export default CreateProjectModal;
-function styled(arg0: (props: StyledTabsProps) => import("react/jsx-runtime").JSX.Element) {
-  throw new Error('Function not implemented.');
-}
-

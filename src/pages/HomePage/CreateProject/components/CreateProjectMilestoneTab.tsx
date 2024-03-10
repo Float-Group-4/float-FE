@@ -1,12 +1,24 @@
-import { Edit, Delete } from "@mui/icons-material";
-import { Box, Typography, TextField, Button, List, ListItem, ListItemText, IconButton } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers";
-import { useState } from "react";
-import { ProjectMileStone } from "../../models";
+import { Edit, Delete } from '@mui/icons-material';
+import {
+  Box,
+  Typography,
+  TextField,
+  Button,
+  List,
+  ListItem,
+  ListItemText,
+  IconButton,
+  FormControl,
+} from '@mui/material';
+import { useState } from 'react';
+import { ProjectMileStone } from '../models';
+import React from 'react';
+import DatePicker from '@base/components/DatePicker';
+import { Stack } from '@mui/system';
 
 interface MileStoneProp {
   mileStone: ProjectMileStone[] | null;
-  setMileStone: (milestone: ProjectMileStone[] | null) => void;
+  setMileStone: (milestone: any | null) => void;
 }
 
 const MilestoneSubBody: React.FC<MileStoneProp> = ({ mileStone, setMileStone }) => {
@@ -76,65 +88,50 @@ const MilestoneSubBody: React.FC<MileStoneProp> = ({ mileStone, setMileStone }) 
           onChange={(e) => setCurrentName(e.target.value)}
           value={currentName}
         />
-        <Box display='flex' justifyContent='space-between' alignContent='flex-start'>
-          <Box sx={{ pt: 1 }}>
+        <Stack direction='row' paddingY={2} alignItems='end'>
+          <FormControl >
             <Typography>From</Typography>
             <DatePicker
-              slotProps={{
-                textField: {
-                  variant: 'filled',
-                  focused: true,
-                },
-              }}
-              sx={{ backgroundColor: 'white', width: '80%' }}
+              inputSx={{ backgroundColor: 'white', width: '90%' }}
               value={startDate}
               onChange={(date) => handleDateChange(date, true)}
             />
-          </Box>
-          <Box sx={{ pt: 1, m: 0 }}>
+          </FormControl>
+          <FormControl>
             <Typography>To</Typography>
             <DatePicker
-              slotProps={{
-                textField: {
-                  variant: 'filled',
-                  focused: true,
-                },
-              }}
-              sx={{ backgroundColor: 'white', width: '80%' }}
-              value={endDate}
-              onChange={(date) => handleDateChange(date, false)}
+              inputSx={{ backgroundColor: 'white', width: '90%' }}
+              value={startDate}
+              onChange={(date) => handleDateChange(date, true)}
             />
-          </Box>
-          <Button
-            sx={{ width: '30%', height: '20%', alignSelf: 'flex-end' }}
-            onClick={addNewMileStone}
-            variant='contained'
-          >
+          </FormControl>
+
+          <Button onClick={addNewMileStone} variant='contained' size='medium' sx={{whiteSpace: 'nowrap'}}>
             Add milestone
           </Button>
+        </Stack>
+        <Box minHeight='50vh' display='flex' alignContent='center'>
+          {mileStone && mileStone.length === 0 ? (
+            <Typography variant='body1' alignSelf='center'>
+              There are no milestones for this project.
+            </Typography>
+          ) : (
+            <List>
+              {mileStone &&
+                mileStone.map((ms, index) => (
+                  <ListItem key={index}>
+                    <ListItemText primary={ms.name} secondary={`${ms.startDate} - ${ms.endDate}`} />
+                    <IconButton onClick={() => handleEdit(index)}>
+                      <Edit />
+                    </IconButton>
+                    <IconButton onClick={() => handleDelete(index)}>
+                      <Delete />
+                    </IconButton>
+                  </ListItem>
+                ))}
+            </List>
+          )}
         </Box>
-      </Box>
-      <Box minHeight='50vh' display='flex' alignContent='center'>
-        {mileStone && mileStone.length === 0 ? (
-          <Typography variant='body1' alignSelf='center'>
-            There are no milestones for this project.
-          </Typography>
-        ) : (
-          <List>
-            {mileStone &&
-              mileStone.map((ms, index) => (
-                <ListItem key={index}>
-                  <ListItemText primary={ms.name} secondary={`${ms.startDate} - ${ms.endDate}`} />
-                  <IconButton onClick={() => handleEdit(index)}>
-                    <Edit />
-                  </IconButton>
-                  <IconButton onClick={() => handleDelete(index)}>
-                    <Delete />
-                  </IconButton>
-                </ListItem>
-              ))}
-          </List>
-        )}
       </Box>
     </>
   );
