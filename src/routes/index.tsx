@@ -22,11 +22,11 @@ export const routes: RouteObject[] = [
       },
       {
         path: 'people',
-        element: <h1>People</h1>,
+        element: <PeoplePage />,
       },
       {
-        path: 'projects',
-        element: <h1>Projects</h1>,
+        path: 'project',
+        element: <ProjectPage />,
       },
       {
         path: 'report',
@@ -57,14 +57,6 @@ export const routes: RouteObject[] = [
             element: <PreferenceSetting />,
           },
         ],
-      },
-      {
-        path: 'people',
-        element: <PeoplePage />,
-      },
-      {
-        path: 'project',
-        element: <ProjectPage />,
       },
     ],
   },
