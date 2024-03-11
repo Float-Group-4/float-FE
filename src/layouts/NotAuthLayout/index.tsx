@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button, Stack } from '@mui/material';
 import { Outlet } from 'react-router';
-// import Header from './Header';
 import { CONTAINER_PADDING_X, HEADER_HEIGHT, HEADER_HEIGHT_NOT_AUTH } from '@base/config/constants';
 import { useMatch } from 'react-router-dom';
 import Header from './Header';

@@ -15,7 +15,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RecoilRoot } from 'recoil';
 import { CircularProgress } from '@mui/material';
-import { routes } from '@base/routes';
+import { routes } from '@routes/index';
 import LinearLoader from './LinearLoader';
 import ThemeCustomization from '@base/themes';
 

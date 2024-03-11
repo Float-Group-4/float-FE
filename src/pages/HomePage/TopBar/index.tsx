@@ -17,6 +17,7 @@ import { grey } from '@mui/material/colors';
 import React, { useState } from 'react';
 import { useScheduleContext } from '../Schedule/ScheduleContext';
 import dayjs from 'dayjs';
+import AddButtonMultiplePurpose from './AddButtonMultiplePurpose';
 
 const options = ['Schedule', 'Project Plan', 'Log Team'];
 const densityOptions = [
@@ -274,13 +275,15 @@ export default function TopBar() {
             >
               <ShareOutlinedIcon fontSize='small' />
             </IconButton>
-            <Button
+            <AddButtonMultiplePurpose />
+            {/* <Button
               variant='outlined'
               className='rounded-md flex items-center h-9 aspect-square p-0 bg-blue-600 text-white'
               sx={{ border: 0, padding: 0, minWidth: 0 }}
+              onClick={() => console.log('')}
             >
               <AddOutlinedIcon fontSize='small' />
-            </Button>
+            </Button> */}
           </div>
         </div>
       </div>

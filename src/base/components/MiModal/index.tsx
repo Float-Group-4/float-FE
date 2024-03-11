@@ -29,12 +29,12 @@ export const MIMODAL_ANCHOR_RIGHT: string = 'right';
 
 export type MiModalAnchor = typeof MIMODAL_ANCHOR_CENTER | typeof MIMODAL_ANCHOR_RIGHT;
 
-interface MiModalProps {
+export interface MiModalProps {
   title: string | React.ReactElement;
   isOpen: boolean;
   size: Breakpoint | false;
   fullScreen?: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   footer?: React.ReactNode;
   onClose: (value: any) => void;
   onScroll?: (e: any) => void;
@@ -131,7 +131,8 @@ const MiModal = (props: MiModalProps) => {
       <DialogTitle
         sx={{
           p: 1,
-          // bgcolor: miState.anchor === MIMODAL_ANCHOR_RIGHT ? 'primary.main' : theme.palette.header,
+          ml: 2,
+          // bgcolor: theme.palette.header,
           height: headerHeight,
         }}
       >
@@ -140,35 +141,6 @@ const MiModal = (props: MiModalProps) => {
             {title}
           </Grid>
           <Grid item>
-            {!isMobile && (
-              <Tooltip
-                title={
-                  miState.anchor === MIMODAL_ANCHOR_CENTER ? 'Swipt to right' : 'Swipt to center'
-                }
-                placement='top'
-              >
-                <IconButton
-                  size='medium'
-                  sx={{ color: theme.palette.common.white }}
-                  // sx={{ color: alpha(theme.palette.common.white, 0.5) }}
-                  onClick={() => {
-                    setMiState({
-                      ...miState,
-                      anchor:
-                        miState.anchor === MIMODAL_ANCHOR_CENTER
-                          ? MIMODAL_ANCHOR_RIGHT
-                          : MIMODAL_ANCHOR_CENTER,
-                    });
-                  }}
-                >
-                  {miState.anchor === MIMODAL_ANCHOR_CENTER ? (
-                    <ArrowForwardOutlined />
-                  ) : (
-                    <ArrowBackOutlined />
-                  )}
-                </IconButton>
-              </Tooltip>
-            )}
             {!isMobile && miState.anchor === MIMODAL_ANCHOR_CENTER && (
               <Tooltip
                 title={miState.isFullScreen ? 'Close full screen' : 'Full screen'}
@@ -218,7 +190,7 @@ const MiModal = (props: MiModalProps) => {
           {footer && (
             <>
               <Divider />
-              <DialogActions sx={{ p: 1, bgcolor: theme.palette.background.paper }}>
+              <DialogActions sx={{ py: 1, px: 2, bgcolor: theme.palette.background.paper }}>
                 {footer}
               </DialogActions>
             </>
