@@ -6,6 +6,7 @@ import { store } from '../src/configs/store';
 import configDayJS from './configs/day';
 configDayJS();
 
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
