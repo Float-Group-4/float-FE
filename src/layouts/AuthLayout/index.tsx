@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import SideNavbar from './SideNavbar';
+import SideNavbar from './SideNavbar/index';
 
 export default function AuthLayout() {
   return (

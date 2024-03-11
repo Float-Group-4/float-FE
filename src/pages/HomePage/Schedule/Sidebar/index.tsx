@@ -1,7 +1,17 @@
-export default function Sidebar() {
+import React from 'react';
+import UserList from './UserList';
+import Toolbar from './Toolbar';
+import { Stack } from '@mui/material';
+
+interface SideBarProps {}
+
+const SideBar = (props: SideBarProps) => {
   return (
-    <div className='w-[280px] min-w-[68px] bg-white h-full absolute top-0 left-0 rounded-t-2xl flex flex-col overflow-hidden'>
-      <div className='h-12 bg-gray-300 px-4 pt-2'>Sidebar</div>
-    </div>
+    <Stack>
+      <Toolbar />
+      <UserList />
+    </Stack>
   );
-}
+};
+
+export default SideBar;
