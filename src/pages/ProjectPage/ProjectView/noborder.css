@@ -1,0 +1,15 @@
+.MuiTableCell-root {
+    border-bottom: none;
+  }
+
+  .MuiTableCell-root:not(:last-of-type)::after {
+    width: 0;
+  }
+
+  tr {
+    height: 8px  !important;
+  }
+
+  tr td {
+    height: auto;
+ }
