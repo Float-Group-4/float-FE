@@ -4,7 +4,17 @@ import * as path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  optimizeDeps: {
+    include: ['@emotion/react', '@emotion/styled', '@mui/material/Tooltip'],
+  },
+  plugins: [
+    react({
+      jsxImportSource: '@emotion/react',
+      babel: {
+        plugins: ['@emotion/babel-plugin'],
+      },
+    }),
+  ],
   resolve: {
     alias: [
       { find: '@base', replacement: path.resolve(__dirname, 'src/base') },
@@ -15,5 +25,8 @@ export default defineConfig({
       { find: '@routes', replacement: path.resolve(__dirname, 'src/routes') },
       { find: '@layouts', replacement: path.resolve(__dirname, 'src/layouts') },
     ],
+  },
+  server: {
+    port: 10000,
   },
 });

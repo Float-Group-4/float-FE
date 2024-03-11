@@ -1,38 +1,9 @@
 import {
-  Box,
-  Card,
-  DialogProps,
-  Grid,
-  ListItemText,
-  Skeleton,
-  Stack,
-  Step,
-  StepLabel,
-  Stepper,
   TextField,
 } from '@mui/material';
-import List from '@mui/joy/List';
-import ListItem from '@mui/joy/ListItem';
-import Radio from '@mui/joy/Radio';
-import RadioGroup from '@mui/joy/RadioGroup';
 import {
-  Dialog,
-  DialogActions,
-  DialogTitle,
-  Button,
   Typography,
-  DialogContent,
 } from '@mui/material';
-import { Fragment, SetStateAction, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { fontWeight } from '@mui/system';
-import { Add, AddIcCallOutlined } from '@mui/icons-material';
-import {
-  experimental_extendTheme as materialExtendTheme,
-  Experimental_CssVarsProvider as MaterialCssVarsProvider,
-  THEME_ID as MATERIAL_THEME_ID,
-} from '@mui/material/styles';
-import { CssVarsProvider as JoyCssVarsProvider } from '@mui/joy/styles';
 
 interface StepTwoProps {
   projectName: string;

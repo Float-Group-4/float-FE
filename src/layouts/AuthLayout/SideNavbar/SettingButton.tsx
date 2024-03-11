@@ -13,11 +13,13 @@ import {
 import { grey } from '@mui/material/colors';
 import TeamSetupModal from '@pages/TeamSetupModal';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
 
 interface SettingButtonProps {}
 
 const SettingButton = (props: SettingButtonProps) => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const [openCreateTeam, setOpenCreateTeam] = useState<boolean>(false);
 
@@ -56,7 +58,7 @@ const SettingButton = (props: SettingButtonProps) => {
         }}
       >
         <MenuList sx={{ px: 1 }}>
-          <MenuItem>
+          <MenuItem onClick={() => navigate('/admin/general')}>
             <ListItemIcon>
               <SettingsOutlined fontSize='small' />
             </ListItemIcon>

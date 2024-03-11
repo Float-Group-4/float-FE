@@ -19,14 +19,6 @@ import { routes } from '@routes/index';
 import LinearLoader from './LinearLoader';
 import ThemeCustomization from '@base/themes';
 
-import {
-  experimental_extendTheme as materialExtendTheme,
-  Experimental_CssVarsProvider as MaterialCssVarsProvider,
-  THEME_ID as MATERIAL_THEME_ID,
-} from '@mui/material/styles';
-
-const materialTheme = materialExtendTheme();
-
 // Create a client
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -67,7 +59,7 @@ function App() {
             <Suspense fallback={<CircularProgress />}>
               <Routes>{getRoutes(routes)}</Routes>
             </Suspense>
-            <ReactQueryDevtools initialIsOpen={false} />
+            {/* <ReactQueryDevtools initialIsOpen={false} /> */}
           </QueryClientProvider>
         </ThemeCustomization>
       </BrowserRouter>

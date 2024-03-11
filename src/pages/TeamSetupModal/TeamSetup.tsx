@@ -1,38 +1,18 @@
 import {
   Box,
   Card,
-  DialogProps,
   Grid,
-  ListItemText,
   Skeleton,
   Stack,
   Step,
   StepLabel,
   Stepper,
-  TextField,
 } from '@mui/material';
-import List from '@mui/joy/List';
-import ListItem from '@mui/joy/ListItem';
-import Radio from '@mui/joy/Radio';
-import RadioGroup from '@mui/joy/RadioGroup';
 import {
-  Dialog,
-  DialogActions,
-  DialogTitle,
   Button,
   Typography,
-  DialogContent,
 } from '@mui/material';
-import { Fragment, SetStateAction, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { fontWeight } from '@mui/system';
-import { Add, AddIcCallOutlined } from '@mui/icons-material';
-import {
-  experimental_extendTheme as materialExtendTheme,
-  Experimental_CssVarsProvider as MaterialCssVarsProvider,
-  THEME_ID as MATERIAL_THEME_ID,
-} from '@mui/material/styles';
-import { CssVarsProvider as JoyCssVarsProvider } from '@mui/joy/styles';
+import { useState } from 'react';
 import StepOne from './StepOne';
 import StepTwo from './StepTwo';
 import StepThree from './StepThree';
@@ -255,27 +235,26 @@ const TeamSetup = () => {
                 mt={'-35%'}
                 width={{ xs: '0', lg: 'auto' }}
               >
-                <img
-                  height={'4000%'}
-                  width={'100%'}
+                <Box                mt={'90%'} 
+><img
                   src='/src/base/assets/imgs/create-team-3-1.svg'
                   alt='create-team-3-1'
-                ></img>
+                ></img></Box>
                 <img
-                  style={{ position: 'absolute', top: 323, left: -68 }}
-                  height={'562%'}
+                  style={{ position: 'absolute', top: 323, left: -168 }}
+                  height={'5%'}
                   src={`/src/base/assets/imgs/create-team-${lastCheck > check1 && lastCheck == 1 ? 'check2.gif' : check1 == 1 && lastCheck < 1 ? 'check1.gif' : check1 < 1 ? 'null' : '3-2.png'}`}
                   alt=''
                 ></img>
                 <img
-                  style={{ position: 'absolute', top: 252, left: 104 }}
-                  height={'560%'}
+                  style={{ position: 'absolute', top: 252, left: 4 }}
+                  height={'5%'}
                   src={`/src/base/assets/imgs/create-team-${lastCheck > check1 && lastCheck == 2 ? 'check2.gif' : check1 == 2 && lastCheck < 2 ? 'check1.gif' : check1 < 2 ? 'null' : '3-2.png'}`}
                   alt=''
                 ></img>
                 <img
-                  style={{ position: 'absolute', top: 451, left: 102 }}
-                  height={'560%'}
+                  style={{ position: 'absolute', top: 451, left: 2 }}
+                  height={'5%'}
                   src={`/src/base/assets/imgs/create-team-${lastCheck > check1 && lastCheck == 3 ? 'check2.gif' : check1 == 3 && lastCheck < 3 ? 'check1.gif' : check1 < 3 ? 'null' : '3-2.png'}`}
                   alt=''
                 ></img>

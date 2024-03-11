@@ -1,12 +1,15 @@
-import React from 'react';
-
 import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
 import HomePage from '@pages/HomePage';
+import GeneralSetting from '@pages/Setting/SettingBody/GeneralSetting';
+import PreferenceSetting from '@pages/Setting/SettingBody/PreferenceSetting';
+import SettingsPage from '@pages/Setting';
+import TeamSetup from '@pages/TeamSetupModal/TeamSetup';
+import PeoplePage from '@pages/PeoplePage';
+import ProjectPage from '@pages/ProjectPage';
+const Layouts = lazy(() => import('@layouts/index'));
 const SignIn = lazy(() => import('@pages/SignIn'));
 const SignUp = lazy(() => import('@pages/SignUp'));
-const TeamSetupModal = lazy(() => import('@pages/TeamSetupModal'));
-const Layouts = lazy(() => import('@layouts/index'));
 
 export const routes: RouteObject[] = [
   {
@@ -15,11 +18,19 @@ export const routes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <p>Home</p>,
+        element: <HomePage />,
       },
       {
-        path: 'home',
-        element: <HomePage />,
+        path: 'people',
+        element: <PeoplePage />,
+      },
+      {
+        path: 'project',
+        element: <ProjectPage />,
+      },
+      {
+        path: 'report',
+        element: <h1>Report</h1>,
       },
       {
         path: 'sign-in',
@@ -28,6 +39,24 @@ export const routes: RouteObject[] = [
       {
         path: 'sign-up',
         element: <SignUp />,
+      },
+      {
+        path: 'team-setup',
+        element: <TeamSetup />,
+      },
+      {
+        path: 'admin',
+        element: <SettingsPage />,
+        children: [
+          {
+            path: 'general',
+            element: <GeneralSetting />,
+          },
+          {
+            path: 'preferences',
+            element: <PreferenceSetting />,
+          },
+        ],
       },
     ],
   },

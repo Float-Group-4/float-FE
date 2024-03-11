@@ -9,16 +9,16 @@ import {
   Select,
   MenuItem,
   ClickAwayListener,
-  Paper,
-  Popper,
   Autocomplete,
   Chip,
+  Popover,
+  FormControl,
 } from '@mui/material';
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import { useState } from 'react';
-import { BUDGET_VALUE, ProjectInfo } from '../../models';
-import { Close, ArrowDropDown } from '@mui/icons-material';
-import TagsInput from './TagsInput';
+import { BUDGET_VALUE, ProjectInfo } from '../models';
+import { Close, ArrowDropDown, RoundaboutRight } from '@mui/icons-material';
+import React from 'react';
 
 interface CustomTextFieldProps {
   placeHolder: string;
@@ -30,7 +30,10 @@ interface CustomTextFieldProps {
 const CustomTextField = (props: CustomTextFieldProps) => {
   const { placeHolder, showClearIcon, showDropdownIcon } = props;
 
-  const handleClose = () => {};
+  const handleClose = () => {
+    setOpen(false);
+    setAnchor(null);
+  };
 
   const onInput = (e: any) => {
     setAnchor(e.target);
@@ -48,6 +51,7 @@ const CustomTextField = (props: CustomTextFieldProps) => {
   return (
     <Box>
       <TextField
+        size='medium'
         value={currentText}
         placeholder={placeHolder}
         onInput={(e) => onInput(e)}
@@ -55,7 +59,7 @@ const CustomTextField = (props: CustomTextFieldProps) => {
         sx={{ maxWidth: '90%', minWidth: '100%' }}
         InputProps={{
           endAdornment: (
-            <Stack>
+            <Stack direction='row'>
               {currentText.length > 0 && (
                 <IconButton onClick={handleClose}>
                   <Close />
@@ -70,30 +74,42 @@ const CustomTextField = (props: CustomTextFieldProps) => {
           ),
         }}
       />
-      <Popper open={isOpen} anchorEl={anchor} placement='bottom-start'>
+      <Popover
+        id='simple-popover'
+        open={isOpen}
+        anchorEl={anchor}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+      >
         <ClickAwayListener onClickAway={handleClose}>
-          <Paper>
-            <Button onClick={handleClose} value={`Add "${currentText}"`} />
-          </Paper>
+          <Typography>
+            <Button onClick={handleClose}>Add "{currentText}"</Button>
+          </Typography>
         </ClickAwayListener>
-      </Popper>
+      </Popover>
     </Box>
   );
 };
 
 interface InfoProp {
   info: ProjectInfo;
-  setInfo: (info: ProjectInfo) => void;
+  setInfo: (info: any) => void;
 }
 
 const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
   const [tags, setTags] = useState<string[]>([]);
-  const [currentTag, setCurrentTag] = useState<string>('');
 
   const handleButtonClick = (newType: string) => {
-    setInfo((prevInfo: ProjectInfo) => ({
+    setInfo((prevInfo: any) => ({
       ...prevInfo,
-      ['type']: newType as string,
+      type: newType as string,
     }));
   };
 
@@ -103,17 +119,14 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
     const { name, value } = event.target;
     setInfo((prevInfo: ProjectInfo) => ({
       ...prevInfo,
-      ['name']: value,
+      [name]: value,
     }));
   };
-
-  const handleSelectedTags = (items: string[]) => {
-    setTags(items);
-  };
+  console.log(info?.color);
 
   return (
     <Box paddingX={3}>
-      <Box>
+      <FormControl fullWidth>
         <Typography>Client</Typography>
         <CustomTextField
           placeHolder='No client'
@@ -121,11 +134,11 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
           showClearIcon={false}
           name='client'
         />
-      </Box>
+      </FormControl>
       <Box sx={{ mt: 2 }}>
         <Typography>Color</Typography>
         <IconButton
-          sx={{ borderRadius: '80%', width: 22, height: 22, backgroundColor: info?.color }}
+          sx={{ borderRadius: '80%', width: 22, height: 22, color: info?.color, backgroundColor: info?.color }}
           disableFocusRipple
           disableTouchRipple
           disableRipple
@@ -139,7 +152,7 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
           <ArrowDropDownIcon />
         </IconButton>
       </Box>
-      <Box sx={{ mt: 2 }}>
+      <FormControl fullWidth sx={{ py: 1 }}>
         <Typography>Notes</Typography>
         <TextField
           maxRows={4}
@@ -153,8 +166,8 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
             sx: { pt: 1 },
           }}
         />
-      </Box>
-      <Box sx={{ mt: 2 }}>
+      </FormControl>
+      <FormControl fullWidth sx={{ py: 1 }}>
         <Typography>Tags</Typography>
         <Autocomplete
           clearIcon={false}
@@ -165,23 +178,17 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
           renderTags={(value, props) =>
             value.map((option, index) => <Chip label={option} {...props({ index })} />)
           }
-          renderInput={(params) => <TextField {...params} variant="outlined" fullWidth />}
+          renderInput={(params) => <TextField {...params} variant='outlined' fullWidth />}
         />
-      </Box>
+      </FormControl>
 
-      <Stack sx={{ mt: 2 }} spacing={2} direction='row'>
-        {/* <ToggleButtonGroup exclusive value={info?.type ?? 'billable'} onChange={handleTypeChange} color='standard'>
-            <ToggleButton value='billable'>billable</ToggleButton>
-            <ToggleButton value='non-billable'>non-billable</ToggleButton>
-          </ToggleButtonGroup> */}
+      <Stack sx={{ my: 2 }} spacing={2} direction='row'>
         <ButtonGroup>
           <Button
             variant='text'
             sx={{
-              backgroundColor: info?.type == 'billable' ? '#82BEFF' : '#F6F6F6',
+              backgroundColor: info?.type === 'billable' ? '#82BEFF' : '#F6F6F6',
               color: 'black',
-              border: 0,
-              '&:hover': { backgroundColor: 'initial', color: 'inherit' },
             }}
             onClick={() => handleButtonClick('billable')}
             disableFocusRipple
@@ -193,9 +200,8 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
           <Button
             variant='text'
             sx={{
-              backgroundColor: info?.type == 'non-billable' ? '#82BEFF' : '#F6F6F6',
+              backgroundColor: info?.type === 'non-billable' ? '#82BEFF' : '#F6F6F6',
               color: 'black',
-              '&:hover': { backgroundColor: '-moz-initial', color: 'inherit' },
             }}
             onClick={() => handleButtonClick('non-billable')}
             disableFocusRipple
@@ -207,9 +213,9 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
         </ButtonGroup>
         <Button
           onClick={() => {
-            setInfo((prevInfo: ProjectInfo) => ({
+            setInfo((prevInfo: boolean | any) => ({
               ...prevInfo,
-              ['isTentative']: !prevInfo?.isTentative,
+              isTentative: !prevInfo?.isTentative,
             }));
           }}
           sx={{
@@ -222,17 +228,16 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
         </Button>
       </Stack>
 
-      <Box sx={{ mt: 2, pb: 6 }}>
+      <FormControl fullWidth sx={{ py: 1 }}>
         <Typography>Budget</Typography>
         <Select
           onChange={(e) => {
-            setInfo((prevInfo: ProjectInfo) => ({
+            setInfo((prevInfo: any) => ({
               ...prevInfo,
-              ['budget']: parseInt(e.target.value, 0) as number,
+              budget: e.target.value as number,
             }));
           }}
           value={info?.budget}
-          sx={{ width: '80%' }}
         >
           {Object.entries(BUDGET_VALUE).map(([key, value]) => (
             <MenuItem key={key} value={key}>
@@ -240,7 +245,7 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
             </MenuItem>
           ))}
         </Select>
-      </Box>
+      </FormControl>
     </Box>
   );
 };

@@ -131,7 +131,8 @@ const MiModal = (props: MiModalProps) => {
       <DialogTitle
         sx={{
           p: 1,
-          bgcolor: theme.palette.header,
+          ml: 2,
+          // bgcolor: theme.palette.header,
           height: headerHeight,
         }}
       >
