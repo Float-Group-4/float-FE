@@ -1,7 +1,6 @@
 import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
 import HomePage from '@pages/HomePage';
-import PeoplePage from '@pages/PeoplePage';
 const PageLayout = lazy(() => import('@base/PageLayout'));
 
 const SignIn = lazy(() => import('@pages/SignIn'));
