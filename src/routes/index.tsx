@@ -18,11 +18,19 @@ export const routes: RouteObject[] = [
     children: [
       {
         index: true,
-        element: <p>Home</p>,
+        element: <HomePage />,
       },
       {
-        path: 'home',
-        element: <HomePage />,
+        path: 'people',
+        element: <h1>People</h1>,
+      },
+      {
+        path: 'projects',
+        element: <h1>Projects</h1>,
+      },
+      {
+        path: 'report',
+        element: <h1>Report</h1>,
       },
       {
         path: 'sign-in',
