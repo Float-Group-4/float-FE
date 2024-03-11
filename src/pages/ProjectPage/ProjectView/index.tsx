@@ -10,21 +10,20 @@ import {
   Typography,
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { createData } from '@pages/PeoplePage/PeopleView/CustomTableProp';
-import CustomizedTables from '@pages/PeoplePage/PeopleView/CustomizedTable';
+import { createData } from './CustomTableProp';
+import CustomizedTables from './CustomizedTable';
 import { useState } from 'react';
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
-import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
 import CreateNewFolderOutlinedIcon from '@mui/icons-material/CreateNewFolderOutlined';
 
 // const CheckboxGroup = Checkbox.Group;
 
+
 const plainOptions = ['Active', 'Archived', 'My projects'];
 
 const rows = [
-  createData(1, '1', 'Bảo Huỳnh Minh', 'Employee', 'IT', 'Editor', 'None', 'EB', 'Types'),
-  createData(2, '2', 'M', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
-
+  createData(1, '1', "Project 1", "Bảo Huỳnh Minh", "__", "5,000,000", "11 Mar 2023", "11 Mar 2024", 'owners'),
+  createData(2, '2', "Project 1", "Nguyễn Quang", "__", "13,000,000", "09 Feb 2023", "2024", 'owners'),
 ];
 
 function CheckboxGroup() {
@@ -42,7 +41,7 @@ function CheckboxGroup() {
     checkedList[index] = checked;
     setFilterString(
       plainOptions
-        .filter((e, v) => checkedList[v])
+        .filter((_e, v) => checkedList[v])
         .join(', ')
         .toString(),
     );
@@ -63,7 +62,7 @@ function CheckboxGroup() {
     checkedList[index] = !checkedList[index];
     setFilterString(
       plainOptions
-        .filter((e, v) => checkedList[v])
+        .filter((_e, v) => checkedList[v])
         .join(', ')
         .toString(),
     );
@@ -76,7 +75,7 @@ function CheckboxGroup() {
   const open = Boolean(anchorEl);
 
   return (
-    <div className='bg-white' >
+    <div className='bg-white'>
       <div className='flex gap-2 items-center ps-4'>
         <IconButton aria-label='' onClick={() => {}} className='rounded-md hover:bg-white'>
           <CreateNewFolderOutlinedIcon sx={{ color: grey[800] }} />
@@ -87,9 +86,13 @@ function CheckboxGroup() {
           aria-expanded={cb ? 'true' : undefined}
           onClick={handleClickViewModeMenu}
           className={`rounded-md flex items-center h-9 aspect-square p-0  text-black  hover:bg-white focus:outline-none focus:bg-white   text-white`}
-          sx={{ border: 0, padding: 0, minWidth: 0 ,width: '300px'}}
+          sx={{ border: 0, padding: 0, minWidth: 0, width: '300px' }}
         >
-          <Typography className={` px-4 py-1 rounded-md decoration-dotted`} fontSize={18} sx={{textDecorationStyle: 'dotted', textDecorationColor: 'blue'}}>
+          <Typography
+            className={` px-4 py-1 rounded-md decoration-dotted`}
+            fontSize={18}
+            sx={{ textDecorationStyle: 'dotted', textDecorationColor: 'blue' }}
+          >
             {filterString}
           </Typography>
 

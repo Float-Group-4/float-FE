@@ -118,7 +118,7 @@ export default function TopBar() {
                 aria-expanded={open ? 'true' : undefined}
                 className={`text-xl font-medium px-4 py-1 rounded-md`}
               >
-                {1} Project
+                {3} Project
               </ListItemButton>
             </List>
             <Menu

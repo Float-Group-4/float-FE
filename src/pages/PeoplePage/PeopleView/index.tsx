@@ -22,14 +22,14 @@ const plainOptions = ['Active', 'Archived', 'AccountAccess'];
 
 const rows = [
   createData(1, '1', 'Bảo Huỳnh Minh', 'Employee', 'IT', 'Editor', 'None', 'EB', 'Types'),
-  createData(2, '2', 'M', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
-  createData(3, '3', 'A', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
-  createData(4, '4', 'B', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
+  createData(2, '2', 'Minh', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
+  createData(3, '3', 'An', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
+  createData(4, '4', 'Bình', '__', 'IT', 'Manager', 'None', '__', 'Types'),
   createData(5, '5', 'PP', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
-  createData(6, '6', 'M', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
-  createData(7, '7', 'A', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
-  createData(8, '8', 'B', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
-  createData(9, '9', 'PP', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
+  createData(6, '6', 'Ngọc Hân', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
+  createData(7, '7', 'Minh Nhật', '__', 'IT', 'Manager', 'None', '__', 'Types'),
+  createData(8, '8', 'Quân', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
+  createData(9, '9', 'PP2', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
 ];
 
 function CheckboxGroup() {
@@ -47,7 +47,7 @@ function CheckboxGroup() {
     checkedList[index] = checked;
     setFilterString(
       plainOptions
-        .filter((e, v) => checkedList[v])
+        .filter((_e, v) => checkedList[v])
         .join(', ')
         .toString(),
     );
@@ -68,7 +68,7 @@ function CheckboxGroup() {
     checkedList[index] = !checkedList[index];
     setFilterString(
       plainOptions
-        .filter((e, v) => checkedList[v])
+        .filter((_e, v) => checkedList[v])
         .join(', ')
         .toString(),
     );

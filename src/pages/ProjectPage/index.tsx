@@ -1,4 +1,4 @@
-import PeopleView from './ProjectView';
+import ProjectView from './ProjectView';
 import TopBar from './TopBar';
 
 const PeoplePage = () => {
@@ -7,7 +7,7 @@ const PeoplePage = () => {
       {/* Top Bar */}
       <TopBar />
       {/* Schedule Board */}
-      <PeopleView />
+      <ProjectView />
     </div>
   );
 };
