@@ -2,7 +2,6 @@ import { lazy } from 'react';
 import { RouteObject } from 'react-router-dom';
 import HomePage from '@pages/HomePage';
 import PeoplePage from '@pages/PeoplePage';
-import ProjectPage from '@pages/ProjectPage';
 const PageLayout = lazy(() => import('@base/PageLayout'));
 
 const SignIn = lazy(() => import('@pages/SignIn'));
@@ -28,14 +27,6 @@ export const routes: RouteObject[] = [
       {
         path: 'sign-up',
         element: <SignUp />,
-      },
-      {
-        path: 'people',
-        element: <PeoplePage />,
-      },
-      {
-        path: 'project',
-        element: <ProjectPage />,
       },
     ],
   },
