@@ -5,6 +5,7 @@ import {
 } from '../../../../../../src/utilities/helper';
 import {
   ITEM_DATE_FORMAT,
+  ITEM_MIN_HEIGHT,
   MARGIN_BOTTOM,
   MARGIN_TOP,
   MAX_SPEED,
@@ -72,7 +73,7 @@ export const getHorizontalDimensions = (range?: any) => {
 
   if (!range) return { x: 0, w: 0 };
   const { from, to } = range;
-  const key = from + '_' + to + (isHiddenWeekend ? '_hidden' : '');
+  const key = from + '_' + to;
   if (dimensionCache[key]) {
     return dimensionCache[key];
   }
@@ -84,17 +85,24 @@ export const getHorizontalDimensions = (range?: any) => {
   const end = isHiddenWeekend
     ? diffBusinessDay(STARTING_POINT, dayjs(to).format(ITEM_DATE_FORMAT)) - 1
     : dayjs(to).diff(STARTING_POINT, 'days');
+  console.log(start, end);
   const w = isHiddenWeekend
     ? Math.abs(
         diffBusinessDay(dayjs(from).format(ITEM_DATE_FORMAT), dayjs(to).format(ITEM_DATE_FORMAT)),
       )
     : Math.abs(end - start) + 1;
 
+  console.log({
+    x: Math.min(start, end),
+    w: w,
+  });
+
   const dimension = {
     x: Math.min(start, end),
     w: w,
   };
   dimensionCache[key] = { ...dimension };
+  console.log(dimension);
   return dimension;
 };
 
@@ -157,3 +165,15 @@ export const getRowY = (
   }
   return y;
 };
+
+export function getHeightByItem(
+  heightPerHour: number,
+  item: any,
+  defaultHour: number,
+  divisor: number,
+): number {
+  if (item.hour) {
+    return heightPerHour * Math.max(ITEM_MIN_HEIGHT, item.hour / divisor);
+  }
+  return heightPerHour * Math.max(ITEM_MIN_HEIGHT, defaultHour);
+}

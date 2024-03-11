@@ -15,6 +15,8 @@ import ViewDayOutlinedIcon from '@mui/icons-material/ViewDayOutlined';
 import { Button, IconButton, List, ListItemButton, Menu, MenuItem } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import React, { useState } from 'react';
+import { useScheduleContext } from '../Schedule/ScheduleContext';
+import dayjs from 'dayjs';
 
 const options = ['Schedule', 'Project Plan', 'Log Team'];
 const densityOptions = [
@@ -29,12 +31,13 @@ const zoomOptions = [
 ];
 
 export default function TopBar() {
+  const { fastForwardDate } = useScheduleContext();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [zoomModeAnchorEl, setZoomModeAnchorEl] = useState<null | HTMLElement>(null);
   const [densityAnchorEl, setDensityAnchorEl] = useState<null | HTMLElement>(null);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [selectedZoomMode, setSelectedZoomMode] = useState(0);
+  const [selectedZoomMode, setSelectedZoomMode] = useState(1);
   const [selectedDensity, setSelectedDensity] = useState(0);
 
   const open = Boolean(anchorEl);
@@ -163,6 +166,10 @@ export default function TopBar() {
               variant='outlined'
               className='rounded-md'
               sx={{ borderColor: grey[300], color: grey[800] }}
+              onClick={() => {
+                console.log('Click');
+                fastForwardDate(dayjs());
+              }}
             >
               Today
             </Button>

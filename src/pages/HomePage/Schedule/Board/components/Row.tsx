@@ -1,15 +1,17 @@
-import { useAppSelector } from '@hooks/reduxHooks';
+import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
 import React, { MouseEvent, memo, useRef, useState } from 'react';
 import VisibilitySensor from 'react-visibility-sensor';
+import { setItemActivity } from '../../../../../redux/activity/activitySlice';
 import { isNonWorkingDay } from '../../../../../utilities/helper';
 import { useScheduleContext } from '../../ScheduleContext';
 import { ITEM_MIN_HEIGHT, MARGIN_TOP, WORKLOAD_ROW_HEIGHT } from '../common/constant';
-import { dayIndexToDay, getActualRowHeight } from '../common/helper';
+import { getActualRowHeight } from '../common/helper';
 import { SideCell } from './Cells/SideCell';
 import { ItemCard } from './Items/ItemCard';
 import { NonWorkItem } from './Items/NonWorkingItem';
 
 export default memo(function Row({ userId, className }: { userId: string; className: string }) {
+  const dispatch = useAppDispatch();
   const {
     trackMouse,
     dragInfo,
@@ -20,7 +22,7 @@ export default memo(function Row({ userId, className }: { userId: string; classN
     rowHoverId,
   } = useScheduleContext();
   const rowRef = useRef<HTMLDivElement>(null);
-
+  const itemActivity = useAppSelector((state) => state.activity.itemActivity);
   const { cellWidth, heightPerHour, cellBaseHeight } = useAppSelector(
     (state) => state.scheduleMeasurement,
   );
@@ -49,7 +51,35 @@ export default memo(function Row({ userId, className }: { userId: string; classN
   const defaultHours = [0, 8, 8, 8, 8, 8, 0];
   const isHovering = () => (rowHoverId === userId ? true : false);
 
-  const handleOnMouseDown = (e: MouseEvent) => {};
+  const handleOnMouseDown = (e: MouseEvent) => {
+    if (itemActivity !== null) {
+      dispatch(setItemActivity(null));
+      return;
+    }
+    if (e.button === 0 && itemActivity === null) {
+      const smp = mousePositionRef.current;
+      dragInfo.current = {
+        isCreating: true,
+        smp,
+        userId,
+        emp: smp,
+        isDragging: false,
+        isPlanning: false,
+      };
+      autoscroller?.current.enable();
+      setIsCreating(true);
+      const handleMouseUp = () => {
+        setIsCreating(false);
+        // Open Add Item Modal
+        dragInfo.current = {};
+        document.body.removeEventListener('mouseup', handleMouseUp);
+        document.body.removeEventListener('mouseleave', handleMouseUp);
+        autoscroller?.current.disable();
+      };
+      document.body.addEventListener('mouseleave', handleMouseUp);
+      document.body.addEventListener('mouseup', handleMouseUp);
+    }
+  };
 
   return (
     <VisibilitySensor partialVisibility>
@@ -164,8 +194,7 @@ export default memo(function Row({ userId, className }: { userId: string; classN
                               index == 0
                                 ? weekIdx * quantity + quantity
                                 : weekIdx * quantity + index;
-                            const _isNonWorking = isNonWorkingDay(dayIndex);
-                            console.log(dayCapacity, _isNonWorking);
+                            // const _isNonWorking = isNonWorkingDay(dayIndex);
                             if (dayCapacity == 0) {
                               return <NonWorkItem x={dayIndex} key={dayIndex} />;
                             }

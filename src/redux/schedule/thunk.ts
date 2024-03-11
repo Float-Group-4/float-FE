@@ -81,8 +81,8 @@ export const buildRows = createAsyncThunk(
         if (xA < xB) return -1;
         if (xA > xB) return 1;
 
-        if (itemA.created_at > itemB.created_at) return -1;
-        if (itemA.created_at < itemB.created_at) return 1;
+        // if (itemA.created_at > itemB.created_at) return -1;
+        // if (itemA.created_at < itemB.created_at) return 1;
 
         return 0;
       });
@@ -98,7 +98,7 @@ export const buildRows = createAsyncThunk(
           overTimeDisplay: number;
         }
       > = {};
-      const itemPosition: Record<number, number> = {};
+      const itemPosition: Record<string, number> = {};
 
       row.items.forEach((tid: number, idx: number, items: any) => {
         const item = itemsById[tid];
@@ -161,6 +161,7 @@ export const buildRows = createAsyncThunk(
           row.height = Math.max(row.height, itemPosition[otherItem.id] + otherItemHours);
         }
       });
+      row.itemPosition = itemPosition;
 
       return row;
     });

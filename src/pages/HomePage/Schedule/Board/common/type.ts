@@ -30,19 +30,19 @@ export interface DragInfo {
   smp: MousePosition;
   emp: MousePosition;
   userId: number;
-  item?: Omit<Item & { columnsById: Record<string, any> }, 'column_values'> | null;
-  rowId: number | null;
+  item?: Item | null;
+  rowId: string | null;
   stableRowId: number | null;
   isPlanning?: boolean;
   padding?: { px: number; py: number };
   dayDelta?: number;
-  itemId?: number;
-  originalItem?: Omit<Item & { columnsById: Record<string, any> }, 'column_values'>;
+  itemId?: string;
+  originalItem?: Item;
   duration?: number;
   isFromSearchBox?: boolean;
   isWaiting?: boolean;
 }
-export interface DragItemV2 {
+export interface DragItem {
   clientX: number;
   clientY: number;
   offsetX: number;
@@ -50,9 +50,9 @@ export interface DragItemV2 {
   width: number;
   height: number;
   element: JSX.Element;
-  item: Omit<Item & { columnsById: Record<string, any> }, 'column_values'>;
+  item: Item;
   isFromSearchBox?: boolean;
-  rowId: number | null;
+  rowId: string | null;
   px: number;
   py: number;
   isAddUpdate?: boolean;
@@ -84,7 +84,7 @@ export interface ScheduleContextType {
   dragInfo: MutableRefObject<DragInfo | undefined | Record<string, any> | null>;
   selectionRef: MutableRefObject<HTMLDivElement> | null;
   timeRangeSelectionRef: MutableRefObject<HTMLDivElement> | null;
-  dragItem: DragItemV2 | null;
+  dragItem: DragItem | null;
   dragItemRef: MutableRefObject<HTMLDivElement> | null;
   boardRef: MutableRefObject<HTMLDivElement> | null;
   itemSearchContainerRef: MutableRefObject<HTMLDivElement | null>;
@@ -110,10 +110,10 @@ export interface ScheduleContextType {
   fastForward: (_: number) => void;
   fastForwardDate: (_: string | Dayjs) => void;
   jumpToItem: (_: number, __: number) => void;
-  setDragItemV2: (_: DragItemV2 | null) => void;
-  onItemDragStartV2: (_: DragItemV2) => void;
-  onItemDragV2: () => void;
-  onItemDragStopV2: () => void;
+  setDragItem: (_: DragItem | null) => void;
+  onItemDragStart: (_: DragItem) => void;
+  onItemDrag: () => void;
+  onItemDragStop: () => void;
   onMouseMoveOutOfBoard: () => void;
   contextMenuPosition: any;
   setContextMenuPosition: any;

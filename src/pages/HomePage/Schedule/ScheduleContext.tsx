@@ -1,5 +1,5 @@
-import { useAppSelector } from '@hooks/reduxHooks';
-import { Dayjs } from 'dayjs';
+import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
+import dayjs, { Dayjs } from 'dayjs';
 import {
   MouseEvent,
   ReactNode,
@@ -9,9 +9,10 @@ import {
   useRef,
   useState,
 } from 'react';
-import { CALENDAR_BAR_HEIGHT } from './Board/common/constant';
-import { Autoscroller, DragInfo, DragItemV2, ScheduleContextType } from './Board/common/type';
+import { CALENDAR_BAR_HEIGHT, ITEM_DATE_FORMAT, STARTING_POINT } from './Board/common/constant';
+import { Autoscroller, DragInfo, DragItem, ScheduleContextType } from './Board/common/type';
 import { useAutoscroller } from './Board/common/hook';
+import { setItemPlaceHolder } from '../../../redux/general/generalSlice';
 
 export const ScheduleContext = createContext<ScheduleContextType>({
   autoscroller: null,
@@ -37,10 +38,10 @@ export const ScheduleContext = createContext<ScheduleContextType>({
   fastForward: () => {},
   fastForwardDate: () => {},
   jumpToItem: () => {},
-  setDragItemV2: (_: DragItemV2 | null) => {},
-  onItemDragStartV2: (_: DragItemV2) => {},
-  onItemDragV2: () => {},
-  onItemDragStopV2: () => {},
+  setDragItem: (_: DragItem | null) => {},
+  onItemDragStart: (_: DragItem) => {},
+  onItemDrag: () => {},
+  onItemDragStop: () => {},
   onMouseMoveOutOfBoard: () => {},
   contextMenuPosition: {},
   setContextMenuPosition: () => {},
@@ -51,6 +52,7 @@ export const useScheduleContext = () => {
 };
 
 export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) => {
+  const dispatch = useAppDispatch();
   const { mainCellWidth, cellWidth } = useAppSelector((state) => state.scheduleMeasurement);
   const oldHoverPositionRef = useRef<{ dayIndex: number; rowId: string; weekIndex: number } | null>(
     null,
@@ -79,7 +81,7 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
   const dragItemRef = useRef<any>();
   const itemSearchContainerRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  const [dragItemV2, setDragItemV2] = useState<DragItemV2 | null>(null);
+  const [dragItem, setDragItem] = useState<DragItem | null>(null);
   const hoverRef = useRef<HTMLDivElement | null>(null);
   const hoverRelatedDateCellRef = useRef<HTMLDivElement | null>(null);
   const [rowHoverId, setRowHoverId] = useState<string | null>(null);
@@ -148,24 +150,66 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
 
   /* -------------------------- Cell Dragging Actions ------------------------- */
 
-  const onCellDrag = () => {};
+  const onCellDrag = () => {
+    if (!dragInfo.current) return;
+    const { smp } = dragInfo.current;
+    if (smp) {
+      dragInfo.current.emp = mousePositionRef.current;
+      const start = Math.min(smp.dayIndex, mousePositionRef.current.dayIndex);
+      const end = Math.max(smp.dayIndex, mousePositionRef.current.dayIndex);
+      selectionRef.current.style.left = `${start * cellWidth}px`;
+      selectionRef.current.style.width = `${(end - start + 1) * cellWidth}px`;
+    }
+  };
   const onTimeRangeDrag = () => {};
 
   /* -------------------------- FastForward and JumpToItem ------------------------- */
 
   const fastForward = (destinationWeekIndex: number) => {};
 
-  const fastForwardDate = (destinationDay: string | Dayjs) => {};
+  const fastForwardDate = (destinationDay: string | Dayjs) => {
+    console.log(destinationDay);
+    if (!destinationDay) return;
+    const date = dayjs(destinationDay, ITEM_DATE_FORMAT);
+    console.log(destinationDay, date, scrollRef);
+    if (!date.isValid()) return;
+    const dayIndex = date.diff(STARTING_POINT, 'days');
+    if (scrollRef) {
+      scrollRef.current.scrollTo({ left: (dayIndex - 1) * cellWidth });
+    }
+  };
 
   const jumpToItem = (x: number, y: number) => {};
 
-  /* -------------------------- DraggingV2 Item Actions ------------------------- */
+  /* -------------------------- Dragging Item Actions ------------------------- */
 
-  const onItemDragStartV2 = (dragItem: DragItemV2) => {};
+  const onItemDragStart = (dragItem: DragItem) => {
+    console.log(dragItem);
+    dispatch(setItemPlaceHolder({ id: dragItem.item.id, isPlaceHolder: true }));
 
-  const onItemDragV2 = async () => {};
+    scrollRef.current.style.cursor = 'grabbing';
+    const smp = mousePositionRef.current;
 
-  const onItemDragStopV2 = async () => {};
+    //@ts-ignore
+    dragInfo.current = {
+      rowId: dragItem.rowId,
+      smp,
+      dayDelta: 0,
+      itemId: dragItem.item.id,
+      originalItem: dragItem.item,
+      duration: Math.floor(dragItem!.width / cellWidth) - 1,
+      isFromSearchBox: dragItem.isFromSearchBox,
+      isWaiting: dragItem.isFromSearchBox, // Wait for item drag out of search box
+    };
+
+    // dispatch(buildRows(owner));
+
+    autoscroller.current!.enable();
+  };
+
+  const onItemDrag = async () => {};
+
+  const onItemDragStop = async () => {};
 
   return (
     <ScheduleContext.Provider
@@ -176,7 +220,7 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
         dragInfo,
         selectionRef,
         timeRangeSelectionRef,
-        dragItem: dragItemV2,
+        dragItem: dragItem,
         dragItemRef,
         boardRef,
         itemSearchContainerRef,
@@ -193,10 +237,10 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
         fastForward,
         fastForwardDate,
         jumpToItem,
-        setDragItemV2,
-        onItemDragStartV2,
-        onItemDragV2,
-        onItemDragStopV2,
+        setDragItem,
+        onItemDragStart,
+        onItemDrag,
+        onItemDragStop,
         onMouseMoveOutOfBoard,
         contextMenuPosition,
         setContextMenuPosition,

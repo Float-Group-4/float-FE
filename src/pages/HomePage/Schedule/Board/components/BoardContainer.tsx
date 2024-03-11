@@ -149,7 +149,7 @@ export const BoardContainer = () => {
 
   return (
     <div
-      className='relative flex bg-white'
+      className='relative flex'
       style={{
         height: `${boardHeight + CALENDAR_BAR_HEIGHT}px`,
         width: `${boardWidth}px`,
@@ -178,18 +178,18 @@ export const BoardContainer = () => {
         <div
           className='absolute top-0 w-full h-full -z-40'
           style={{
-            backgroundImage: 'linear-gradient(to right, #9ca3af 1px, transparent 1px)',
+            backgroundImage: 'linear-gradient(to right, #e9e9e9 1px, transparent 1px)',
             backgroundSize: `${cellWidth}px ${cellWidth}px`,
           }}
         />
         <div
-          className='absolute top-0 w-full h-full bg-black -z-50'
+          className='absolute top-0 w-full h-full bg-white -z-50'
           style={{
-            backgroundImage: 'linear-gradient(to right, #9ca3af 1px, transparent 1px)',
+            backgroundImage: 'linear-gradient(to right, #e9e9e9 1px, transparent 1px)',
             backgroundSize: `${mainCellWidth}px ${mainCellWidth}px`,
           }}
         />
-        {timeRangeBoard}
+        {/* {timeRangeBoard} */}
       </div>
     </div>
   );

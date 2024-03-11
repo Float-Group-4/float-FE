@@ -291,7 +291,7 @@ export default function DateCell() {
       {/*Highlight DateCell Based on Hovering*/}
       <div
         ref={hoverRelatedDateCellRef}
-        className='absolute w-[160px] top-[50px] border-b-2 border-b-black'
+        className='absolute w-[160px] top-[50px] border-b-2 border-b-blue-500'
       ></div>
       {timeRange && (
         <div
@@ -344,7 +344,6 @@ const Cells = memo(() => {
   return (
     <>
       {displayingWeeks.map((weekIndex: number) => {
-        console.log(weekIndex);
         const startOfWeek = dayjs(STARTING_POINT.clone().add(weekIndex, 'weeks'));
         const weekOfYear = startOfWeek.week();
         const startMonth = startOfWeek.format('MMM');
@@ -439,7 +438,7 @@ const JumpCell = ({ weekIndex, label, type }: any) => {
 
   return (
     <span
-      className='px-2 rounded cursor-pointer hover:bg-primary hover:text-textOnPrimary'
+      className='px-2 rounded cursor-pointer hover:bg-blue-500 hover:text-white'
       onClick={() => {
         jumpWeekHandler(weekIndex, type);
       }}
@@ -464,17 +463,17 @@ const HolidayDot = memo(({ day }: { day: string }) => {
   return (
     <div
       className={`relative border-red-500 flex ${viewType === ViewType.months ? 'pl-1' : 'pl-3'} gap-1 items-center ${
-        isToday && 'text-primary font-medium '
+        isToday && 'text-blue-500 font-medium '
       } ${isInRange && 'bg-gray-400  '}
                 ${isLeftEdge && 'bg-gray-400   rounded-tl-md'}
                 ${isRightEdge && 'bg-gray-400  rounded-tr-md'} `}
       style={{ width: `${cellWidth}px` }}
     >
-      <span className='relative flex items-center h-full gap-1 px-1 hover:bg-primary hover:text-textOnPrimary rounded-t-medium'>
+      <span className='relative flex items-center h-full gap-1 px-1 hover:bg-blue-500 hover:text-white rounded-t-md'>
         <span>{viewType === ViewType.months ? '' : weekDay}</span>
         <span
           className={`${
-            isToday && 'h-full w-5 text-textOnPrimary bg-primary rounded-t-medium '
+            isToday && 'h-full w-5 text-white bg-blue-500 rounded-t-md'
           }  font-medium flex justify-center items-center`}
         >
           {dateOfMonth}

@@ -18,17 +18,27 @@ interface GeneralState {
   fetchedWeekIndexes: any;
 }
 
-const emptyMappedField: any = {
-  timeline: null,
-  assignees: null,
-  hour: null,
-  status: null,
-  color: null,
-  subitems: 'subitems',
-};
-
 const initialState: GeneralState = {
-  itemsById: {},
+  itemsById: {
+    item1: {
+      id: 'item1',
+      userIds: ['userId1', 'userId2'],
+      name: 'Item 1',
+      startDate: '2024-03-10',
+      endDate: '2024-03-12',
+      hour: 8,
+      isPlaceHolder: false,
+    },
+    item2: {
+      id: 'item2',
+      userIds: ['userId1'],
+      name: 'Item 2',
+      startDate: '2024-03-11',
+      endDate: '2024-03-14',
+      hour: 10,
+      isPlaceHolder: false,
+    },
+  },
   subBoardById: {},
   itemIdsByWeekIndex: {},
   usersById: {
@@ -51,14 +61,14 @@ const initialState: GeneralState = {
   rowMap: {
     userId1: {
       id: 'userId1',
-      items: [],
+      items: ['item1', 'item2'],
       itemPosition: {},
       height: 0,
       dayCell: {},
     },
     userId2: {
       id: 'userId2',
-      items: [],
+      items: ['item1'],
       itemPosition: {},
       height: 0,
       dayCell: {},
@@ -84,7 +94,7 @@ const generalSlice = createSlice({
     setItemPlaceHolder: (
       state,
       action: PayloadAction<{
-        id: number;
+        id: string;
         isPlaceHolder: boolean;
       }>,
     ) => {
@@ -131,7 +141,6 @@ const generalSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(buildRows.fulfilled, (state, action: PayloadAction<any>) => {
       const rows = action.payload;
-      console.log(rows);
       rows.forEach((r: any) => (state.rowMap[r.id] = r));
     });
   },
