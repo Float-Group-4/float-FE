@@ -235,27 +235,26 @@ const TeamSetup = () => {
                 mt={'-35%'}
                 width={{ xs: '0', lg: 'auto' }}
               >
-                <img
-                  height={'4000%'}
-                  width={'100%'}
+                <Box                mt={'90%'} 
+><img
                   src='/src/base/assets/imgs/create-team-3-1.svg'
                   alt='create-team-3-1'
-                ></img>
+                ></img></Box>
                 <img
-                  style={{ position: 'absolute', top: 323, left: -68 }}
-                  height={'562%'}
+                  style={{ position: 'absolute', top: 323, left: -168 }}
+                  height={'5%'}
                   src={`/src/base/assets/imgs/create-team-${lastCheck > check1 && lastCheck == 1 ? 'check2.gif' : check1 == 1 && lastCheck < 1 ? 'check1.gif' : check1 < 1 ? 'null' : '3-2.png'}`}
                   alt=''
                 ></img>
                 <img
-                  style={{ position: 'absolute', top: 252, left: 104 }}
-                  height={'560%'}
+                  style={{ position: 'absolute', top: 252, left: 4 }}
+                  height={'5%'}
                   src={`/src/base/assets/imgs/create-team-${lastCheck > check1 && lastCheck == 2 ? 'check2.gif' : check1 == 2 && lastCheck < 2 ? 'check1.gif' : check1 < 2 ? 'null' : '3-2.png'}`}
                   alt=''
                 ></img>
                 <img
-                  style={{ position: 'absolute', top: 451, left: 102 }}
-                  height={'560%'}
+                  style={{ position: 'absolute', top: 451, left: 2 }}
+                  height={'5%'}
                   src={`/src/base/assets/imgs/create-team-${lastCheck > check1 && lastCheck == 3 ? 'check2.gif' : check1 == 3 && lastCheck < 3 ? 'check1.gif' : check1 < 3 ? 'null' : '3-2.png'}`}
                   alt=''
                 ></img>

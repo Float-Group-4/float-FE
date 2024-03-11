@@ -59,7 +59,7 @@ function App() {
             <Suspense fallback={<CircularProgress />}>
               <Routes>{getRoutes(routes)}</Routes>
             </Suspense>
-            <ReactQueryDevtools initialIsOpen={false} />
+            {/* <ReactQueryDevtools initialIsOpen={false} /> */}
           </QueryClientProvider>
         </ThemeCustomization>
       </BrowserRouter>

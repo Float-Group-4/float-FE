@@ -26,4 +26,7 @@ export default defineConfig({
       { find: '@layouts', replacement: path.resolve(__dirname, 'src/layouts') },
     ],
   },
+  server: {
+    port: 10000,
+  },
 });
