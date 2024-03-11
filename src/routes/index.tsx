@@ -5,7 +5,7 @@ import GeneralSetting from '@pages/Setting/SettingBody/GeneralSetting';
 import PreferenceSetting from '@pages/Setting/SettingBody/PreferenceSetting';
 import SettingsPage from '@pages/Setting';
 import TeamSetup from '@pages/TeamSetupModal/TeamSetup';
-import PeoplePage from '@pages/ProjectPage';
+import PeoplePage from '@pages/PeoplePage';
 import ProjectPage from '@pages/ProjectPage';
 const Layouts = lazy(() => import('@layouts/index'));
 const SignIn = lazy(() => import('@pages/SignIn'));
@@ -22,11 +22,11 @@ export const routes: RouteObject[] = [
       },
       {
         path: 'people',
-        element: <h1>People</h1>,
+        element: <PeoplePage />,
       },
       {
-        path: 'projects',
-        element: <h1>Projects</h1>,
+        path: 'project',
+        element: <ProjectPage />,
       },
       {
         path: 'report',
@@ -57,14 +57,6 @@ export const routes: RouteObject[] = [
             element: <PreferenceSetting />,
           },
         ],
-      },
-      {
-        path: 'people',
-        element: <PeoplePage />,
-      },
-      {
-        path: 'project',
-        element: <ProjectPage />,
       },
     ],
   },
