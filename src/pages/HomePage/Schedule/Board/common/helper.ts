@@ -177,3 +177,8 @@ export function getHeightByItem(heightPerHour: number, item: any, defaultHour: n
   }
   return heightPerHour * Math.max(ITEM_MIN_HEIGHT, defaultHour);
 }
+
+export const roundToQuarter = (floatNum: number, quarter: number): number => {
+  const factor = 1 / quarter;
+  return Math.round(floatNum * factor) / factor;
+};

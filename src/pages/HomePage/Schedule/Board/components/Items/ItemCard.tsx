@@ -1,45 +1,39 @@
 import dayjs from 'dayjs';
-import { MARGIN_LEFT, MARGIN_RIGHT, MARGIN_TOP } from '../../common/constant';
+import { ITEM_DATE_FORMAT, MARGIN_LEFT, MARGIN_RIGHT, MARGIN_TOP } from '../../common/constant';
 
 import { HEIGHT_PER_HOUR, MIN_HEIGHT_HOURS, TASK_DEFAULT_COLOR } from '@constants/home';
-import { useAppSelector } from '@hooks/reduxHooks';
+import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
 import { useScheduleContext } from '@pages/HomePage/Schedule/ScheduleContext';
 import {
   convertMinuteToHumanRead,
   getContrastColor,
 } from '../../../../../../../src/utilities/helper';
-import { getHeightByItem, getHorizontalDimensions } from '../../common/helper';
+import { getHeightByItem, getHorizontalDimensions, roundToQuarter } from '../../common/helper';
 import PlaceholderItem from './PlaceholderItem';
+import { useRef, useState } from 'react';
+import { ResizeDirection } from '../../../../../../../src/types/enums';
+import { buildRows } from '../../../../../../../src/redux/schedule/thunk';
+import { setItemsById } from '../../../../../../../src/redux/general/generalSlice';
+import _ from 'lodash';
 
 export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
-  const { setDragItem, mousePositionRef, autoscroller } = useScheduleContext();
+  const dispatch = useAppDispatch();
+  const { setDragItem, mousePositionRef, autoscroller, dragItem, scrollRef } = useScheduleContext();
   const item = useAppSelector((state) => state.general.itemsById[id]);
-  // const priorityMap = useAppSelector((state) => state.schedule.priorityMap);
-  // const statusMap = useAppSelector((state) => state.schedule.statusMap);
   const cellWidth = useAppSelector((state) => state.scheduleMeasurement.cellWidth);
   const heightPerHour = useAppSelector((state) => state.scheduleMeasurement.heightPerHour);
   const y = useAppSelector((state) => state.general.rowMap[rowId].itemPosition[id]);
-  // const focusItem = useAppSelector((state) => state.general.focusItem);
+  const itemsById = useAppSelector((state) => state.general.itemsById);
+
+  const [isResizing, setIsResizing] = useState(false);
+  const mouseDownRef = useRef<any>();
 
   if (!item) return <></>;
-
-  const isOverdue = dayjs().isAfter(item.endDate);
-  // const mappedBadge = BADGE_STATUS_MAPPER[item.Status as StatusChoice];
-
-  // const isShowStatus = dayjs(item.endDate).diff(item.startDate, 'days') >= 1 && isShowitemStatus;
 
   const { x, w } = getHorizontalDimensions({ from: item.startDate, to: item.endDate });
 
   const textColor = getContrastColor(TASK_DEFAULT_COLOR);
 
-  // const handleMouseDown = (e: MouseEvent) => {
-  //   e.stopPropagation();
-  //   const rightMouse = 2;
-  //   if (e.button === rightMouse) {
-  //     setContextMenuPosition({ x: e.clientX, y: e.clientY, itemId: id });
-  //   }
-  //   if (e.button !== 0) return;
-  // };
   const handleMouseDown = (e: React.MouseEvent) => {
     const mp = mousePositionRef.current;
     e.stopPropagation();
@@ -86,6 +80,133 @@ export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
       px,
       py,
     });
+  };
+
+  //-------------- Resize Item --------------
+  const resizeItemHour = async (e: MouseEvent) => {
+    let deltaHour = 0;
+    const maxHour = 24;
+
+    //@ts-ignore
+    const deltaY = e.clientY + scrollRef?.current.scrollTop - mouseDownRef.current.pointY;
+    deltaHour = roundToQuarter(deltaY / heightPerHour / 2, 0.25);
+    const mouseDownlastDeltaHour = mouseDownRef.current.lastDeltaHour;
+    if (deltaHour !== mouseDownlastDeltaHour) {
+      mouseDownRef.current.lastDeltaHour = deltaHour;
+      const oldHour = roundToQuarter(item.hour ?? 0, 0.25);
+      if (deltaHour + oldHour > 0) {
+        mouseDownRef.current.hour = _.clamp(deltaHour + oldHour, 0, maxHour);
+        dispatch(
+          setItemsById({
+            ...itemsById,
+            [id]: {
+              ...itemsById[id],
+              hour: mouseDownRef.current.hour,
+            },
+          }),
+        );
+        dispatch(buildRows(item.userIds));
+      }
+    }
+  };
+
+  const onItemResizeStart = (e: React.MouseEvent, edge: string) => {
+    if (dragItem) return;
+
+    setIsResizing(true);
+
+    mouseDownRef.current = {
+      //@ts-ignore
+      dayIndex: mousePositionRef.current.dayIndex,
+      lastDeltaDay: 0,
+      //@ts-ignore
+      pointY: e.clientY + scrollRef?.current.scrollTop,
+      hour: item.hour || 0,
+      lastDeltaHour: 0,
+    };
+
+    if (edge === ResizeDirection.right || edge === ResizeDirection.left) {
+      autoscroller?.current.enable();
+    }
+    if (edge === ResizeDirection.bottom) {
+      autoscroller?.current.enableVertical();
+    }
+    const upHandler = () => {
+      setIsResizing(false);
+      if (edge === ResizeDirection.right || edge === ResizeDirection.left) {
+        //@ts-ignore
+        if (mousePositionRef.current.dayIndex - mouseDownRef.current.dayIndex != 0) {
+          // Update timeline to API
+        }
+      }
+      if (edge === ResizeDirection.bottom) {
+        // Update hour to API
+      }
+
+      autoscroller?.current.disable();
+
+      window.removeEventListener('mousemove', moveHandler);
+    };
+    const moveHandler = async (e: MouseEvent) => {
+      let newTimeRangeValue = { from: item.startDate, to: item.endDate };
+      let deltaDay = 0;
+      //@ts-ignore
+      deltaDay = mousePositionRef.current.dayIndex - mouseDownRef.current.dayIndex;
+      const mouseDownlastDeltaDay = mouseDownRef.current.lastDeltaDay;
+      if (deltaDay !== mouseDownlastDeltaDay) {
+        mouseDownRef.current.lastDeltaDay = deltaDay;
+        switch (edge) {
+          case ResizeDirection.left:
+            {
+              const dayAdded = w - deltaDay > 0 ? deltaDay : w - 1;
+              const newFrom = dayjs(newTimeRangeValue.from, ITEM_DATE_FORMAT)
+                .clone()
+                .add(dayAdded, 'day');
+              newTimeRangeValue = {
+                ...newTimeRangeValue,
+                from: newFrom.format(ITEM_DATE_FORMAT),
+              };
+              console.log(newFrom);
+            }
+            break;
+
+          case ResizeDirection.right:
+            {
+              const dayAdded = deltaDay + w > 0 ? deltaDay : 1 - w;
+              const newTo = dayjs(newTimeRangeValue.to, ITEM_DATE_FORMAT)
+                .clone()
+                .add(dayAdded, 'day');
+              newTimeRangeValue = {
+                ...newTimeRangeValue,
+                to: newTo.format(ITEM_DATE_FORMAT),
+              };
+            }
+            break;
+
+          default:
+            break;
+        }
+        dispatch(
+          setItemsById({
+            ...itemsById,
+            [id]: {
+              ...itemsById[id],
+              startDate: newTimeRangeValue.from,
+              endDate: newTimeRangeValue.to,
+            },
+          }),
+        );
+        if (deltaDay + w > 0 || w - deltaDay > 0) {
+          dispatch(buildRows(item.userIds));
+        }
+      }
+      if (edge === ResizeDirection.bottom) {
+        resizeItemHour(e);
+      }
+    };
+    window.addEventListener('mouseup', upHandler, { once: true });
+
+    window.addEventListener('mousemove', moveHandler);
   };
 
   return item.isPlaceHolder ? (
@@ -140,7 +261,7 @@ export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
           className='top-0 left-[-3px] w-[6px] h-full absolute cursor-ew-resize '
           onMouseDown={(e) => {
             e.stopPropagation();
-            // onitemResizeStart(id, ResizeDirection.left);
+            onItemResizeStart(e, ResizeDirection.left);
           }}
         />
 
@@ -148,7 +269,7 @@ export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
           className='top-0 right-[-3px] w-[6px] h-full absolute cursor-ew-resize '
           onMouseDown={(e) => {
             e.stopPropagation();
-            // onitemResizeStart(id, ResizeDirection.right);
+            onItemResizeStart(e, ResizeDirection.right);
           }}
         />
 
@@ -156,7 +277,7 @@ export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
           className='left-0 bottom-[-2x] h-[7px] w-full absolute cursor-ns-resize '
           onMouseDown={(e) => {
             e.stopPropagation();
-            // onitemResizeStart(id, ResizeDirection.bottom);
+            onItemResizeStart(e, ResizeDirection.bottom);
           }}
         />
       </div>
