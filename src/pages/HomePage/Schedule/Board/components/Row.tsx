@@ -20,6 +20,7 @@ export default memo(function Row({ userId, className }: { userId: string; classN
     autoscroller,
     hoverRef,
     rowHoverId,
+    addItemModalRef,
   } = useScheduleContext();
   const rowRef = useRef<HTMLDivElement>(null);
   const itemActivity = useAppSelector((state) => state.activity.itemActivity);
@@ -44,7 +45,6 @@ export default memo(function Row({ userId, className }: { userId: string; classN
     isWorkloadMode && !workloadRow[userId]?.isNotCollapse ? WORKLOAD_ROW_HEIGHT : rowHeight + 1;
   const [isCreating, setIsCreating] = useState(false);
   const isOffWeekend = useAppSelector((state) => state.settings.isOffWeekend);
-  const isHiddenWeekend = useAppSelector((state) => state.settings.isHiddenWeekend);
 
   // const defaultHour = useDefaultHour();
   //Select schedule for user
@@ -70,7 +70,9 @@ export default memo(function Row({ userId, className }: { userId: string; classN
       setIsCreating(true);
       const handleMouseUp = () => {
         setIsCreating(false);
+        console.log('Up');
         // Open Add Item Modal
+        addItemModalRef.current.openAddItemModal({ dragInfo: dragInfo.current });
         dragInfo.current = {};
         document.body.removeEventListener('mouseup', handleMouseUp);
         document.body.removeEventListener('mouseleave', handleMouseUp);

@@ -12,7 +12,9 @@ import {
 import { CALENDAR_BAR_HEIGHT, ITEM_DATE_FORMAT, STARTING_POINT } from './Board/common/constant';
 import { Autoscroller, DragInfo, DragItem, ScheduleContextType } from './Board/common/type';
 import { useAutoscroller } from './Board/common/hook';
-import { setItemPlaceHolder } from '../../../redux/general/generalSlice';
+import { setItemPlaceHolder, setItemsById } from '../../../redux/general/generalSlice';
+import { getNewDateByDayIndex } from './Board/common/helper';
+import { buildRows } from '../../../redux/schedule/thunk';
 
 export const ScheduleContext = createContext<ScheduleContextType>({
   autoscroller: null,
@@ -45,6 +47,11 @@ export const ScheduleContext = createContext<ScheduleContextType>({
   onMouseMoveOutOfBoard: () => {},
   contextMenuPosition: {},
   setContextMenuPosition: () => {},
+  addItemModalRef: {
+    current: {
+      openAddItemModal() {},
+    },
+  },
 });
 
 export const useScheduleContext = () => {
@@ -53,6 +60,7 @@ export const useScheduleContext = () => {
 
 export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) => {
   const dispatch = useAppDispatch();
+  const itemsById = useAppSelector((state) => state.general.itemsById);
   const { mainCellWidth, cellWidth } = useAppSelector((state) => state.scheduleMeasurement);
   const oldHoverPositionRef = useRef<{ dayIndex: number; rowId: string; weekIndex: number } | null>(
     null,
@@ -90,6 +98,8 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
     y: null,
     itemId: null,
   });
+
+  const addItemModalRef = useRef<any>();
 
   /* -------------------------- Tracking Mouse on Board------------------------- */
 
@@ -207,7 +217,53 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
     autoscroller.current!.enable();
   };
 
-  const onItemDrag = async () => {};
+  const onItemDrag = async () => {
+    if (!dragItem) return;
+
+    const di = dragInfo.current;
+    const mp = mousePositionRef.current;
+
+    const prevRowId = di!.rowId;
+    const curRowId = mp.rowId;
+    console.log(prevRowId, curRowId);
+
+    const padding = Math.floor((dragItem!.px * 1.0) / cellWidth);
+    const paddingIndex = padding < 0 ? padding + 1 : padding;
+    const curDay = mp.dayIndex + (dragInfo.current?.isFromSearchBox ? 0 : paddingIndex);
+    const dayDelta = curDay - di!.smp?.dayIndex;
+    if (di!.dayDelta !== dayDelta || prevRowId !== curRowId) {
+      di!.dayDelta = dayDelta;
+      di!.rowId = curRowId;
+
+      //--- Horizontal drag ------
+
+      const _day = getNewDateByDayIndex(curDay);
+      const newStartDate = dayjs(_day).format(ITEM_DATE_FORMAT);
+      const newEndDate = dayjs(newStartDate).add(di!.duration!, 'days').format(ITEM_DATE_FORMAT);
+
+      //--- Vertical drag ------
+      dispatch(
+        setItemsById({
+          ...itemsById,
+          [dragItem!.item.id]: {
+            ...itemsById[dragItem!.item.id],
+            userIds: [curRowId],
+            startDate: newStartDate,
+            endDate: newEndDate,
+          },
+        }),
+      );
+      // itemsById[dragItem!.item.id].userIds = [curRowId];
+      // itemsById[dragItem!.item.id].startDate = newStartDate;
+      // itemsById[dragItem!.item.id].endDate = newEndDate;
+
+      console.log('New User: ', curRowId);
+      console.log('New Timeline: ', newStartDate, newEndDate);
+
+      const affectRow = [prevRowId!, curRowId];
+      dispatch(buildRows(affectRow));
+    }
+  };
 
   const onItemDragStop = async () => {};
 
@@ -244,6 +300,7 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
         onMouseMoveOutOfBoard,
         contextMenuPosition,
         setContextMenuPosition,
+        addItemModalRef,
       }}
     >
       {children}

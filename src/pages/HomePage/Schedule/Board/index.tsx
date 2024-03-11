@@ -3,6 +3,8 @@ import { ScheduleContextWrapper, useScheduleContext } from '../ScheduleContext';
 import { BoardContainer } from './components/BoardContainer';
 import { ScrollWrapper } from './components/ScrollWrapper';
 import { DragItem } from './components/Items/DragItem';
+import { useState } from 'react';
+import AddItemModal from './components/Modals/AddItemModal';
 
 export default function Board() {
   return (
@@ -10,6 +12,12 @@ export default function Board() {
       <ScrollWrapper>
         <BoardContainer />
       </ScrollWrapper>
+      <AddItemModal
+        isOpen={false}
+        setIsOpen={function (isOpen: boolean): void {
+          return;
+        }}
+      />
       <NonItems />
     </>
   );
@@ -17,6 +25,5 @@ export default function Board() {
 
 const NonItems = () => {
   const { dragItem } = useScheduleContext();
-  console.log(dragItem);
   return <>{dragItem && <DragItem dragItem={dragItem} />}</>;
 };

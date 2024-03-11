@@ -29,7 +29,7 @@ export interface DragInfo {
   isTimeRangeSelect?: boolean;
   smp: MousePosition;
   emp: MousePosition;
-  userId: number;
+  userId: string;
   item?: Item | null;
   rowId: string | null;
   stableRowId: number | null;
@@ -117,6 +117,7 @@ export interface ScheduleContextType {
   onMouseMoveOutOfBoard: () => void;
   contextMenuPosition: any;
   setContextMenuPosition: any;
+  addItemModalRef: MutableRefObject<{ openAddItemModal: (_?: any) => void }>;
 }
 
 export interface RangeDate {

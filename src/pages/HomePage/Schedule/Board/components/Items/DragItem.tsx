@@ -38,6 +38,7 @@ export const DragItem = ({ dragItem }: { dragItem: IDragItem }) => {
       if (dragging) {
         api.set({ opacity: 0.8 });
         transformRef.current.translate3d = `${mx}px,${my}px, 0`;
+        console.log('Dragging');
         if (wrapperRef.current) wrapperRef.current.style.transform = getTransformCss(transformRef);
         onItemDrag();
       }

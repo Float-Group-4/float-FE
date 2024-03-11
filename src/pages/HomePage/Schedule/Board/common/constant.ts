@@ -37,7 +37,7 @@ export const ACCIDENTAL_DRAG_DISTANCE = 1;
 
 export const CHECK_FLOAT_REGEX = /[0-9]*.?[0-9]/;
 
-export const ITEM_MIN_HEIGHT = 5.25;
+export const ITEM_MIN_HEIGHT = 6;
 
 export const MIN_DAYS_AVATAR_DISPLAY = {
   MONTH: 3,

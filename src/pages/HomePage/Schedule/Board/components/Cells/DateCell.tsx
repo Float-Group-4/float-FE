@@ -365,7 +365,7 @@ const Cells = memo(() => {
               left: `${left}px`,
             }}
           >
-            <div className='flex items-center border-black h-[30px]'>
+            <div className='flex items-center border-gray-100 h-[30px]'>
               <div className='pl-3 '>
                 <JumpCell weekIndex={weekIndex} type={'week'} label={weekOfYear} />
               </div>
@@ -380,7 +380,7 @@ const Cells = memo(() => {
                   </span>
                 )}
               </div>
-              <div className='h-3 w-[1px] bg-black'></div>
+              <div className='h-3 w-[1px] bg-blue-500'></div>
             </div>
             <div className='flex text-xs h-[24px]'>
               {days.map((d) => {

@@ -67,6 +67,19 @@ export const getDayIndex = (targetDate: string | Date) => {
   return dayjs(targetDate).diff(STARTING_POINT, 'days');
 };
 
+export const getNewDateByDayIndex = (days: number) => {
+  return STARTING_POINT.add(days, 'days').format(ITEM_DATE_FORMAT);
+};
+
+export const getRangeDate = (start: number, end: number) => {
+  const from = STARTING_POINT.clone().add(Math.min(start, end), 'days');
+  const to = STARTING_POINT.clone().add(Math.max(start, end), 'days');
+  return {
+    from,
+    to,
+  };
+};
+
 const dimensionCache: Record<string, any> = {};
 export const getHorizontalDimensions = (range?: any) => {
   const isHiddenWeekend = store.getState().settings.isHiddenWeekend;
@@ -79,18 +92,10 @@ export const getHorizontalDimensions = (range?: any) => {
   }
   if (!from || !to) return { x: 0, w: -1 };
 
-  const start = isHiddenWeekend
-    ? diffBusinessDay(STARTING_POINT, dayjs(from).format(ITEM_DATE_FORMAT)) - 1
-    : dayjs(from).diff(STARTING_POINT, 'days');
-  const end = isHiddenWeekend
-    ? diffBusinessDay(STARTING_POINT, dayjs(to).format(ITEM_DATE_FORMAT)) - 1
-    : dayjs(to).diff(STARTING_POINT, 'days');
+  const start = dayjs(from).diff(STARTING_POINT, 'days');
+  const end = dayjs(to).diff(STARTING_POINT, 'days');
   console.log(start, end);
-  const w = isHiddenWeekend
-    ? Math.abs(
-        diffBusinessDay(dayjs(from).format(ITEM_DATE_FORMAT), dayjs(to).format(ITEM_DATE_FORMAT)),
-      )
-    : Math.abs(end - start) + 1;
+  const w = Math.abs(end - start) + 1;
 
   console.log({
     x: Math.min(start, end),
@@ -166,14 +171,9 @@ export const getRowY = (
   return y;
 };
 
-export function getHeightByItem(
-  heightPerHour: number,
-  item: any,
-  defaultHour: number,
-  divisor: number,
-): number {
+export function getHeightByItem(heightPerHour: number, item: any, defaultHour: number): number {
   if (item.hour) {
-    return heightPerHour * Math.max(ITEM_MIN_HEIGHT, item.hour / divisor);
+    return heightPerHour * Math.max(ITEM_MIN_HEIGHT, item.hour);
   }
   return heightPerHour * Math.max(ITEM_MIN_HEIGHT, defaultHour);
 }

@@ -42,6 +42,7 @@ export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
   // };
   const handleMouseDown = (e: React.MouseEvent) => {
     const mp = mousePositionRef.current;
+    e.stopPropagation();
     if (e.button !== 0 || !mp) return;
 
     const rect = e.currentTarget!.getBoundingClientRect();
@@ -56,7 +57,7 @@ export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
         <div
           className={` w-full  rounded-md  absolute touch-none bg-blue-500`}
           style={{
-            height: `${getHeightByItem(heightPerHour, item, 8, 1)}px`,
+            height: `${getHeightByItem(heightPerHour, item, 8)}px`,
             width: `${w * cellWidth - MARGIN_RIGHT}px`,
           }}
         >
@@ -79,7 +80,7 @@ export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
       offsetX: rect.left,
       offsetY: rect.top,
       width: w * cellWidth,
-      height: getHeightByItem(heightPerHour, item, 8, 1),
+      height: getHeightByItem(heightPerHour, item, 8),
       clientX: e.clientX,
       clientY: e.clientY,
       px,
@@ -105,7 +106,7 @@ export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
       onMouseDown={handleMouseDown}
       style={{
         top: `${y}px`, //item position
-        height: `${Math.max(MIN_HEIGHT_HOURS, 480 / 60.0 ?? 0) * HEIGHT_PER_HOUR}px`,
+        height: `${getHeightByItem(heightPerHour, item, 8)}px`,
         width: `${w * cellWidth - MARGIN_RIGHT}px`,
         left: `${x * cellWidth + MARGIN_LEFT}px`,
       }}
@@ -131,7 +132,7 @@ export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
             {/* {isOverdue && <CustomIcon name='ti ti-alert-circle' className='text-yellow-400 ' />} */}
           </div>
           <div className='flex items-end justify-end p-1' style={{ color: textColor }}>
-            <span className='leading-none'>{convertMinuteToHumanRead(480)}</span>
+            <span className='leading-none'>{convertMinuteToHumanRead(item.hour * 60)}</span>
           </div>
         </div>
 

@@ -1,7 +1,7 @@
 import ProjectView from './ProjectView';
 import TopBar from './TopBar';
 
-const PeoplePage = () => {
+const ProjectPage = () => {
   return (
     <div className='flex flex-col h-screen'>
       {/* Top Bar */}
@@ -12,4 +12,4 @@ const PeoplePage = () => {
   );
 };
 
-export default PeoplePage;
+export default ProjectPage;

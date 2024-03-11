@@ -22,7 +22,7 @@ const initialState: GeneralState = {
   itemsById: {
     item1: {
       id: 'item1',
-      userIds: ['userId1', 'userId2'],
+      userIds: ['userId1'],
       name: 'Item 1',
       startDate: '2024-03-10',
       endDate: '2024-03-12',
@@ -31,11 +31,20 @@ const initialState: GeneralState = {
     },
     item2: {
       id: 'item2',
-      userIds: ['userId1'],
+      userIds: ['userId2'],
       name: 'Item 2',
+      startDate: '2024-03-12',
+      endDate: '2024-03-15',
+      hour: 10,
+      isPlaceHolder: false,
+    },
+    item3: {
+      id: 'item3',
+      userIds: ['userId3'],
+      name: 'Item 3',
       startDate: '2024-03-11',
       endDate: '2024-03-14',
-      hour: 10,
+      hour: 4,
       isPlaceHolder: false,
     },
   },
@@ -61,14 +70,14 @@ const initialState: GeneralState = {
   rowMap: {
     userId1: {
       id: 'userId1',
-      items: ['item1', 'item2'],
+      items: ['item1'],
       itemPosition: {},
       height: 0,
       dayCell: {},
     },
     userId2: {
       id: 'userId2',
-      items: ['item1'],
+      items: ['item2'],
       itemPosition: {},
       height: 0,
       dayCell: {},
@@ -136,6 +145,10 @@ const generalSlice = createSlice({
     setFetchedIndexes: (state, action) => {
       state.fetchedWeekIndexes = action.payload;
     },
+    setItemsById: (state, action) => {
+      console.log(action.payload);
+      state.itemsById = action.payload;
+    },
   },
 
   extraReducers: (builder) => {
@@ -146,7 +159,7 @@ const generalSlice = createSlice({
   },
 });
 
-export const { setItemPlaceHolder, addNewItem, addItemIntoMap, setFetchedIndexes } =
+export const { setItemPlaceHolder, addNewItem, addItemIntoMap, setFetchedIndexes, setItemsById } =
   generalSlice.actions;
 
 export default generalSlice;
