@@ -15,7 +15,7 @@ const Toolbar = (props: ToolbarProps) => {
       alignItems='center'
       justifyContent='space-between'
       p={1}
-      width='100%'
+      width='60px'
       borderBottom={`1px solid ${theme.palette.divider}`}
       height={CORNER_CELL_HEIGHT}
     >

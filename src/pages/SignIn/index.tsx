@@ -15,11 +15,13 @@ import LoadingButton from '@base/components/LoadingButton';
 import { useAuthMutation } from '@hooks/useAuthMutation';
 import { queryKeys } from '@base/config/queryKeys';
 import signInBackgroundUrl from '@base/assets/imgs/signIn-background.svg';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginProps {}
 
 const Login = (props: LoginProps) => {
   const theme = useTheme();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const layoutFields: string[] = [
     keyNames.KEY_NAME_SIGN_IN_USERNAME,
@@ -54,7 +56,7 @@ const Login = (props: LoginProps) => {
   const onSubmit = async (formData: any) => {
     const params = getParams(formData);
     const parsedParams = finalizeParams(params); // define add or update here
-
+    navigate('/');
     mSignIn.mutate(parsedParams, {
       onSuccess(data, variables: any, context) {
         // setTimeout(() => {
