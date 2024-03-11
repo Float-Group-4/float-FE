@@ -3,10 +3,12 @@ import FloatIcon from '../../../base/assets/imgs/float.svg';
 import { AppBar, Button, CssBaseline, Link, Toolbar, Typography } from '@mui/material';
 import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
 import KeyboardArrowUpOutlinedIcon from '@mui/icons-material/KeyboardArrowUpOutlined';
+import { useNavigate } from 'react-router-dom';
 
 function NavBar() {
   const [isExpanded, setIsExpanded] = useState<boolean>(false);
   const [isHovered, setIsHovered] = useState(false);
+  const navigate = useNavigate();
 
   const handleMouseOver = () => {
     setIsHovered(true);
@@ -18,6 +20,11 @@ function NavBar() {
 
   const handleToggleFeature = () => {
     setIsExpanded(!isExpanded);
+  };
+
+  const handleOnClick = () => {
+    const path = '/sign-up';
+    navigate(path);
   };
 
   const navList = ['Customer', 'Integration', 'Pricing'];
@@ -60,6 +67,8 @@ function NavBar() {
                   padding: '0 10px',
                   fontFamily: 'Lexend Deca, sans-serif',
                   display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
                 }}
                 className='flex justify-center align-items-center '
                 href='#'
@@ -96,7 +105,7 @@ function NavBar() {
                   display: 'flex',
                 }}
                 className='flex justify-center align-items-center '
-                href='#'
+                href='/sign-in'
               >
                 Log in
               </Link>
@@ -112,6 +121,7 @@ function NavBar() {
                 }}
                 onMouseOver={handleMouseOver}
                 onMouseOut={handleMouseOut}
+                onClick={handleOnClick}
               >
                 <span
                   style={{

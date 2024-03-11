@@ -123,25 +123,52 @@ export default () => {
   ];
 
   return (
-    <section className='py-14'>
-      <div className='max-w-screen-xl mx-auto px-4 text-center text-gray-600 md:px-8'>
-        <div className='max-w-2xl mx-auto'>
-          <h3 className='text-gray-800 text-3xl font-semibold sm:text-4xl'>
+    <section style={{ paddingTop: '3.5rem' }}>
+      <div style={{ maxWidth: '48rem', margin: '0 auto', padding: '0 1rem' }}>
+        <div style={{ maxWidth: '32rem', margin: '0 auto', textAlign: 'center', color: '#4B5563' }}>
+          <h3
+            style={{
+              color: '#1F2937',
+              fontSize: '1.875rem',
+              fontWeight: '600',
+              lineHeight: '2.25rem',
+            }}
+          >
             The fastest way to launch a product
           </h3>
-          <p className='mt-3'>
+          <p style={{ marginTop: '0.75rem' }}>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec congue, nisl eget
             molestie varius, enim ex faucibus purus.
           </p>
         </div>
-        <div className='mt-12'>
-          <ul className='grid gap-y-8 gap-x-12 sm:grid-cols-2 lg:grid-cols-3'>
+        <div style={{ marginTop: '4.5rem' }}>
+          <ul
+            style={{
+              display: 'grid',
+              gap: '2rem',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(14rem, 1fr))',
+            }}
+          >
             {features.map((item, idx) => (
-              <li key={idx} className='space-y-3'>
-                <div className='w-12 h-12 mx-auto bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center'>
+              <li key={idx} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                <div
+                  style={{
+                    width: '3rem',
+                    height: '3rem',
+                    margin: '0 auto',
+                    backgroundColor: '#EDF2F7',
+                    color: '#4C51BF',
+                    borderRadius: '9999px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
                   {item.icon}
                 </div>
-                <h4 className='text-lg text-gray-800 font-semibold'>{item.title}</h4>
+                <h4 style={{ color: '#1F2937', fontSize: '1.125rem', fontWeight: '600' }}>
+                  {item.title}
+                </h4>
                 <p>{item.desc}</p>
               </li>
             ))}
