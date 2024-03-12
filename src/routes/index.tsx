@@ -14,15 +14,15 @@ const SignUp = lazy(() => import('@pages/SignUp'));
 
 export const routes: RouteObject[] = [
   {
-    path: '/',
-    element: <LandingPage />,
-  },
-  {
     path: '*',
     element: <Layouts />,
     children: [
       {
         index: true,
+        element: <LandingPage />,
+      },
+      {
+        path: 'home',
         element: <HomePage />,
       },
       {

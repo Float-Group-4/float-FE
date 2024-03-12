@@ -21,7 +21,7 @@ export default function SideNavbar() {
         <div
           className='w-full aspect-square flex flex-col items-center group hover:cursor-pointer gap-1'
           onClick={(_e) => {
-            navigate('/');
+            navigate('/home');
           }}
         >
           <IconButton
