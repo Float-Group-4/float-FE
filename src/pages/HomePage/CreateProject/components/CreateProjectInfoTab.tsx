@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -14,11 +15,10 @@ import {
   Popover,
   FormControl,
 } from '@mui/material';
-import { ArrowDropDownIcon } from '@mui/x-date-pickers';
-import { useState } from 'react';
+import { ArrowDropDown, Close } from '@mui/icons-material';
 import { BUDGET_VALUE, ProjectInfo } from '../models';
-import { Close, ArrowDropDown, RoundaboutRight } from '@mui/icons-material';
-import React from 'react';
+
+import ColorSelectPopover from './ColorSelectIcon';
 
 interface CustomTextFieldProps {
   placeHolder: string;
@@ -27,26 +27,29 @@ interface CustomTextFieldProps {
   name: string;
 }
 
-const CustomTextField = (props: CustomTextFieldProps) => {
-  const { placeHolder, showClearIcon, showDropdownIcon } = props;
+const CustomTextField: React.FC<CustomTextFieldProps> = ({
+  placeHolder,
+  showClearIcon,
+  showDropdownIcon,
+  name,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [anchor, setAnchor] = useState<HTMLDivElement | null>(null);
+  const [currentText, setCurrentText] = useState('');
 
   const handleClose = () => {
-    setOpen(false);
+    setIsOpen(false);
     setAnchor(null);
   };
 
-  const onInput = (e: any) => {
-    setAnchor(e.target);
-    setOpen(true);
+  const onInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAnchor(e.currentTarget);
+    setIsOpen(true);
   };
 
-  const handleChange = (e: any) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentText(e.target.value.trim());
   };
-
-  const [isOpen, setOpen] = useState(false);
-  const [anchor, setAnchor] = useState(null);
-  const [currentText, setCurrentText] = useState('');
 
   return (
     <Box>
@@ -54,13 +57,13 @@ const CustomTextField = (props: CustomTextFieldProps) => {
         size='medium'
         value={currentText}
         placeholder={placeHolder}
-        onInput={(e) => onInput(e)}
+        onInput={onInput}
         onChange={handleChange}
         sx={{ maxWidth: '90%', minWidth: '100%' }}
         InputProps={{
           endAdornment: (
             <Stack direction='row'>
-              {currentText.length > 0 && (
+              {currentText.length > 0 && showClearIcon && (
                 <IconButton onClick={handleClose}>
                   <Close />
                 </IconButton>
@@ -109,7 +112,14 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
   const handleButtonClick = (newType: string) => {
     setInfo((prevInfo: any) => ({
       ...prevInfo,
-      type: newType as string,
+      type: newType,
+    }));
+  };
+
+  const selectColor = (color: string) => {
+    setInfo((prevInfo: any) => ({
+      ...prevInfo,
+      color: color,
     }));
   };
 
@@ -117,12 +127,13 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ): void => {
     const { name, value } = event.target;
-    setInfo((prevInfo: ProjectInfo) => ({
+    setInfo((prevInfo: any) => ({
       ...prevInfo,
       [name]: value,
     }));
   };
-  console.log(info?.color);
+
+  console.log(info?.type);
 
   return (
     <Box paddingX={3}>
@@ -137,20 +148,7 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
       </FormControl>
       <Box sx={{ mt: 2 }}>
         <Typography>Color</Typography>
-        <IconButton
-          sx={{ borderRadius: '80%', width: 22, height: 22, color: info?.color, backgroundColor: info?.color }}
-          disableFocusRipple
-          disableTouchRipple
-          disableRipple
-        />
-        <IconButton
-          sx={{ width: 22, height: 22 }}
-          disableFocusRipple
-          disableTouchRipple
-          disableRipple
-        >
-          <ArrowDropDownIcon />
-        </IconButton>
+        <ColorSelectPopover selectedColor={info?.color ?? '#ff0000'} onSelectColor={selectColor} />
       </Box>
       <FormControl fullWidth sx={{ py: 1 }}>
         <Typography>Notes</Typography>
@@ -187,41 +185,47 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
           <Button
             variant='text'
             sx={{
-              backgroundColor: info?.type === 'billable' ? '#82BEFF' : '#F6F6F6',
+              bgcolor: `${info?.type === 'billable' ? '#82BEFF' : '#F6F6F6'} !important`,
               color: 'black',
+              '&:hover': { backgroundColor: '-moz-initial', color: 'black' },
             }}
-            onClick={() => handleButtonClick('billable')}
-            disableFocusRipple
             disableRipple
             disableTouchRipple
+            disableElevation
+            onClick={() => handleButtonClick('billable')}
           >
             Billable
           </Button>
           <Button
             variant='text'
             sx={{
-              backgroundColor: info?.type === 'non-billable' ? '#82BEFF' : '#F6F6F6',
+              bgcolor: `${info?.type === 'non-billable' ? '#82BEFF' : '#F6F6F6'} !important`,
               color: 'black',
+              '&:hover': { backgroundColor: '-moz-initial', color: 'black' },
             }}
-            onClick={() => handleButtonClick('non-billable')}
-            disableFocusRipple
             disableRipple
             disableTouchRipple
+            disableElevation
+            onClick={() => handleButtonClick('non-billable')}
           >
             Non-billable
           </Button>
         </ButtonGroup>
         <Button
           onClick={() => {
-            setInfo((prevInfo: boolean | any) => ({
+            setInfo((prevInfo: { isTentative: any }) => ({
               ...prevInfo,
-              isTentative: !prevInfo?.isTentative,
+              isTentative: !prevInfo.isTentative,
             }));
           }}
+          disableFocusRipple
+          disableRipple
+          disableTouchRipple
+          disableElevation
           sx={{
-            backgroundColor: info?.isTentative ? '#82BEFF' : '#F6F6F6',
+            backgroundColor: `${info?.isTentative ? '#82BEFF' : '#F6F6F6'} !important`,
             color: 'black',
-            '&:hover': { backgroundColor: '-moz-initial', color: 'inherit' },
+            '&:hover': { backgroundColor: '-moz-initial', color: 'black' },
           }}
         >
           Tentative
@@ -240,7 +244,7 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
           value={info?.budget}
         >
           {Object.entries(BUDGET_VALUE).map(([key, value]) => (
-            <MenuItem key={key} value={key}>
+            <MenuItem key={key} value={parseInt(key)}>
               {value}
             </MenuItem>
           ))}

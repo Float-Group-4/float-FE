@@ -1,31 +1,19 @@
+import { AddOutlined, CreateNewFolderOutlined } from '@mui/icons-material';
 import {
-  AddOutlined,
-  CreateNewFolderOutlined,
-  KeyboardArrowDown,
-  SettingsOutlined,
-} from '@mui/icons-material';
-import {
-  Button,
-  Divider,
   IconButton,
   ListItemIcon,
   MenuItem,
   MenuList,
   Popover,
   Typography,
-  useTheme,
 } from '@mui/material';
-import { grey } from '@mui/material/colors';
-import TeamSetupModal from '@pages/TeamSetupModal';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
 import CreateProjectModal from '../CreateProject';
-import MiddlePage from '../CreateProject/middlePage';
+import CreateProjectMiddlePage from '../CreateProject/CreateProjectMiddlePage';
 
 interface AddButtonMultiplePurposeButtonProps {}
 
 const AddButtonMultiplePurpose = (props: AddButtonMultiplePurposeButtonProps) => {
-  const theme = useTheme();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const [openCreateProject, setOpenCreateProject] = useState<boolean>(false);
 
@@ -90,7 +78,7 @@ const AddButtonMultiplePurpose = (props: AddButtonMultiplePurposeButtonProps) =>
               Add new project
             </Typography>
           </MenuItem>
-          <MenuItem onClick={() => setOpenCreateProject(true)}>
+          <MenuItem onClick={() => console.log('Add people modal')}>
             <ListItemIcon>
               <CreateNewFolderOutlined />
             </ListItemIcon>
@@ -102,12 +90,8 @@ const AddButtonMultiplePurpose = (props: AddButtonMultiplePurposeButtonProps) =>
       </Popover>
 
       {openCreateProject && (
-        <CreateProjectModal
-          isOpen={openCreateProject}
-          setIsOpen={setOpenCreateProject}
-          size='sm'
-        />
-        // <MiddlePage/>
+        <CreateProjectModal isOpen={openCreateProject} setIsOpen={setOpenCreateProject} />
+        // <CreateProjectMiddlePage isOpen={openCreateProject} setIsOpen={setOpenCreateProject} />
       )}
     </>
   );
