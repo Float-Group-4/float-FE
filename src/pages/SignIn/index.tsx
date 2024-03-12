@@ -56,7 +56,7 @@ const Login = (props: LoginProps) => {
   const onSubmit = async (formData: any) => {
     const params = getParams(formData);
     const parsedParams = finalizeParams(params); // define add or update here
-    navigate('/');
+    navigate('/home');
     mSignIn.mutate(parsedParams, {
       onSuccess(data, variables: any, context) {
         // setTimeout(() => {
