@@ -11,10 +11,30 @@ import LayersOutlinedIcon from '@mui/icons-material/LayersOutlined';
 import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
 import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
 import ViewDayOutlinedIcon from '@mui/icons-material/ViewDayOutlined';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
+import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
+import FolderOpenOutlinedIcon from '@mui/icons-material/FolderOpenOutlined';
+import SplitscreenIcon from '@mui/icons-material/Splitscreen';
+import SearchIcon from '@mui/icons-material/Search';
 
-import { Button, IconButton, List, ListItemButton, Menu, MenuItem } from '@mui/material';
+import {
+  Button,
+  Container,
+  Divider,
+  IconButton,
+  InputBase,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Menu,
+  MenuItem,
+  TextField,
+} from '@mui/material';
 import { grey } from '@mui/material/colors';
 import React, { useState } from 'react';
+import { useScheduleContext } from '../Schedule/ScheduleContext';
+import dayjs from 'dayjs';
 import AddButtonMultiplePurpose from './AddButtonMultiplePurpose';
 
 const options = ['Schedule', 'Project Plan', 'Log Team'];
@@ -29,18 +49,44 @@ const zoomOptions = [
   { label: 'Months', value: 'month' },
 ];
 
+const filterOptions = [
+  {
+    label: 'Me',
+    icon: <AccountCircleOutlinedIcon fontSize='small' />,
+    divider: true,
+  },
+  {
+    label: 'Person',
+    icon: <PeopleAltOutlinedIcon fontSize='small' />,
+    divider: true,
+  },
+  {
+    label: 'Project',
+    icon: <FolderOpenOutlinedIcon fontSize='small' />,
+    divider: true,
+  },
+  {
+    label: 'Task',
+    icon: <SplitscreenIcon fontSize='small' />,
+    divider: false,
+  },
+];
+
 export default function TopBar() {
+  const { fastForwardDate } = useScheduleContext();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [zoomModeAnchorEl, setZoomModeAnchorEl] = useState<null | HTMLElement>(null);
   const [densityAnchorEl, setDensityAnchorEl] = useState<null | HTMLElement>(null);
+  const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [selectedZoomMode, setSelectedZoomMode] = useState(0);
+  const [selectedZoomMode, setSelectedZoomMode] = useState(1);
   const [selectedDensity, setSelectedDensity] = useState(0);
 
   const open = Boolean(anchorEl);
   const openZoomModeMenu = Boolean(zoomModeAnchorEl);
   const openDensityMenu = Boolean(densityAnchorEl);
+  const openFilterMenu = Boolean(filterAnchorEl);
 
   const handleClickViewModeMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -79,6 +125,14 @@ export default function TopBar() {
 
   const handleCloseDensityMenu = () => {
     setDensityAnchorEl(null);
+  };
+
+  const handleOpenFilterMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setFilterAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseFilterMenu = () => {
+    setFilterAnchorEl(null);
   };
   return (
     <div className='py-4 pl-2 pr-4 bg-gray-100'>
@@ -143,10 +197,32 @@ export default function TopBar() {
             variant='outlined'
             className='rounded-md'
             sx={{ borderColor: grey[300], color: grey[800] }}
+            onClick={handleOpenFilterMenu}
           >
             <ManageSearchOutlinedIcon fontSize='small' className='me-2' />
             Filter
           </Button>
+          <Menu
+            id='filter-menu'
+            anchorEl={filterAnchorEl}
+            open={openFilterMenu}
+            onClose={handleCloseFilterMenu}
+          >
+            <div className='mb-2 mx-2'>
+              <SearchIcon fontSize='small' className='ml-3' />
+              <InputBase className='ml-3' placeholder='Search' />
+            </div>
+            <Divider className='mb-2' />
+            {filterOptions.map((option, index) => (
+              <div>
+                <MenuItem className='h-8 w-60 px-3 py-3 mx-2 rounded-lg my-1'>
+                  <ListItemIcon>{option.icon}</ListItemIcon>
+                  <ListItemText>{option.label}</ListItemText>
+                </MenuItem>
+                {option.divider ? <Divider /> : <></>}
+              </div>
+            ))}
+          </Menu>
         </div>
         {/* Right Nav Content */}
         <div className='flex gap-4'>
@@ -164,6 +240,10 @@ export default function TopBar() {
               variant='outlined'
               className='rounded-md'
               sx={{ borderColor: grey[300], color: grey[800] }}
+              onClick={() => {
+                console.log('Click');
+                fastForwardDate(dayjs());
+              }}
             >
               Today
             </Button>
@@ -268,7 +348,7 @@ export default function TopBar() {
             >
               <ShareOutlinedIcon fontSize='small' />
             </IconButton>
-            <AddButtonMultiplePurpose/>
+            <AddButtonMultiplePurpose />
             {/* <Button
               variant='outlined'
               className='rounded-md flex items-center h-9 aspect-square p-0 bg-blue-600 text-white'

@@ -5,6 +5,10 @@ export default function TableRow() {
     MuiTableRow: {
       styleOverrides: {
         root: {
+          '&:nth-of-type(even)': {
+            backgroundColor: '#F0F0F094',
+        
+          },
           '&:last-of-type': {
             '& .MuiTableCell-root': {
               borderBottom: 'none',

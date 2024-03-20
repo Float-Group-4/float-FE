@@ -27,6 +27,7 @@ const TeamSetupModal = (props: TeamSetupModalProp) => {
   const [isStepperOpen, setIsStepperOpen] = useState(false);
   const openTeamSetupModal = (e: React.MouseEvent<HTMLElement>) => {
     localStorage.setItem('teamName', teamName);
+    onClose();
     navigate('team-setup');
   };
 
