@@ -107,7 +107,7 @@ const MiModal = (props: MiModalProps) => {
                   : {}),
                 ...(miState.anchor === MIMODAL_ANCHOR_RIGHT && {
                   mx: 0,
-                  width: '500',
+                  width: 'auto',
                   maxWidth: 800,
                   minWidth: drawerWidth,
                   maxHeight: '100%',

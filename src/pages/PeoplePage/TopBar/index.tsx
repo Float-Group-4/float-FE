@@ -1,16 +1,9 @@
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import DensityLargeOutlinedIcon from '@mui/icons-material/DensityLargeOutlined';
 import DensityMediumOutlinedIcon from '@mui/icons-material/DensityMediumOutlined';
 import DensitySmallOutlinedIcon from '@mui/icons-material/DensitySmallOutlined';
 import LayersOutlinedIcon from '@mui/icons-material/LayersOutlined';
 import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
 import SaveAltOutlinedIcon from '@mui/icons-material/SaveAltOutlined';
-import SplitscreenOutlinedIcon from '@mui/icons-material/SplitscreenOutlined';
-import AccessAlarmOutlinedIcon from '@mui/icons-material/AccessAlarmOutlined';
-import CreateNewFolderOutlinedIcon from '@mui/icons-material/CreateNewFolderOutlined';
-import MoreTimeOutlinedIcon from '@mui/icons-material/MoreTimeOutlined';
-import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
 
 import {
   Button,
@@ -18,30 +11,12 @@ import {
   List,
   ListItemButton,
   Menu,
-  MenuItem,
-  SvgIconTypeMap,
 } from '@mui/material';
-import { OverridableComponent } from '@mui/material/OverridableComponent';
 import { grey } from '@mui/material/colors';
 import React, { useState } from 'react';
+import AddButtonMultiplePurpose from '@pages/HomePage/TopBar/AddButtonMultiplePurpose';
 
-class Item {
-  constructor(
-    public icon: OverridableComponent<SvgIconTypeMap<{}, 'svg'>> & {
-      muiName: string;
-    } = DensitySmallOutlinedIcon,
-    public name: string = '',
-    public key: string = '',
-  ) {}
-}
 
-const options = [
-  new Item(SplitscreenOutlinedIcon, 'Allocate time', 'A'),
-  new Item(AccessAlarmOutlinedIcon, 'Log time', 'G'),
-  new Item(MoreTimeOutlinedIcon, 'Add time off', 'T'),
-  new Item(CreateNewFolderOutlinedIcon, 'Add project', 'P'),
-  new Item(PersonAddAlt1OutlinedIcon, 'Add person', 'E'),
-];
 const densityOptions = [
   { leftIcon: <DensitySmallOutlinedIcon fontSize='small' />, label: 'Compact', value: 0 },
   { leftIcon: <DensityMediumOutlinedIcon fontSize='small' />, label: 'Comfortable', value: 1 },
@@ -168,59 +143,7 @@ export default function TopBar() {
             </Button>
           </div>
 
-          {/* Share & Add */}
-          <div className='flex gap-2 items-center'>
-            <ListItemButton
-              id='addBtn'
-              aria-controls='addMenu'
-              aria-expanded={open ? 'true' : undefined}
-              onClick={handleClickViewModeMenu}
-              className={`rounded-md flex items-center h-9 aspect-square p-0  ${open ? 'bg-blue-100' : 'bg-blue-600'}  text-white`}
-              sx={{ border: 0, padding: 0, minWidth: 0 }}
-            >
-              <AddOutlinedIcon fontSize='small' className='ms-2' />
-            </ListItemButton>
-          </div>
-          <div>
-            <Menu
-              id='addMenu'
-              MenuListProps={{
-                'aria-labelledby': 'addBtn',
-              }}
-              anchorEl={anchorEl}
-              open={open}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              className='top-2'
-            >
-              {options.map((option, index) => {
-                const Icon = option.icon;
-                return (
-                  <MenuItem
-                    key={option.name}
-                    selected={index === selectedIndex}
-                    onClick={(event) => handleSelectViewMode(event, index)}
-                    className={`flex justify-between min-w-56 rounded-md`}
-                  >
-                    <div className='flex items-center gap-8 min-h-8'>
-                      <Icon fontSize='small' className='ms-2 ms-0'></Icon>
-
-                      {option.name}
-                    </div>
-                    <div className='flex items-center justify-center me-1'><p>{option.key}</p></div>
-                    {/* {selectedIndex == index ? (
-                    <div>
-                      <CheckOutlinedIcon sx={{ fontSize: 16 }} />
-                    </div>
-                  ) : null} */}
-                  </MenuItem>
-                );
-              })}
-            </Menu>
-          </div>
+          <AddButtonMultiplePurpose/>
         </div>
       </div>
     </div>
