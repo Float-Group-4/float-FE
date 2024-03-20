@@ -13,8 +13,9 @@ const Layouts = (props: LayoutsProps) => {
   // change condition login here
   const isSignIn = useMatch('sign-in');
   const isSignUp = useMatch('sign-up');
+  const isLanding = useMatch('');
 
-  return <>{isSignIn || isSignUp ? <NotAuthLayout /> : <AuthLayout />}</>;
+  return <>{isSignIn || isSignUp || isLanding ? <NotAuthLayout /> : <AuthLayout />}</>;
 };
 
 export default Layouts;

@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
 
 import {
-  ArrowBackOutlined,
-  ArrowForwardOutlined,
   Close,
   Fullscreen,
   FullscreenExit,
-  LaunchOutlined,
-  Minimize,
 } from '@mui/icons-material';
 import {
   Breakpoint,
@@ -19,9 +15,8 @@ import {
   Grid,
   IconButton,
   Tooltip,
-  useMediaQuery,
 } from '@mui/material';
-import { alpha, useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles';
 import { drawerWidth, headerHeight } from '@base/config/config';
 
 export const MIMODAL_ANCHOR_CENTER: string = 'center';
@@ -30,7 +25,7 @@ export const MIMODAL_ANCHOR_RIGHT: string = 'right';
 export type MiModalAnchor = typeof MIMODAL_ANCHOR_CENTER | typeof MIMODAL_ANCHOR_RIGHT;
 
 export interface MiModalProps {
-  title: string | React.ReactElement;
+  title?: string | React.ReactElement;
   isOpen: boolean;
   size: Breakpoint | false;
   fullScreen?: boolean;
@@ -47,7 +42,7 @@ const MiModal = (props: MiModalProps) => {
   const theme = useTheme();
 
   const {
-    title = 'New Item',
+    title,
     isOpen,
     size,
     fullScreen = false,
@@ -87,6 +82,7 @@ const MiModal = (props: MiModalProps) => {
       keepMounted
       onClose={handleOnClose}
       open={isOpen}
+      scroll='body'
       sx={
         miState.isMinimize
           ? {
@@ -117,6 +113,7 @@ const MiModal = (props: MiModalProps) => {
                   maxHeight: '100%',
                   borderBottomLeftRadius: 0,
                   borderBottomRightRadius: 0,
+                  boxShadow: 24,
                 }),
               },
               '& .MuiDialog-container': {
@@ -128,54 +125,57 @@ const MiModal = (props: MiModalProps) => {
       }
       hideBackdrop={miState.isMinimize}
     >
-      <DialogTitle
-        sx={{
-          p: 1,
-          ml: 2,
-          // bgcolor: theme.palette.header,
-          height: headerHeight,
-        }}
-      >
-        <Grid container justifyContent='space-between' alignItems='center' sx={{ px: 1 }}>
-          <Grid item sx={{ color: theme.palette.common.white }}>
-            {title}
-          </Grid>
-          <Grid item>
-            {!isMobile && miState.anchor === MIMODAL_ANCHOR_CENTER && (
-              <Tooltip
-                title={miState.isFullScreen ? 'Close full screen' : 'Full screen'}
-                placement='top'
-              >
+      {title != null && (
+        <DialogTitle
+          sx={{
+            p: 1,
+            ml: 2,
+            // bgcolor: theme.palette.header,
+            height: headerHeight,
+          }}
+        >
+          <Grid container justifyContent='space-between' alignItems='center' sx={{ px: 1 }}>
+            <Grid item sx={{ color: theme.palette.common.white }}>
+              {title}
+            </Grid>
+            <Grid item>
+              {!isMobile && miState.anchor === MIMODAL_ANCHOR_CENTER && (
+                <Tooltip
+                  title={miState.isFullScreen ? 'Close full screen' : 'Full screen'}
+                  placement='top'
+                >
+                  <IconButton
+                    size='medium'
+                    sx={{ color: theme.palette.common.white }}
+                    // sx={{ color: alpha(theme.palette.common.white, 0.5) }}
+                    onClick={(e: any) => {
+                      e.stopPropagation();
+                      setMiState({
+                        ...miState,
+                        isFullScreen: !miState.isFullScreen,
+                        anchor: MIMODAL_ANCHOR_CENTER,
+                      });
+                    }}
+                  >
+                    {miState.isFullScreen ? <FullscreenExit /> : <Fullscreen />}
+                  </IconButton>
+                </Tooltip>
+              )}
+              <Tooltip title={'Close' as string} placement='top'>
                 <IconButton
                   size='medium'
                   sx={{ color: theme.palette.common.white }}
                   // sx={{ color: alpha(theme.palette.common.white, 0.5) }}
-                  onClick={(e: any) => {
-                    e.stopPropagation();
-                    setMiState({
-                      ...miState,
-                      isFullScreen: !miState.isFullScreen,
-                      anchor: MIMODAL_ANCHOR_CENTER,
-                    });
-                  }}
+                  onClick={onClose}
                 >
-                  {miState.isFullScreen ? <FullscreenExit /> : <Fullscreen />}
+                  <Close />
                 </IconButton>
               </Tooltip>
-            )}
-            <Tooltip title={'Close' as string} placement='top'>
-              <IconButton
-                size='medium'
-                sx={{ color: theme.palette.common.white }}
-                // sx={{ color: alpha(theme.palette.common.white, 0.5) }}
-                onClick={onClose}
-              >
-                <Close />
-              </IconButton>
-            </Tooltip>
+            </Grid>
           </Grid>
-        </Grid>
-      </DialogTitle>
+        </DialogTitle>
+      )}
+
       {!miState.isMinimize && (
         <>
           <Divider />

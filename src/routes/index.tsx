@@ -5,6 +5,7 @@ import GeneralSetting from '@pages/Setting/SettingBody/GeneralSetting';
 import PreferenceSetting from '@pages/Setting/SettingBody/PreferenceSetting';
 import SettingsPage from '@pages/Setting';
 import TeamSetup from '@pages/TeamSetupModal/TeamSetup';
+import LandingPage from '@pages/LandingPage';
 import PeoplePage from '@pages/PeoplePage';
 import ProjectPage from '@pages/ProjectPage';
 const Layouts = lazy(() => import('@layouts/index'));
@@ -18,6 +19,10 @@ export const routes: RouteObject[] = [
     children: [
       {
         index: true,
+        element: <LandingPage />,
+      },
+      {
+        path: 'home',
         element: <HomePage />,
       },
       {

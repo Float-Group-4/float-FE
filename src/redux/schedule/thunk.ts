@@ -106,7 +106,7 @@ export const buildRows = createAsyncThunk(
         console.log(x, w);
         /* ---------------------------- Calculate height ---------------------------- */
         for (let i = x; i < x + w; i++) {
-          const hour = standardizeHour(item, defaultHour, 1);
+          const hour = standardizeHour(item, item.hour ?? defaultHour, 1);
           dayCell[i] ??= { dayCapacity: 0, firstOTItem: item, isStable: false, overTimeDisplay: 0 };
           dayCell[i].dayCapacity += item.hour / 1 || defaultHour;
           if (dayCell[i].dayCapacity > defaultHour && !dayCell[i].isStable) {
