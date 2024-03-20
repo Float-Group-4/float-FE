@@ -56,11 +56,11 @@ interface ModalFooterProps {
 
 const ModalFooter: React.FC<ModalFooterProps> = ({ handleSave, handleClose }) => {
   return (
-    <Stack direction='row' spacing={1} paddingY={3}>
+    <Stack direction='row' spacing={1} paddingY={3} alignItems={'left'} justifyItems={'left'}>
       <Button onClick={handleSave} variant='contained'>
         Create project
       </Button>
-      <Button onClick={handleClose} sx={{ backgroundColor: '#F5F5F5', color: 'black' }}>
+      <Button onClick={handleClose} sx={{ backgroundColor: '#F5F5F5 !important', color: 'black', '&:hover' :{bgcolor: '#E1E5F3 !important', color: 'black !important'} }}>
         Cancel
       </Button>
     </Stack>
@@ -96,7 +96,7 @@ const ModalBody: React.FC<ModalBodyProps> = ({
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Box sx={{ borderColor: 'transparent', mr: 6, mt: 1 }}>
+      <Box sx={{ borderColor: 'transparent', ml: 3 }}>
         <Tabs
           TabIndicatorProps={{
             sx: {
@@ -114,7 +114,9 @@ const ModalBody: React.FC<ModalBodyProps> = ({
             label='Info'
             {...a11yProps(0)}
             sx={{
+              fontSize: '15px',
               '&:hover': { backgroundColor: 'transparent', color: 'black' },
+              minWidth: 'auto',
             }}
             wrapped
           />
@@ -122,22 +124,31 @@ const ModalBody: React.FC<ModalBodyProps> = ({
             label='Team'
             {...a11yProps(1)}
             sx={{
+              fontSize: '15px',
+              minWidth: 'auto',
               '&:hover': { backgroundColor: 'transparent', color: 'black' },
             }}
+            wrapped
           />
           <Tab
             label={`Milestones ${mileStone?.length ?? 0}`}
             {...a11yProps(2)}
             sx={{
+              fontSize: '15px',
+              minWidth: 'auto',
               '&:hover': { backgroundColor: 'transparent', color: 'black' },
             }}
+            wrapped
           />
           <Tab
             label={`Task list ${task?.length ?? 0}`}
             {...a11yProps(3)}
             sx={{
+              fontSize: '15px',
+              minWidth: 'auto',
               '&:hover': { backgroundColor: 'transparent', color: 'black' },
             }}
+            wrapped
           />
         </Tabs>
       </Box>
@@ -158,21 +169,17 @@ const ModalBody: React.FC<ModalBodyProps> = ({
 };
 
 interface CreateProjectModalProps {
-   isOpen: boolean,
-   setIsOpen: (isOpen: boolean) => void,
-   size?: Breakpoint | false
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+  sx?: any;
 }
 
 const CreateProjectModal = (props: CreateProjectModalProps) => {
   const theme = useTheme();
 
-  const {
-    size,
-    isOpen,
-    setIsOpen
-  } = props
+  const { sx, isOpen, setIsOpen } = props;
 
-  const defaultColor = '#ff0000';
+  const defaultColor = '#3451b2';
   const defaultProjectInfo: ProjectInfo = {
     color: defaultColor,
     budget: 0,
@@ -201,30 +208,42 @@ const CreateProjectModal = (props: CreateProjectModalProps) => {
   };
 
   const handleOnClose = () => {
-     setIsOpen(false)
+    setIsOpen(false);
   };
 
   return (
-    <MiModal
-      title={
-        <TextField
-          id='project-title'
-          name='projectTitle'
-          variant='standard'
-          fullWidth
-          placeholder='Project name'
-          value={projectName}
-          onChange={(e) => setProjectName(e.target.value.trim())}
-          InputProps={{
-            disableUnderline: true,
-            sx: { fontSize: '22px' },
-          }}
-        />
-      }
-      isOpen={isOpen}
-      size={size ?? 'xs'}
-      onClose={handleOnClose}
-      children={
+    <Box
+      flexDirection='column'
+      overflow='auto'
+      maxHeight='100vh'
+      sx={{
+        ...sx,
+        '&::-webkit-scrollbar': { width: '8px' },
+        '&::-webkit-scrollbar-thumb': { backgroundColor: '#aaa', borderRadius: '4px' },
+      }}
+    >
+      <MiModal
+        title={
+          <TextField
+            id='project-title'
+            name='projectTitle'
+            variant='standard'
+            fullWidth
+            placeholder='Project name'
+            value={projectName}
+            onChange={(e) => setProjectName(e.target.value.trim())}
+            InputProps={{
+              disableUnderline: true,
+              sx: { fontSize: '22px' },
+            }}
+          />
+        }
+        size={'sm'}
+        isOpen={isOpen}
+        onClose={handleOnClose}
+        footer={<ModalFooter handleSave={handleSave} handleClose={handleOnClose} />}
+        isCloseByBackdrop={false}
+      >
         <ModalBody
           info={infoData}
           team={teamData}
@@ -235,10 +254,8 @@ const CreateProjectModal = (props: CreateProjectModalProps) => {
           setMileStone={setMileStoneData}
           setTask={setTaskData}
         />
-      }
-      footer={<ModalFooter handleSave={handleSave} handleClose={handleOnClose} />}
-      isCloseByBackdrop={false}
-    />
+      </MiModal>
+    </Box>
   );
 };
 

@@ -9,10 +9,10 @@ import {
   ListItemText,
   IconButton,
   FormControl,
+  ButtonGroup,
 } from '@mui/material';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { ProjectMileStone } from '../models';
-import React from 'react';
 import DatePicker from '@base/components/DatePicker';
 import { Stack } from '@mui/system';
 
@@ -65,6 +65,8 @@ const MilestoneSubBody: React.FC<MileStoneProp> = ({ mileStone, setMileStone }) 
     }
   };
 
+  const totalMileStone = mileStone?.length;
+
   const handleEdit = (index: number) => {};
 
   const handleDelete = (index: number) => {
@@ -80,19 +82,25 @@ const MilestoneSubBody: React.FC<MileStoneProp> = ({ mileStone, setMileStone }) 
 
   return (
     <>
-      <Box sx={{ backgroundColor: '#F6F6F6', p: 2, borderRadius: 3, m: 1 }}>
-        <Typography>Milestone name</Typography>
+      <Box sx={{ backgroundColor: '#F6F6F6', px: 2, borderRadius: 3, m: 1 }}>
+        <Typography sx={{ py: 1 }}>Milestone name</Typography>
         <TextField
           sx={{ backgroundColor: 'white' }}
           fullWidth
           onChange={(e) => setCurrentName(e.target.value)}
           value={currentName}
         />
-        <Stack direction='row' paddingY={2} alignItems='end'>
-          <FormControl >
+        <Stack
+          direction='row'
+          paddingY={2}
+          margin={0}
+          sx={{ width: '100%' }}
+          justifyContent='space-between'
+        >
+          <FormControl>
             <Typography>From</Typography>
             <DatePicker
-              inputSx={{ backgroundColor: 'white', width: '90%' }}
+              inputSx={{ backgroundColor: 'white' }}
               value={startDate}
               onChange={(date) => handleDateChange(date, true)}
             />
@@ -100,38 +108,45 @@ const MilestoneSubBody: React.FC<MileStoneProp> = ({ mileStone, setMileStone }) 
           <FormControl>
             <Typography>To</Typography>
             <DatePicker
-              inputSx={{ backgroundColor: 'white', width: '90%' }}
+              size='medium'
+              inputSx={{ backgroundColor: 'white' }}
               value={startDate}
               onChange={(date) => handleDateChange(date, true)}
             />
           </FormControl>
 
-          <Button onClick={addNewMileStone} variant='contained' size='medium' sx={{whiteSpace: 'nowrap'}}>
+          <Button
+            onClick={addNewMileStone}
+            variant='contained'
+            size='medium'
+            sx={{ alignSelf: 'flex-end', whiteSpace: 'nowrap' }}
+          >
             Add milestone
           </Button>
         </Stack>
-        <Box minHeight='50vh' display='flex' alignContent='center'>
-          {mileStone && mileStone.length === 0 ? (
-            <Typography variant='body1' alignSelf='center'>
-              There are no milestones for this project.
-            </Typography>
-          ) : (
-            <List>
-              {mileStone &&
-                mileStone.map((ms, index) => (
-                  <ListItem key={index}>
-                    <ListItemText primary={ms.name} secondary={`${ms.startDate} - ${ms.endDate}`} />
-                    <IconButton onClick={() => handleEdit(index)}>
-                      <Edit />
-                    </IconButton>
-                    <IconButton onClick={() => handleDelete(index)}>
-                      <Delete />
-                    </IconButton>
-                  </ListItem>
-                ))}
-            </List>
-          )}
-        </Box>
+      </Box>
+      <Box minHeight='30vh'>
+        {totalMileStone == 0 ? (
+          <Typography variant='body1' alignSelf='center'>
+            There are no milestones for this project.
+          </Typography>
+        ) : (
+          <List sx={{ m: 0, px: 2, pt: 1 }}>
+            {mileStone?.map((ms, index) => (
+              <ListItem key={ms.name + '' + index}>
+                <ListItemText primary={ms.name} secondary={`${ms.startDate} - ${ms.endDate}`} />
+                <ButtonGroup sx={{ ml: 'auto' }}>
+                  <IconButton onClick={() => handleEdit(index)}>
+                    <Edit />
+                  </IconButton>
+                  <IconButton onClick={() => handleDelete(index)}>
+                    <Delete />
+                  </IconButton>
+                </ButtonGroup>
+              </ListItem>
+            ))}
+          </List>
+        )}
       </Box>
     </>
   );

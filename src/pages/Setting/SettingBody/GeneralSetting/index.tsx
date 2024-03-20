@@ -1,18 +1,4 @@
-import {
-  Button,
-  Card,
-  FormControl,
-  Grid,
-  Input,
-  InputLabel,
-  OutlinedInput,
-  Stack,
-  TextField,
-  Typography,
-} from '@mui/material';
-import { Box } from '@mui/material';
-import { bgcolor } from '@mui/system';
-import React from 'react';
+import { Button, FormControl, Stack, TextField, Typography, Box } from '@mui/material';
 
 const GeneralSetting = () => {
   return (
@@ -44,8 +30,10 @@ const GeneralSetting = () => {
 
         <Stack direction='row' spacing={1} paddingTop={1} alignItems='flex-end'>
           <FormControl fullWidth>
-            <Typography variant='body2' fontWeight={480}>Account Owner</Typography>
-            <TextField fullWidth value='float-owner' sx={{pt: 1}}/>
+            <Typography variant='body2' fontWeight={480}>
+              Account Owner
+            </Typography>
+            <TextField fullWidth value='float-owner' sx={{ pt: 1 }} />
           </FormControl>
           <Button variant='contained' disabled={true} size='medium'>
             Transfer
@@ -71,14 +59,14 @@ const GeneralSetting = () => {
         <Stack spacing={1} direction='row' alignItems='end'>
           <FormControl fullWidth size='medium'>
             <Typography variant='caption'>Team name</Typography>
-            <TextField value='float-owner' fullWidth sx={{pt: 1}} disabled/>
+            <TextField value='float-owner' fullWidth sx={{ pt: 1 }} disabled />
           </FormControl>
           <FormControl fullWidth size='medium'>
             <Typography variant='caption'>Team URL</Typography>
-            <TextField value='float.com' fullWidth sx={{pt: 1}} disabled/>
+            <TextField value='float.com' fullWidth sx={{ pt: 1 }} disabled />
           </FormControl>
 
-          <Button variant='contained' size='medium' sx={{ p: 1, backgroundColor: 'lightgrey'}}>
+          <Button variant='contained' size='medium' sx={{ p: 1, backgroundColor: 'lightgrey' }}>
             Edit
           </Button>
         </Stack>
@@ -106,7 +94,7 @@ const GeneralSetting = () => {
             sx={{
               whiteSpace: 'nowrap',
               borderRadius: 'primary',
-              bgcolor: 'Highlight',
+              bgcolor: '#F57070 !important',
               fontSize: '13px',
               color: 'white',
             }}

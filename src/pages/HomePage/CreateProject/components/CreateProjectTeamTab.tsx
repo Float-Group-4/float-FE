@@ -95,24 +95,23 @@ const TeamSubBody: React.FC<TeamProps> = ({ team, setTeam }) => {
                       </Typography>
                     </ListSubheader>
 
-                    {d.member &&
-                      d.member.map((projectMember, index) => (
-                        <ListItem
-                          key={index}
-                          sx={{
-                            '&:hover': { backgroundColor: '#F6F6F6' },
-                            cursor: 'pointer',
-                            m: 0,
-                            px: 1,
-                          }}
-                          onClick={() => addToProject(index, d.department)}
-                        >
-                          <ListItemText
-                            primary={projectMember.name}
-                            secondary={projectMember.email}
-                          />
-                        </ListItem>
-                      ))}
+                    {d.member?.map((projectMember, index) => (
+                      <ListItem
+                        key={projectMember.email}
+                        sx={{
+                          '&:hover': { backgroundColor: '#F6F6F6' },
+                          cursor: 'pointer',
+                          m: 0,
+                          px: 1,
+                        }}
+                        onClick={() => addToProject(index, d.department)}
+                      >
+                        <ListItemText
+                          primary={projectMember.name}
+                          secondary={projectMember.email}
+                        />
+                      </ListItem>
+                    ))}
                   </React.Fragment>
                 ))}
               </List>
@@ -134,7 +133,7 @@ const TeamSubBody: React.FC<TeamProps> = ({ team, setTeam }) => {
         ) : (
           <List>
             {team?.map((projectTeam: ProjectTeam, index: number) => (
-              <ListItem key={index}>
+              <ListItem key={projectTeam.member.email}>
                 <ListItemText primary={projectTeam.member.name} />
                 <IconButton onClick={() => removeMember(index)} sx={{ ml: 'auto' }}>
                   <Close />
