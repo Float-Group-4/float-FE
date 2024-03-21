@@ -14,6 +14,7 @@ import {
 import React, { useState } from 'react';
 import CreateProjectModal from '../CreateProject';
 import { OverridableComponent } from '@mui/material/OverridableComponent';
+import AddPeopleModal from '../AddPeople';
 
 interface AddButtonMultiplePurposeButtonProps {}
 
@@ -37,6 +38,7 @@ const HomePageOptions = [
 
 const AddButtonMultiplePurpose = (props: AddButtonMultiplePurposeButtonProps) => {
   const [openCreateProject, setOpenCreateProject] = useState<boolean>(false);
+  const [openAddPerson, setOpenAddPerson] = useState<boolean>(false);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -59,6 +61,7 @@ const AddButtonMultiplePurpose = (props: AddButtonMultiplePurposeButtonProps) =>
         setOpenCreateProject(true);
         return;
       case 4:
+        setOpenAddPerson(true);
         return;
       default:
         throw new Error('Not valid index');
@@ -129,6 +132,10 @@ const AddButtonMultiplePurpose = (props: AddButtonMultiplePurposeButtonProps) =>
       {openCreateProject && (
         <CreateProjectModal isOpen={openCreateProject} setIsOpen={setOpenCreateProject} />
         // <CreateProjectMiddlePage isOpen={openCreateProject} setIsOpen={setOpenCreateProject} />
+      )}
+
+      {openAddPerson && (
+        <AddPeopleModal isOpen={openAddPerson} setIsOpen={setOpenAddPerson}/>
       )}
     </>
   );

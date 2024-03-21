@@ -10,20 +10,21 @@ import {
   Typography,
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { createData } from './CustomTableProp';
+import { Data, createData } from './CustomTableProp';
 import CustomizedTables from './CustomizedTable';
 import { useState } from 'react';
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
 import CreateNewFolderOutlinedIcon from '@mui/icons-material/CreateNewFolderOutlined';
+import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
 
 // const CheckboxGroup = Checkbox.Group;
 
 
 const plainOptions = ['Active', 'Archived', 'My projects'];
 
-const rows = [
-  createData(1, '1', "Project 1", "Bảo Huỳnh Minh", "__", "5,000,000", "11 Mar 2023", "11 Mar 2024", 'owners'),
-  createData(2, '2', "Project 1", "Nguyễn Quang", "__", "13,000,000", "09 Feb 2023", "2024", 'owners'),
+const rows: Data[] = [
+  // createData(1, '1', "Project 1", "Bảo Huỳnh Minh", "__", "5,000,000", "11 Mar 2023", "11 Mar 2024", 'owners'),
+  // createData(2, '2', "Project 1", "Nguyễn Quang", "__", "13,000,000", "09 Feb 2023", "2024", 'owners'),
 ];
 
 function CheckboxGroup() {
@@ -35,6 +36,24 @@ function CheckboxGroup() {
   // const [densityAnchorEl, setDensityAnchorEl] = useState<null | HTMLElement>(null);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const projectList = useAppSelector((state) => state.project.project);
+
+  if (rows.length == 0)
+  projectList.forEach((p) => {
+    rows.push(
+      createData(
+        +p.project.id,
+        p.project.id,
+        p.project.name,
+        (p.project.tags ?? []).join(", "),
+        p.project.client ?? "",
+        (p.project.budget ?? 0).toString(),
+        p.milestones[0].startDate,
+        p.milestones[0].endDate,
+        p.project.owner ?? "",
+      ),
+    );
+  });
 
   const onChange = (checked: boolean, index: number) => {
     console.log('checkedList', checkedList);

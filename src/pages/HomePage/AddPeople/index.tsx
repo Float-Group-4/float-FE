@@ -8,15 +8,14 @@ import {
   Tab,
   Button,
   Stack,
-  Breakpoint,
 } from '@mui/material';
 import React, { useState } from 'react';
-import { ProjectInfo, ProjectMileStone, ProjectTask, ProjectTeam } from './models';
-import InfoSubBody from './components/CreateProjectInfoTab';
-import MilestoneSubBody from './components/CreateProjectMilestoneTab';
-import TeamSubBody from './components/CreateProjectTeamTab';
-import TaskListSubBody from './components/CreateProjectTaskTab';
-import { ProjectType } from '../../../types/enums';
+import InfoSubBody from './components/InfoTab';
+import AccessSubBody from './components/AccessTab';
+import AvailSubBody from './components/AvailabilityTab';
+import ProjectSubBody from './components/ProjectTab';
+import { PersonInfo, Availability, WorkingType, ContractType, AccountType } from './models';
+import MiModalModified from './components/MiModalModified';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -31,8 +30,8 @@ function CustomTabPanel(props: Readonly<TabPanelProps>) {
     <div
       role='tabpanel'
       hidden={value !== index}
-      id={`project-tabpanel-${index}`}
-      aria-labelledby={`project-tab-${index}`}
+      id={`person-tabpanel-${index}`}
+      aria-labelledby={`person-tab-${index}`}
       {...other}
     >
       {value === index && (
@@ -46,8 +45,8 @@ function CustomTabPanel(props: Readonly<TabPanelProps>) {
 
 function a11yProps(index: number) {
   return {
-    id: `project-tab-${index}`,
-    'aria-controls': `project-tabpanel-${index}`,
+    id: `person-tab-${index}`,
+    'aria-controls': `person-tabpanel-${index}`,
   };
 }
 interface ModalFooterProps {
@@ -59,9 +58,9 @@ const ModalFooter: React.FC<ModalFooterProps> = ({ handleSave, handleClose }) =>
   return (
     <Stack direction='row' spacing={1} paddingY={3} alignItems={'left'} justifyItems={'left'}>
       <Button onClick={handleSave} variant='contained'>
-        Create project
+        Add person
       </Button>
-      <Button onClick={handleClose} sx={{ backgroundColor: '#F5F5F5 !important', color: 'black', '&:hover' :{bgcolor: '#E1E5F3 !important', color: 'black !important'} }}>
+      <Button onClick={handleClose} sx={{ backgroundColor: '#F5F5F5 !important', color: 'black', '&:hover': { bgcolor: '#E1E5F3 !important', color: 'black !important' } }}>
         Cancel
       </Button>
     </Stack>
@@ -69,25 +68,13 @@ const ModalFooter: React.FC<ModalFooterProps> = ({ handleSave, handleClose }) =>
 };
 
 interface ModalBodyProps {
-  info: ProjectInfo;
-  team: ProjectTeam[] | null;
-  mileStone: ProjectMileStone[] | null;
-  task: ProjectTask[] | null;
-  setInfo: (info: ProjectInfo) => void;
-  setTeam: (team: ProjectTeam[] | null) => void;
-  setMileStone: (mileStone: ProjectMileStone[] | null) => void;
-  setTask: (task: ProjectTask[] | null) => void;
+  info: PersonInfo;
+  setInfo: (info: PersonInfo) => void;
 }
 
 const ModalBody: React.FC<ModalBodyProps> = ({
   info,
-  team,
-  mileStone,
-  task,
   setInfo,
-  setTeam,
-  setMileStone,
-  setTask,
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -122,7 +109,7 @@ const ModalBody: React.FC<ModalBodyProps> = ({
             wrapped
           />
           <Tab
-            label='Team'
+            label='Access'
             {...a11yProps(1)}
             sx={{
               fontSize: '15px',
@@ -132,7 +119,7 @@ const ModalBody: React.FC<ModalBodyProps> = ({
             wrapped
           />
           <Tab
-            label={`Milestones ${mileStone?.length ?? 0}`}
+            label='Availability'
             {...a11yProps(2)}
             sx={{
               fontSize: '15px',
@@ -142,7 +129,7 @@ const ModalBody: React.FC<ModalBodyProps> = ({
             wrapped
           />
           <Tab
-            label={`Task list ${task?.length ?? 0}`}
+            label={`Projects ${info.projects?.length ?? ''}`}
             {...a11yProps(3)}
             sx={{
               fontSize: '15px',
@@ -157,54 +144,42 @@ const ModalBody: React.FC<ModalBodyProps> = ({
         <InfoSubBody info={info} setInfo={setInfo} />
       </CustomTabPanel>
       <CustomTabPanel value={currentIndex} index={1}>
-        <TeamSubBody team={team} setTeam={setTeam} />
+        <AccessSubBody info={info} setInfo={setInfo} />
       </CustomTabPanel>
       <CustomTabPanel value={currentIndex} index={2}>
-        <MilestoneSubBody mileStone={mileStone} setMileStone={setMileStone} />
+        <AvailSubBody info={info} setInfo={setInfo} />
       </CustomTabPanel>
       <CustomTabPanel value={currentIndex} index={3}>
-        <TaskListSubBody tasks={task} setTasks={setTask} />
+        <ProjectSubBody info={info} setInfo={setInfo} />
       </CustomTabPanel>
     </Box>
   );
 };
 
-interface CreateProjectModalProps {
+interface AddPeopleModalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   sx?: any;
 }
 
-const CreateProjectModal = (props: CreateProjectModalProps) => {
+const AddPeopleModal = (props: AddPeopleModalProps) => {
   const theme = useTheme();
 
   const { sx, isOpen, setIsOpen } = props;
 
-  const defaultColor = '#3451b2';
-  const defaultProjectInfo: ProjectInfo = {
+  const avail: Availability = {
+    startDate: new Date(),
+    workingType: WorkingType.partTime
+  }
+  const sampleData: PersonInfo = {
     id: "1",
-    color: defaultColor,
-    budget: 0,
-    type: ProjectType.billable,
-    isTentative: false,
-    note: '',
-    client: '',
-    name: "",
-  };
+    availability: avail,
+    type: ContractType.employee,
+    name: '',
+    accountType: AccountType.member
+  }
 
-  const demoForTasks: ProjectTask[] = [
-    {
-      id: 1,
-      name: 'milestone 1',
-      isBillable: true,
-    },
-  ];
-
-  const [projectName, setProjectName] = useState<string>('');
-  const [infoData, setInfoData] = useState<ProjectInfo>(defaultProjectInfo);
-  const [teamData, setTeamData] = useState<ProjectTeam[] | null>(null);
-  const [mileStoneData, setMileStoneData] = useState<ProjectMileStone[] | null>(null);
-  const [taskData, setTaskData] = useState<ProjectTask[] | null>(demoForTasks);
+  const [personInfoData, setPersonInfoData] = useState<PersonInfo>(sampleData);
 
   const handleSave = () => {
     setIsOpen(false);
@@ -213,6 +188,14 @@ const CreateProjectModal = (props: CreateProjectModalProps) => {
   const handleOnClose = () => {
     setIsOpen(false);
   };
+
+  const setValue = (e: { target: { name: any; value: any; }; }) => {
+    const { name, value } = e.target;
+    setPersonInfoData({
+      ...personInfoData,
+      name: value
+    });
+  }
 
   return (
     <Box
@@ -225,21 +208,37 @@ const CreateProjectModal = (props: CreateProjectModalProps) => {
         '&::-webkit-scrollbar-thumb': { backgroundColor: '#aaa', borderRadius: '4px' },
       }}
     >
-      <MiModal
+      <MiModalModified
         title={
-          <TextField
-            id='project-title'
-            name='projectTitle'
-            variant='standard'
-            fullWidth
-            placeholder='Project name'
-            value={projectName}
-            onChange={(e) => setProjectName(e.target.value.trim())}
-            InputProps={{
-              disableUnderline: true,
-              sx: { fontSize: '22px' },
-            }}
-          />
+          <Box display='flex' flexDirection='column'>
+            <TextField
+              id='person-name'
+              name='personName'
+              variant='standard'
+              fullWidth
+              placeholder='Person name'
+              value={personInfoData.name}
+              onChange={setValue}
+              InputProps={{
+                disableUnderline: true,
+                sx: { fontSize: '22px' },
+              }}
+            />
+            <TextField
+              id='project-title'
+              name='projectTitle'
+              variant='standard'
+              size='small'
+              placeholder='Email'
+              inputProps={{style: {fontSize: '15px'}}}
+              value={personInfoData.name}
+              onChange={setValue}
+              InputProps={{
+                disableUnderline: true
+              }}
+            />
+          </Box>
+
         }
         size={'sm'}
         isOpen={isOpen}
@@ -248,18 +247,12 @@ const CreateProjectModal = (props: CreateProjectModalProps) => {
         isCloseByBackdrop={false}
       >
         <ModalBody
-          info={infoData}
-          team={teamData}
-          mileStone={mileStoneData}
-          task={taskData}
-          setInfo={setInfoData}
-          setTeam={setTeamData}
-          setMileStone={setMileStoneData}
-          setTask={setTaskData}
+          info={personInfoData}
+          setInfo={setPersonInfoData}
         />
-      </MiModal>
+      </MiModalModified>
     </Box>
   );
 };
 
-export default CreateProjectModal;
+export default AddPeopleModal;

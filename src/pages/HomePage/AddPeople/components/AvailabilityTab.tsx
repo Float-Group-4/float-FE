@@ -5,7 +5,6 @@ import {
   IconButton,
   TextField,
   Stack,
-  ButtonGroup,
   Button,
   Select,
   MenuItem,
@@ -14,12 +13,15 @@ import {
   Chip,
   Popover,
   FormControl,
+  List,
+  ListItem,
+  ListItemText,
+  Paper,
+  ButtonGroup,
 } from '@mui/material';
 import { ArrowDropDown, Close } from '@mui/icons-material';
-import { BUDGET_VALUE, ProjectInfo } from '../models';
-
-import ColorSelectPopover from './ColorSelectIcon';
-import { ProjectType } from '../../../../types/enums';
+import DatePicker from '@base/components/DatePicker';
+import { PersonInfo } from '../models';
 
 interface CustomTextFieldProps {
   placeHolder: string;
@@ -60,6 +62,7 @@ const CustomTextField: React.FC<CustomTextFieldProps> = ({
         placeholder={placeHolder}
         onInput={onInput}
         onChange={handleChange}
+        name={name}
         sx={{ maxWidth: '90%', minWidth: '100%' }}
         InputProps={{
           endAdornment: (
@@ -102,25 +105,73 @@ const CustomTextField: React.FC<CustomTextFieldProps> = ({
   );
 };
 
-interface InfoProp {
-  info: ProjectInfo;
+interface AvailProp {
+  info: PersonInfo;
   setInfo: (info: any) => void;
 }
 
-const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
+const AvailSubBody: React.FC<AvailProp> = ({ info, setInfo }) => {
   const [tags, setTags] = useState<string[]>([]);
+  const today = new Date();
+  const [startDate, setStartDate] = useState(today);
+  const [endDate, setEndDate] = useState(today);
 
-  const handleButtonClick = (newType: string) => {
+  const setValue = (
+    event: { target: { name: any; value: any; }; },
+  ): void => {
+    const { name, value } = event.target;
     setInfo((prevInfo: any) => ({
       ...prevInfo,
-      type: newType,
+      [name]: value,
     }));
   };
 
-  const selectColor = (color: string) => {
-    setInfo((prevInfo: any) => ({
+  console.log(info?.type);
+
+  const handleDateChange = (date: any, isStart: boolean) => {
+    try {
+      if (!date || typeof date !== 'object' || !date.isValid()) {
+        console.error('Invalid date:', date);
+        return;
+      }
+      if (isStart) {
+        setInfo((prev: any) => ({
+          ...prev,
+          availability: {
+            ...prev.availability,
+            startDate: date
+          }
+        }));
+      } else {
+        if (date.isBefore(startDate)) {
+          setInfo((prev: any) => ({
+            ...prev,
+            availability: {
+              ...prev.availability,
+              startDate: date
+            }
+          }));
+        }
+        setInfo((prev: any) => ({
+          ...prev,
+          availability: {
+            ...prev.availability,
+            endDate: date
+          }
+        }));
+      }
+    } catch (error) {
+      console.error('Error occurred while handling date change:', error);
+    }
+  };
+
+  const handleButtonClick = (newType: string) => {
+    setInfo((prevInfo: PersonInfo) => ({
       ...prevInfo,
-      color: color,
+      availability: {
+        ...prevInfo.availability,
+        workingType: newType
+      }
     }));
   };
 
@@ -134,24 +185,67 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
     }));
   };
 
-  console.log(info?.type);
-
   return (
-    <Box paddingX={3}>
-      <FormControl fullWidth>
-        <Typography>Client</Typography>
+    <Box display='flex' flexDirection='column' justifyContent='space-between' paddingX={2}>
+      <Box sx={{ backgroundColor: '#F6F6F6', px: 2, py: 2, borderRadius: '5%' }}>
+        <FormControl>
+          <Typography>From</Typography>
+          <DatePicker
+            inputSx={{ backgroundColor: 'white' }}
+            value={startDate}
+            onChange={(date) => handleDateChange(date, true)}
+          />
+        </FormControl>
+        <FormControl>
+          <Typography>To</Typography>
+          <DatePicker
+            size='medium'
+            inputSx={{ backgroundColor: 'white' }}
+            value={endDate}
+            onChange={(date) => handleDateChange(date, true)}
+          />
+        </FormControl>
+
+      </Box>
+      <Box paddingY={3}>
+        <ButtonGroup>
+          <Button
+            variant='text'
+            sx={{
+              bgcolor: `${info?.availability.workingType === 'Full-time' ? '#82BEFF' : '#F6F6F6'} !important`,
+              color: 'black',
+              '&:hover': { backgroundColor: '-moz-initial', color: 'black' },
+            }}
+            disableRipple
+            disableTouchRipple
+            disableElevation
+            onClick={() => handleButtonClick('Full-time')}
+          >
+            Billable
+          </Button>
+          <Button
+            variant='text'
+            sx={{
+              bgcolor: `${info?.availability.workingType === 'Part-time' ? '#82BEFF' : '#F6F6F6'} !important`,
+              color: 'black',
+              '&:hover': { backgroundColor: '-moz-initial', color: 'black' },
+            }}
+            disableRipple
+            disableTouchRipple
+            disableElevation
+            onClick={() => handleButtonClick('Part-time')}
+          >
+            Non-billable
+          </Button>
+        </ButtonGroup>
+      </Box>
+      <FormControl>
+        <Typography>Public holidays</Typography>
         <CustomTextField
-          placeHolder='No client'
-          showDropdownIcon={true}
-          showClearIcon={false}
-          name='client'
+          name='publicHoliday' placeHolder={'Ho Chi Minh'} showClearIcon={false} showDropdownIcon={false}
         />
       </FormControl>
-      <Box sx={{ mt: 2 }}>
-        <Typography>Color</Typography>
-        <ColorSelectPopover selectedColor={info?.color ?? '#ff0000'} onSelectColor={selectColor} />
-      </Box>
-      <FormControl fullWidth sx={{ py: 1 }}>
+      <FormControl fullWidth sx={{ py: 2 }}>
         <Typography>Notes</Typography>
         <TextField
           maxRows={4}
@@ -159,100 +253,15 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
           sx={{ width: '100%' }}
           multiline
           name='note'
-          value={info?.note ?? ''}
+          value={info?.availability.note ?? ''}
           onChange={handleValueChange}
           InputProps={{
             sx: { pt: 1 },
           }}
         />
       </FormControl>
-      <FormControl fullWidth sx={{ py: 1 }}>
-        <Typography>Tags</Typography>
-        <Autocomplete
-          clearIcon={false}
-          options={[]}
-          freeSolo
-          multiple
-          onChange={(_, value) => setTags(value)}
-          renderTags={(value, props) =>
-            value.map((option, index) => <Chip label={option} {...props({ index })} />)
-          }
-          renderInput={(params) => <TextField {...params} variant='outlined' fullWidth />}
-        />
-      </FormControl>
-
-      <Stack sx={{ my: 2 }} spacing={2} direction='row'>
-        <ButtonGroup>
-          <Button
-            variant='text'
-            sx={{
-              bgcolor: `${info?.type === ProjectType.billable ? '#82BEFF' : '#F6F6F6'} !important`,
-              color: 'black',
-              '&:hover': { backgroundColor: '-moz-initial', color: 'black' },
-            }}
-            disableRipple
-            disableTouchRipple
-            disableElevation
-            onClick={() => handleButtonClick('billable')}
-          >
-            Billable
-          </Button>
-          <Button
-            variant='text'
-            sx={{
-              bgcolor: `${info?.type === ProjectType.nonBillable ? '#82BEFF' : '#F6F6F6'} !important`,
-              color: 'black',
-              '&:hover': { backgroundColor: '-moz-initial', color: 'black' },
-            }}
-            disableRipple
-            disableTouchRipple
-            disableElevation
-            onClick={() => handleButtonClick('non-billable')}
-          >
-            Non-billable
-          </Button>
-        </ButtonGroup>
-        <Button
-          onClick={() => {
-            setInfo((prevInfo: { isTentative: any }) => ({
-              ...prevInfo,
-              isTentative: !prevInfo.isTentative,
-            }));
-          }}
-          disableFocusRipple
-          disableRipple
-          disableTouchRipple
-          disableElevation
-          sx={{
-            backgroundColor: `${info?.isTentative ? '#82BEFF' : '#F6F6F6'} !important`,
-            color: 'black',
-            '&:hover': { backgroundColor: '-moz-initial', color: 'black' },
-          }}
-        >
-          Tentative
-        </Button>
-      </Stack>
-
-      <FormControl fullWidth sx={{ py: 1 }}>
-        <Typography>Budget</Typography>
-        <Select
-          onChange={(e) => {
-            setInfo((prevInfo: any) => ({
-              ...prevInfo,
-              budget: e.target.value as number,
-            }));
-          }}
-          value={info?.budget}
-        >
-          {Object.entries(BUDGET_VALUE).map(([key, value]) => (
-            <MenuItem key={key} value={parseInt(key)}>
-              {value}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
     </Box>
   );
 };
 
-export default InfoSubBody;
+export default AvailSubBody;
