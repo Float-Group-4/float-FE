@@ -3,15 +3,16 @@ import React, { useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 
 interface SecondMenu {
-  data: [];
+  anchor: null | HTMLElement;
   category: {
-    label: String;
+    label: string;
     icon: React.ReactNode;
-  };
+  } | null;
 }
 
-const SecondMenu = ({ data, category }: SecondMenu) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+const SecondMenu = ({ anchor, category }: SecondMenu) => {
+  var data: any[] = [];
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(anchor);
 
   const open = Boolean(anchorEl);
 

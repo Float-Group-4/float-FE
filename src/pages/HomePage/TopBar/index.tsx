@@ -36,6 +36,7 @@ import React, { useState } from 'react';
 import { useScheduleContext } from '../Schedule/ScheduleContext';
 import dayjs from 'dayjs';
 import AddButtonMultiplePurpose from './AddButtonMultiplePurpose';
+import SecondMenu from '../Components/FilterMenu/SecondMenu';
 
 const options = ['Schedule', 'Project Plan', 'Log Team'];
 const densityOptions = [
@@ -82,6 +83,10 @@ export default function TopBar() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedZoomMode, setSelectedZoomMode] = useState(1);
   const [selectedDensity, setSelectedDensity] = useState(0);
+  const [selectedFilterOption, setSelectedFilterOption] = useState<{
+    label: string;
+    icon: React.ReactNode;
+  } | null>(null);
 
   const open = Boolean(anchorEl);
   const openZoomModeMenu = Boolean(zoomModeAnchorEl);
@@ -134,6 +139,11 @@ export default function TopBar() {
   const handleCloseFilterMenu = () => {
     setFilterAnchorEl(null);
   };
+
+  const handleFilterItemClick = (option: any) => {
+    setSelectedFilterOption(option);
+  };
+
   return (
     <div className='py-4 pl-2 pr-4 bg-gray-100'>
       <div className='h-8 flex justify-between items-center'>
@@ -193,6 +203,8 @@ export default function TopBar() {
           >
             <LayersOutlinedIcon fontSize='small' />
           </IconButton>
+
+          {/* Filter Button */}
           <Button
             variant='outlined'
             className='rounded-md'
@@ -215,7 +227,10 @@ export default function TopBar() {
             <Divider className='mb-2' />
             {filterOptions.map((option, index) => (
               <div>
-                <MenuItem className='h-8 w-60 px-3 py-3 mx-2 rounded-lg my-1'>
+                <MenuItem
+                  className='h-8 w-60 px-3 py-3 mx-2 rounded-lg my-1'
+                  onClick={handleFilterItemClick}
+                >
                   <ListItemIcon>{option.icon}</ListItemIcon>
                   <ListItemText>{option.label}</ListItemText>
                 </MenuItem>
@@ -223,6 +238,7 @@ export default function TopBar() {
               </div>
             ))}
           </Menu>
+          <SecondMenu anchor={filterAnchorEl} category={selectedFilterOption} />
         </div>
         {/* Right Nav Content */}
         <div className='flex gap-4'>
