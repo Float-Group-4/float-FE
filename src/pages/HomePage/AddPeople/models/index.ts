@@ -13,8 +13,8 @@ export interface PersonInfo{
 }
 
 export interface Availability{
-    startDate: Date;
-    endDate?: Date;
+    startDate: string;
+    endDate?: string;
     workingType: WorkingType;
     publicHoliday?: string;
     note?: string;

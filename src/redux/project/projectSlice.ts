@@ -177,7 +177,9 @@ const projectSlice = createSlice({
       }>,
     ) => {
       const { project, members, milestones, tasks } = action.payload;
-      state.project.push({ project, members, milestones, tasks });
+      console.log(action.payload);
+      state.project = [{ project, members, milestones, tasks }, ...state.project];
+      console.log(state.project);
     },
     updateProject: (
       state,

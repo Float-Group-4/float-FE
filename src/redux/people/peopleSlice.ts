@@ -27,8 +27,8 @@ const initialState: PeopleState = {
       name: 'Luu Tuan Quan',
       accountType: AccountType.admin,
       availability: {
-        startDate: new Date(),
-        endDate: new Date(),
+        startDate: new Date().toDateString(),
+        endDate: new Date().toDateString(),
         workingType: WorkingType.fullTime,
         publicHoliday: 'Tet',
         note: 'I am a person hihihi',
@@ -46,8 +46,8 @@ const initialState: PeopleState = {
       name: 'Huynh Minh Bao',
       accountType: AccountType.member,
       availability: {
-        startDate: new Date(),
-        endDate: new Date(),
+        startDate: new Date().toDateString(),
+        endDate: new Date().toDateString(),
         workingType: WorkingType.fullTime,
         publicHoliday: 'Summer',
         note: 'I am a w hihihi',
@@ -65,8 +65,8 @@ const initialState: PeopleState = {
       name: 'Le Minh Nhat',
       accountType: AccountType.member,
       availability: {
-        startDate: new Date(),
-        endDate: new Date(),
+        startDate: new Date().toDateString(),
+        endDate: new Date().toDateString(),
         workingType: WorkingType.fullTime,
         publicHoliday: '',
         note: 'Nhat note',
@@ -84,8 +84,8 @@ const initialState: PeopleState = {
       name: 'Nguyen Ngoc Quang',
       accountType: AccountType.admin,
       availability: {
-        startDate: new Date(),
-        endDate: new Date(),
+        startDate: new Date().toDateString(),
+        endDate: new Date().toDateString(),
         workingType: WorkingType.fullTime,
         publicHoliday: 'Tet, Summer',
         note: 'I am a Quang hihihi',
@@ -112,7 +112,8 @@ const peopleSlice = createSlice({
       }>,
     ) => {
       const { person } = action.payload;
-      state.people.push(person);
+      console.log(person);
+      state.people = [person, ...state.people];
     },
     updatePeople: (
       state,

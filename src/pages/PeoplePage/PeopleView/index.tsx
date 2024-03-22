@@ -41,24 +41,6 @@ function CheckboxGroup() {
 
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const peopleList = useAppSelector((state) => state.people.people);
-
-  if (rows.length == 0)
-  peopleList.forEach((p) => {
-    rows.push(
-      createData(
-        +p.id,
-        p.id,
-        p.name,
-        p.accountType.toString(),
-        p.role ?? '',
-        p.department ?? '',
-        p.accountType.toString(),
-        (p.tags ?? []).join(', '),
-        p.type.toString(),
-      ),
-    );
-  });
 
   const onChange = (checked: boolean, index: number) => {
     console.log('checkedList', checkedList);
@@ -171,10 +153,21 @@ function CheckboxGroup() {
 }
 
 export default function PeopleView() {
-  return (
+    const peopleList = useAppSelector((state) => state.people.people);
+return (
     <div className='bg-white flex-1 h-full px-9 py-3'>
       {CheckboxGroup()}
-      {CustomizedTables(rows)}
+      {CustomizedTables(peopleList.map((p) => createData(
+        p.id,
+        p.id,
+        p.name,
+        p.accountType.toString(),
+        p.role ?? '',
+        p.department ?? '',
+        p.accountType.toString(),
+        (p.tags ?? []).join(', '),
+        p.type.toString(),
+      ),))}
       <Box sx={{ width: '100%' }} className='content-center flex flex-col items-center mx-0 mr-5'>
         <Stack spacing={3} direction='column' className='flex content-center align-center'>
           <div className='content-center' style={{ marginLeft: -20 }}>

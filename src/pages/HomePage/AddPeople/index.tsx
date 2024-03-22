@@ -16,6 +16,9 @@ import AvailSubBody from './components/AvailabilityTab';
 import ProjectSubBody from './components/ProjectTab';
 import { PersonInfo, Availability, WorkingType, ContractType, AccountType } from './models';
 import MiModalModified from './components/MiModalModified';
+import { useAppDispatch } from '@hooks/reduxHooks';
+import { addPeople } from '../../../redux/people/peopleSlice'; 
+import { generateUUID } from '@base/utils/uuid';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -168,7 +171,7 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
   const { sx, isOpen, setIsOpen } = props;
 
   const avail: Availability = {
-    startDate: new Date(),
+    startDate: new Date().toDateString(),
     workingType: WorkingType.partTime
   }
   const sampleData: PersonInfo = {
@@ -179,9 +182,12 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
     accountType: AccountType.member
   }
 
+  const dispatch = useAppDispatch();
+
   const [personInfoData, setPersonInfoData] = useState<PersonInfo>(sampleData);
 
   const handleSave = () => {
+    dispatch(addPeople({person: {...personInfoData, id: generateUUID()}}));
     setIsOpen(false);
   };
 

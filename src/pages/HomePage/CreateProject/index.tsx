@@ -17,6 +17,10 @@ import MilestoneSubBody from './components/CreateProjectMilestoneTab';
 import TeamSubBody from './components/CreateProjectTeamTab';
 import TaskListSubBody from './components/CreateProjectTaskTab';
 import { ProjectType } from '../../../types/enums';
+import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
+import { addProject } from '../../../redux/project/projectSlice';
+import { generateUUID } from '@base/utils/uuid';
+
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -179,6 +183,8 @@ const CreateProjectModal = (props: CreateProjectModalProps) => {
   const theme = useTheme();
 
   const { sx, isOpen, setIsOpen } = props;
+  const dispatch = useAppDispatch();
+
 
   const defaultColor = '#3451b2';
   const defaultProjectInfo: ProjectInfo = {
@@ -207,6 +213,9 @@ const CreateProjectModal = (props: CreateProjectModalProps) => {
   const [taskData, setTaskData] = useState<ProjectTask[] | null>(demoForTasks);
 
   const handleSave = () => {
+    var p ={project: {...infoData, name: projectName, id: generateUUID(),}, members: teamData ?? [], milestones: mileStoneData ?? [], tasks: taskData ?? [],};
+    console.log(p);
+    dispatch(addProject(p));
     setIsOpen(false);
   };
 
@@ -234,7 +243,7 @@ const CreateProjectModal = (props: CreateProjectModalProps) => {
             fullWidth
             placeholder='Project name'
             value={projectName}
-            onChange={(e) => setProjectName(e.target.value.trim())}
+            onChange={(e) => setProjectName(e.target.value)}
             InputProps={{
               disableUnderline: true,
               sx: { fontSize: '22px' },

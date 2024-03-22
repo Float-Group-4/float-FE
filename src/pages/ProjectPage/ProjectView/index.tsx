@@ -36,24 +36,6 @@ function CheckboxGroup() {
   // const [densityAnchorEl, setDensityAnchorEl] = useState<null | HTMLElement>(null);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const projectList = useAppSelector((state) => state.project.project);
-
-  if (rows.length == 0)
-  projectList.forEach((p) => {
-    rows.push(
-      createData(
-        +p.project.id,
-        p.project.id,
-        p.project.name,
-        (p.project.tags ?? []).join(", "),
-        p.project.client ?? "",
-        (p.project.budget ?? 0).toString(),
-        p.milestones[0].startDate,
-        p.milestones[0].endDate,
-        p.project.owner ?? "",
-      ),
-    );
-  });
 
   const onChange = (checked: boolean, index: number) => {
     console.log('checkedList', checkedList);
@@ -166,10 +148,22 @@ function CheckboxGroup() {
 }
 
 export default function ProjectView() {
+  const projectList = useAppSelector((state) => state.project.project);
+
   return (
     <div className='bg-white flex-1 h-full px-9 py-3'>
       {CheckboxGroup()}
-      {CustomizedTables(rows)}
+      {CustomizedTables(projectList.map((p) =>  createData(
+        p.project.id,
+        p.project.id,
+        p.project.name,
+        (p.project.tags ?? []).join(", "),
+        p.project.client ?? "",
+        (p.project.budget ?? 0).toString(),
+        p.milestones.length > 0 ? p.milestones[0].startDate : "Null",
+        p.milestones.length > 0 ? p.milestones[0].endDate : "Null",
+        p.project.owner ?? "",
+      ),))}
       <Box sx={{ width: '100%' }} className='content-center flex flex-col items-center mx-0 mr-5'>
         <Stack spacing={3} direction='column' className='flex content-center align-center'>
           <div className='content-center' style={{ marginLeft: -20 }}>
