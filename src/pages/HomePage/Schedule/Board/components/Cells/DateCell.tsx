@@ -73,7 +73,6 @@ export default function DateCell() {
   const handleMouseMove = (e: MouseEvent) => {
     if (!boardRef) return;
     if (!dragInfo.current) return;
-    console.log('Move: ', dragInfo.current);
     if (nonDrag.current === true) {
       e.stopPropagation();
       e.preventDefault();
@@ -246,13 +245,7 @@ export default function DateCell() {
             },
           }),
         );
-        console.log({
-          from: { dayIndex: newFromIndex, weekIndex: dayIndexToWeekIndex(newFromIndex) },
-          to: {
-            dayIndex: newFromIndex + w - 1,
-            weekIndex: dayIndexToWeekIndex(newFromIndex + w - 1),
-          },
-        });
+
         lastdayIndex = dayIndex;
       }
       timeLineRef.current.style.cursor = 'grabbing';
