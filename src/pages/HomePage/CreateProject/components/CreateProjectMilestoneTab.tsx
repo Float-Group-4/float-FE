@@ -126,10 +126,12 @@ const MilestoneSubBody: React.FC<MileStoneProp> = ({ mileStone, setMileStone }) 
         </Stack>
       </Box>
       <Box minHeight='30vh'>
-        {totalMileStone == 0 ? (
-          <Typography variant='body1' alignSelf='center'>
-            There are no milestones for this project.
-          </Typography>
+        {totalMileStone == 0 || mileStone == null ? (
+          <Box padding={10}>
+            <Typography variant='body1' align='center' fontSize={17}>
+              There are no milestones for this project.
+            </Typography>
+          </Box>
         ) : (
           <List sx={{ m: 0, px: 2, pt: 1 }}>
             {mileStone?.map((ms, index) => (
