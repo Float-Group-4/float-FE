@@ -20,6 +20,7 @@ import { BUDGET_VALUE, ProjectInfo } from '../models';
 
 import ColorSelectPopover from './ColorSelectIcon';
 import { ProjectType } from '../../../../types/enums';
+
 import { adjustSectionValue } from '@mui/x-date-pickers/internals/hooks/useField/useField.utils';
 
 interface InfoProp {
@@ -112,7 +113,7 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
           <Button
             variant='text'
             sx={{
-              bgcolor: `${info?.type === 'billable' ? '#82BEFF' : '#F6F6F6'} !important`,
+              bgcolor: `${info?.type === ProjectType.billable ? '#82BEFF' : '#F6F6F6'} !important`,
               color: 'black',
               '&:hover': { backgroundColor: '-moz-initial', color: 'black' },
             }}
@@ -126,7 +127,7 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
           <Button
             variant='text'
             sx={{
-              bgcolor: `${info?.type === 'non-billable' ? '#82BEFF' : '#F6F6F6'} !important`,
+              bgcolor: `${info?.type === ProjectType.nonBillable ? '#82BEFF' : '#F6F6F6'} !important`,
               color: 'black',
               '&:hover': { backgroundColor: '-moz-initial', color: 'black' },
             }}

@@ -18,7 +18,7 @@ import { visuallyHidden } from '@mui/utils';
 import "./noborder.css"
 
 export interface Data {
-  id: number;
+  id: string;
   _id: string;
   name: string;
   role: string;
@@ -30,7 +30,7 @@ export interface Data {
 }
 
 export function createData(
-  id: number,
+  id: string,
   _id: string,
   name: string,
   role: string,
