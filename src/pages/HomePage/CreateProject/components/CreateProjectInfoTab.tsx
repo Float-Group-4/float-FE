@@ -21,86 +21,7 @@ import { BUDGET_VALUE, ProjectInfo } from '../models';
 import ColorSelectPopover from './ColorSelectIcon';
 import { ProjectType } from '../../../../types/enums';
 
-interface CustomTextFieldProps {
-  placeHolder: string;
-  showClearIcon: boolean;
-  showDropdownIcon: boolean;
-  name: string;
-}
-
-const CustomTextField: React.FC<CustomTextFieldProps> = ({
-  placeHolder,
-  showClearIcon,
-  showDropdownIcon,
-  name,
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [anchor, setAnchor] = useState<HTMLDivElement | null>(null);
-  const [currentText, setCurrentText] = useState('');
-
-  const handleClose = () => {
-    setIsOpen(false);
-    setAnchor(null);
-  };
-
-  const onInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAnchor(e.currentTarget);
-    setIsOpen(true);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentText(e.target.value.trim());
-  };
-
-  return (
-    <Box>
-      <TextField
-        size='medium'
-        value={currentText}
-        placeholder={placeHolder}
-        onInput={onInput}
-        onChange={handleChange}
-        sx={{ maxWidth: '90%', minWidth: '100%' }}
-        InputProps={{
-          endAdornment: (
-            <Stack direction='row'>
-              {currentText.length > 0 && showClearIcon && (
-                <IconButton onClick={handleClose}>
-                  <Close />
-                </IconButton>
-              )}
-              {showDropdownIcon && (
-                <IconButton onClick={handleClose}>
-                  <ArrowDropDown />
-                </IconButton>
-              )}
-            </Stack>
-          ),
-        }}
-      />
-      <Popover
-        id='simple-popover'
-        open={isOpen}
-        anchorEl={anchor}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-      >
-        <ClickAwayListener onClickAway={handleClose}>
-          <Typography>
-            <Button onClick={handleClose}>Add "{currentText}"</Button>
-          </Typography>
-        </ClickAwayListener>
-      </Popover>
-    </Box>
-  );
-};
+import { adjustSectionValue } from '@mui/x-date-pickers/internals/hooks/useField/useField.utils';
 
 interface InfoProp {
   info: ProjectInfo;
@@ -109,6 +30,8 @@ interface InfoProp {
 
 const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
   const [tags, setTags] = useState<string[]>([]);
+
+  const clients: string[] = [];
 
   const handleButtonClick = (newType: string) => {
     setInfo((prevInfo: any) => ({
@@ -134,17 +57,21 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
     }));
   };
 
-  console.log(info?.type);
-
   return (
     <Box paddingX={3}>
       <FormControl fullWidth>
         <Typography>Client</Typography>
-        <CustomTextField
-          placeHolder='No client'
-          showDropdownIcon={true}
-          showClearIcon={false}
-          name='client'
+        <Autocomplete
+          open={clients.length > 0}
+          options={clients}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              name='client'
+              value={info?.client}
+              onChange={(e) => handleValueChange(e)}
+            />
+          )}
         />
       </FormControl>
       <Box sx={{ mt: 2 }}>

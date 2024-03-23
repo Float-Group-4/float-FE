@@ -136,7 +136,7 @@ const ModalBody: React.FC<ModalBodyProps> = ({
             wrapped
           />
           <Tab
-            label={`Milestones ${mileStone?.length ?? 0}`}
+            label={`Milestones ${mileStone?.length == 0 || mileStone == null ? '' : mileStone?.length}`}
             {...a11yProps(2)}
             sx={{
               fontSize: '15px',

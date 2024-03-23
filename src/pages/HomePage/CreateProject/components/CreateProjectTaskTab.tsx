@@ -25,7 +25,6 @@ const TaskListSubBody: React.FC<TaskProp> = ({ tasks, setTasks }) => {
   const [currentName, setCurrentName] = useState<string>('');
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
   const [checkedTasks, setCheckedTasks] = useState<ProjectTask[]>([]);
-  const [isAll, setIsAll] = useState(false);
   const [isManagerOnly, setIsManagerOnly] = useState(false);
 
   const setBillable = (index: number) => {
@@ -87,12 +86,6 @@ const TaskListSubBody: React.FC<TaskProp> = ({ tasks, setTasks }) => {
     } else {
       setCheckedTasks((prevCheckedTasks) => [...prevCheckedTasks, task]);
     }
-
-    if (checkedTasks.length > 0) {
-      setIsAll(true);
-    } else {
-      setIsAll(false);
-    }
   };
 
   const addNewTask = () => {
@@ -111,9 +104,6 @@ const TaskListSubBody: React.FC<TaskProp> = ({ tasks, setTasks }) => {
   const addOrRemoveAll = () => {
     if (checkedTasks.length > 0) {
       setCheckedTasks([]);
-      setIsAll(true);
-    } else {
-      setIsAll(false);
     }
   };
 
@@ -142,13 +132,22 @@ const TaskListSubBody: React.FC<TaskProp> = ({ tasks, setTasks }) => {
         </ListItem>
       </Box>
 
-      <Box height='50vh'>
-        {tasks?.length === 0 || tasks === null ? (
+      <Box height='30vh'>
+        {tasks?.length == 0 || tasks == null ? (
           <Box display='flex' alignItems='center' justifyContent='center'>
             <ListItemText
-              primary='Project has no tasks'
-              secondary=' You can still allocate this project on the schedule, however you won’t be able to
-                assign specific tasks.'
+              sx={{ paddingX: 10, paddingY: 5 }}
+              primary={
+                <Typography align='center' fontSize={20} fontWeight={450}>
+                  Project has no tasks
+                </Typography>
+              }
+              secondary={
+                <Typography paddingX={10} align='center'>
+                  You can still allocate this project on the schedule, however you won’t be able to
+                  assign specific tasks.
+                </Typography>
+              }
             />
           </Box>
         ) : (
@@ -156,7 +155,11 @@ const TaskListSubBody: React.FC<TaskProp> = ({ tasks, setTasks }) => {
             {checkedTasks.length > 0 ? (
               <Box display='flex' alignItems='center' paddingRight={3}>
                 <ListItem>
-                  <Checkbox value={isAll} onChange={addOrRemoveAll} sx={{ m: 0, p: 0 }} />
+                  <Checkbox
+                    value={checkedTasks.length > 0}
+                    onChange={addOrRemoveAll}
+                    sx={{ m: 0, p: 0 }}
+                  />
                   <ListItemText>{checkedTasks.length} selected</ListItemText>
                 </ListItem>
 
@@ -192,6 +195,7 @@ const TaskListSubBody: React.FC<TaskProp> = ({ tasks, setTasks }) => {
                 <ListItem>
                   <ListItemText></ListItemText>
                 </ListItem>
+                <ButtonGroup></ButtonGroup>
               </Box>
             )}
 
