@@ -246,7 +246,11 @@ const CornerCell = () => {
         {timeRange && timeScoreRef.current && (
           <Tooltip
             title={
-              <div>{`Total Scheduled Time: ${timeScoreRef.current.scheduledTime.toFixed(2)}h`}</div>
+              <div>
+                <div>{`${timeScoreRef.current.scheduledTime.toFixed(2)}h scheduled`}</div>
+                <div>{`${timeScoreRef.current.unscheduledTime.toFixed(2)}h unscheduled`}</div>
+                <div>{`${timeScoreRef.current.totalOT.toFixed(2)}h overtime`}</div>
+              </div>
             }
             arrow
             placement='right'
@@ -254,8 +258,13 @@ const CornerCell = () => {
             <Chip
               variant='light'
               size='small'
-              label={`${timeScoreRef.current.scheduledTime.toFixed(2)}h`}
-              sx={{ '& .MuiChip-label ': { color: theme.palette.text.primary } }}
+              color={timeScoreRef.current.totalOT === 0 ? 'secondary' : 'error'}
+              label={`${timeScoreRef.current.scheduledTime.toFixed(0)}h`}
+              sx={
+                timeScoreRef.current.totalOT === 0
+                  ? { '& .MuiChip-label ': { color: theme.palette.text.primary } }
+                  : {}
+              }
             />
           </Tooltip>
         )}

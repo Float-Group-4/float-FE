@@ -30,16 +30,25 @@ export const SideCell = ({ userId }: { userId: string }) => {
           </Stack>
           {timeRange && (
             <Tooltip
-              title={<div>{`Scheduled Time: ${scheduledTime[user.id]?.scheduledTime || 0}h`}</div>}
+              title={
+                <div>
+                  <div>{`${scheduledTime[user.id]?.scheduledTime.toFixed(2) || 0}h/${scheduledTime[user.id]?.totalTime.toFixed(0) || 0}h capacity`}</div>
+                  <div>{`${scheduledTime[user.id]?.overtime.toFixed(2) || 0}h overtime`}</div>
+                </div>
+              }
               arrow
               placement='right'
             >
               <Chip
                 variant='light'
                 size='small'
-                color='secondary'
+                color={scheduledTime[user.id]?.overtime === 0 ? 'secondary' : 'error'}
                 label={`${scheduledTime[user.id]?.scheduledTime || 0}h`}
-                sx={{ '& .MuiChip-label ': { color: theme.palette.text.primary } }}
+                sx={
+                  scheduledTime[user.id]?.overtime === 0
+                    ? { '& .MuiChip-label ': { color: theme.palette.text.primary } }
+                    : {}
+                }
               />
             </Tooltip>
           )}
