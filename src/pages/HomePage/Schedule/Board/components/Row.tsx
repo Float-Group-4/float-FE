@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
-import React, { MouseEvent, memo, useRef, useState } from 'react';
+import React, { MouseEvent, memo, useEffect, useRef, useState } from 'react';
 import VisibilitySensor from 'react-visibility-sensor';
 import { setItemActivity } from '../../../../../redux/activity/activitySlice';
 import { isNonWorkingDay } from '../../../../../utilities/helper';
@@ -83,6 +83,8 @@ export default memo(function Row({ userId, className }: { userId: string; classN
     }
   };
 
+  useEffect(() => console.log(rowMap), [null]);
+
   return (
     <VisibilitySensor partialVisibility>
       {({ isVisible }: { isVisible: boolean }) => {
@@ -142,6 +144,15 @@ export default memo(function Row({ userId, className }: { userId: string; classN
                       height: `${rowHeight + 1 - (isWorkloadMode ? WORKLOAD_ROW_HEIGHT : 0)}px`,
                     }}
                   >
+                    {rowMap.statusItems.map((id: string) => {
+                      console.log('Status');
+                      return (
+                        <div
+                          key={id}
+                          className={'bottom-1 right-1 w-20 h-20 border-red border-2 statusMark'}
+                        ></div>
+                      );
+                    })}
                     {rowMap.items.map((id: string) => {
                       return <ItemCard key={id} id={id} rowId={rowMap.id} />;
                     })}

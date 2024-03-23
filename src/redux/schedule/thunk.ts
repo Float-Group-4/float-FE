@@ -29,7 +29,7 @@ export const buildRows = createAsyncThunk(
   (rowIds: string[], { getState, dispatch }) => {
     const state: RootState = getState() as RootState;
 
-    const { itemsById, rowMap, usersById } = state.general;
+    const { itemsById, timeOffItemsById, statusItemsById, rowMap, usersById } = state.general;
     const displayingWeeks = state.schedule.displayingWeeks;
     const isHiddenWeekend = state.settings.isHiddenWeekend;
     const defaultMinute = state.settings.defaultMinute;
@@ -42,6 +42,8 @@ export const buildRows = createAsyncThunk(
       .flat();
     const uniqueId: string[] = uniq(uniqueListId);
     const plannedItems = Object.keys(itemsById);
+    const timeOffItems = Object.keys(timeOffItemsById);
+    const statusItems = Object.keys(statusItemsById);
     const workHourFormat = state.settings.workHourFormat;
     const isDividedByDays = workHourFormat == 1 ? true : false; // Total Hours will be divided by days within timeline
     const isDividedByPeople = state.settings.isDividedByPeople;
@@ -61,10 +63,70 @@ export const buildRows = createAsyncThunk(
         const userIds = itemsById[itemId].userIds;
         return userIds.includes(id);
       });
+      row.timeOffItems = timeOffItems.filter((itemId: string) => {
+        // check if exactly this time off avalable for this user id
+        const userIds = timeOffItemsById[itemId].userIds;
+        return userIds.includes(id);
+      });
+      row.statusItems = statusItems.filter((itemId: string) => {
+        // check if exactly this status avalable for this user id
+        const userIds = statusItemsById[itemId].userIds;
+        return userIds.includes(id);
+      });
 
       row.items.sort((id1: string, id2: string) => {
         const itemA = itemsById[id1];
         const itemB = itemsById[id2];
+
+        const { x: xA, w: wA } = getHorizontalDimensions({
+          from: itemA.startDate,
+          to: itemA.endDate,
+        });
+        const { x: xB, w: wB } = getHorizontalDimensions({
+          from: itemB.startDate,
+          to: itemB.endDate,
+        });
+
+        if (wA > wB) return -1;
+        if (wA < wB) return 1;
+
+        if (xA < xB) return -1;
+        if (xA > xB) return 1;
+
+        // if (itemA.created_at > itemB.created_at) return -1;
+        // if (itemA.created_at < itemB.created_at) return 1;
+
+        return 0;
+      });
+
+      row.timeOffItems.sort((id1: string, id2: string) => {
+        const itemA = timeOffItemsById[id1];
+        const itemB = timeOffItemsById[id2];
+
+        const { x: xA, w: wA } = getHorizontalDimensions({
+          from: itemA.startDate,
+          to: itemA.endDate,
+        });
+        const { x: xB, w: wB } = getHorizontalDimensions({
+          from: itemB.startDate,
+          to: itemB.endDate,
+        });
+
+        if (wA > wB) return -1;
+        if (wA < wB) return 1;
+
+        if (xA < xB) return -1;
+        if (xA > xB) return 1;
+
+        // if (itemA.created_at > itemB.created_at) return -1;
+        // if (itemA.created_at < itemB.created_at) return 1;
+
+        return 0;
+      });
+
+      row.statusItems.sort((id1: string, id2: string) => {
+        const itemA = statusItemsById[id1];
+        const itemB = statusItemsById[id2];
 
         const { x: xA, w: wA } = getHorizontalDimensions({
           from: itemA.startDate,
@@ -162,6 +224,68 @@ export const buildRows = createAsyncThunk(
         }
       });
       row.itemPosition = itemPosition;
+
+      row.statusItems.forEach((tid: number, idx: number, items: any) => {
+        const item = itemsById[tid];
+        const { x, w } = getHorizontalDimensions({ from: item.startDate, to: item.endDate });
+        console.log(x, w);
+        /* ---------------------------- Calculate height ---------------------------- */
+        for (let i = x; i < x + w; i++) {
+          const hour = standardizeHour(item, item.hour ?? defaultHour, 1);
+          dayCell[i] ??= { dayCapacity: 0, firstOTItem: item, isStable: false, overTimeDisplay: 0 };
+          dayCell[i].dayCapacity += item.hour / 1 || defaultHour;
+          if (dayCell[i].dayCapacity > defaultHour && !dayCell[i].isStable) {
+            dayCell[i].firstOTItem = item;
+            dayCell[i].isStable = true;
+            dayCell[i].overTimeDisplay = Math.max(
+              defaultHour - dayCell[i].dayCapacity,
+              ITEM_MIN_HEIGHT,
+            );
+          }
+
+          cellHeight[i] ??= 0;
+
+          cellHeight[i] += hour;
+          row.height = Math.max(cellHeight[i], row.height);
+        }
+
+        row.dayCell = dayCell;
+
+        /* ------------------------------- Calculate y ------------------------------ */
+        itemPosition[tid] ??= 0;
+        const itemHour = Math.max(defaultHour, item.hour / 1 ?? defaultHour);
+
+        for (let i = 0; i < idx; i++) {
+          const otherItem = itemsById[items[i]];
+
+          const otherItemHours = standardizeHour(otherItem, defaultHour, 1);
+          const otherItemTimeline = otherItem.startDate && otherItem.endDate;
+          if (!otherItemTimeline) continue;
+
+          if (
+            isDayOverlapped(
+              {
+                from: moment(item.startDate, 'YYYY-MM-DD').toDate(),
+                to: moment(item.endDate, 'YYYY-MM-DD').toDate(),
+              },
+              {
+                from: moment(otherItem.startDate, 'YYYY-MM-DD').toDate(),
+                to: moment(otherItem.endDate, 'YYYY-MM-DD').toDate(),
+              },
+            )
+          ) {
+            itemPosition[tid] = Math.max(
+              itemPosition[tid],
+              itemPosition[otherItem.id] + otherItemHours + GAP_BETWEEN_ITEM,
+            );
+          }
+          row.height = Math.max(
+            itemPosition[tid] + Math.max(itemHour, ITEM_MIN_HEIGHT),
+            row.height,
+          );
+          row.height = Math.max(row.height, itemPosition[otherItem.id] + otherItemHours);
+        }
+      });
 
       return row;
     });
