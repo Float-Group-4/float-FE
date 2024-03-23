@@ -171,11 +171,28 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
       selectionRef.current.style.width = `${(end - start + 1) * cellWidth}px`;
     }
   };
-  const onTimeRangeDrag = () => {};
+  const onTimeRangeDrag = () => {
+    if (!dragInfo.current) return;
+    const { smp } = dragInfo.current;
+    if (smp) {
+      dragInfo.current.emp = mousePositionRef.current;
+      const start = Math.min(smp.dayIndex, mousePositionRef.current.dayIndex);
+      const end = Math.max(smp.dayIndex, mousePositionRef.current.dayIndex);
+      if (!timeRangeSelectionRef.current) return;
+      timeRangeSelectionRef.current.style.left = `${start * cellWidth}px`;
+      timeRangeSelectionRef.current.style.width = `${(end - start + 1) * cellWidth}px`;
+      timeRangeSelectionRef.current.style.cursor = `grabbing !important`;
+    }
+  };
 
   /* -------------------------- FastForward and JumpToItem ------------------------- */
 
-  const fastForward = (destinationWeekIndex: number) => {};
+  const fastForward = (destinationWeekIndex: number) => {
+    if (destinationWeekIndex < 0) return;
+    if (scrollRef) {
+      scrollRef.current.scrollTo({ left: destinationWeekIndex * mainCellWidth });
+    }
+  };
 
   const fastForwardDate = (destinationDay: string | Dayjs) => {
     console.log(destinationDay);

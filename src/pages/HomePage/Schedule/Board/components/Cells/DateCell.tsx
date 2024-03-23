@@ -6,7 +6,10 @@ import { ResizeDirection } from '../../../../../../../src/types/enums';
 import { CALENDAR_BAR_HEIGHT, STARTING_POINT } from '../../common/constant';
 import { dayIndexToDay, dayIndexToWeekIndex, weekIndexToDay } from '../../common/helper';
 import { DragInfo, ViewType } from '../../common/type';
+import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
+import CloseIcon from '@mui/icons-material/Close';
 import dayjs from 'dayjs';
+import { IconButton } from '@mui/material';
 
 export default function DateCell() {
   const dispatch = useAppDispatch();
@@ -70,6 +73,7 @@ export default function DateCell() {
   const handleMouseMove = (e: MouseEvent) => {
     if (!boardRef) return;
     if (!dragInfo.current) return;
+    console.log('Move: ', dragInfo.current);
     if (nonDrag.current === true) {
       e.stopPropagation();
       e.preventDefault();
@@ -119,7 +123,6 @@ export default function DateCell() {
     document.body.removeEventListener('mouseup', handleMouseUp);
     autoscroller?.current.disable();
   };
-
   // ------------- RESIZE TIME BAR ---------------
 
   const onTimeRangeResizeStart = (e: React.MouseEvent, edge: string) => {
@@ -243,6 +246,13 @@ export default function DateCell() {
             },
           }),
         );
+        console.log({
+          from: { dayIndex: newFromIndex, weekIndex: dayIndexToWeekIndex(newFromIndex) },
+          to: {
+            dayIndex: newFromIndex + w - 1,
+            weekIndex: dayIndexToWeekIndex(newFromIndex + w - 1),
+          },
+        });
         lastdayIndex = dayIndex;
       }
       timeLineRef.current.style.cursor = 'grabbing';
@@ -279,7 +289,7 @@ export default function DateCell() {
       {isTimeRangeSelect && (
         <div
           ref={timeRangeSelectionRef}
-          className='absolute rounded-t-md bottom-0 !bg-gray-800 h-[24px] z-[1] opacity-30'
+          className='absolute rounded-t-md bottom-0 !bg-blue-300 h-[24px] z-[1] opacity-30'
           style={{
             width: `${cellWidth}px`,
             // @ts-ignore
@@ -311,7 +321,9 @@ export default function DateCell() {
               e.preventDefault();
               onTimeRangeResizeStart(e, ResizeDirection.left);
             }}
-          ></div>
+          >
+            <DragIndicatorIcon className='top-0 h-full w-[8px] cursor-ew-resize' />
+          </div>
 
           <div
             className='ds-timeframe-actions top-0 text-textOnInverted w-[8px] h-full rounded-tr-md absolute cursor-ew-resize z-5 !opacity-100 bg-placeholder !right-0'
@@ -320,22 +332,31 @@ export default function DateCell() {
               e.preventDefault();
               onTimeRangeResizeStart(e, ResizeDirection.right);
             }}
-          ></div>
+          >
+            <DragIndicatorIcon className='top-0 h-full  w-[8px] cursor-ew-resize ' />
+          </div>
           <div
-            className='ds-timeframe-actions absolute flex items-center !opacity-100 h-full  text-textOnInverted float-right right-[10px]'
+            className=' absolute flex items-center !opacity-100 h-full  text-textOnInverted float-right right-[10px] py-2'
             onMouseDown={(e) => {
               e.preventDefault();
               e.stopPropagation();
               dispatch(setTimeRange(null));
             }}
-          ></div>
+          >
+            <IconButton
+              color='default'
+              className='rounded-full h-full aspect-square hover:bg-red-500 hover:text-white'
+              sx={{ width: 16, height: 16 }}
+            >
+              <CloseIcon sx={{ fontSize: 12 }} />
+            </IconButton>
+          </div>
         </div>
       )}
     </div>
   );
 }
 
-// Handle this one to avoid to rerender when dragging item
 const Cells = memo(() => {
   const { mainCellWidth } = useAppSelector((state) => state.scheduleMeasurement);
   const displayingWeeks = useAppSelector((state) => state.schedule.displayingWeeks);
@@ -464,9 +485,9 @@ const HolidayDot = memo(({ day }: { day: string }) => {
     <div
       className={`relative border-red-500 flex ${viewType === ViewType.months ? 'pl-1' : 'pl-3'} gap-1 items-center ${
         isToday && 'text-blue-500 font-medium '
-      } ${isInRange && 'bg-gray-400  '}
-                ${isLeftEdge && 'bg-gray-400   rounded-tl-md'}
-                ${isRightEdge && 'bg-gray-400  rounded-tr-md'} `}
+      } ${isInRange && 'bg-gray-300  '}
+                ${isLeftEdge && 'bg-gray-300   rounded-tl-md'}
+                ${isRightEdge && 'bg-gray-300  rounded-tr-md'} `}
       style={{ width: `${cellWidth}px` }}
     >
       <span className='relative flex items-center h-full gap-1 px-1 hover:bg-blue-500 hover:text-white rounded-t-md'>

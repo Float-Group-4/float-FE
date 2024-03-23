@@ -136,7 +136,7 @@ export const BoardContainer = () => {
       timeRange && (
         <>
           <div
-            className='absolute z-[-1] bottom-0 border-2 h-full !border-link border-solid bg-primary opacity-40'
+            className='absolute z-[-1] bottom-0 border-2 h-full !border-gray-400 border-solid bg-blue-300 opacity-40'
             style={{
               left: `${timeRange.from.dayIndex * cellWidth}px`,
               width: `${(timeRange.to.dayIndex - timeRange.from.dayIndex + 1) * cellWidth}px`,
@@ -189,7 +189,7 @@ export const BoardContainer = () => {
             backgroundSize: `${mainCellWidth}px ${mainCellWidth}px`,
           }}
         />
-        {/* {timeRangeBoard} */}
+        {timeRangeBoard}
       </div>
     </div>
   );
