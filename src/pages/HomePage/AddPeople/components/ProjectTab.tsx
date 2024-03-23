@@ -1,125 +1,91 @@
-import { Box, Button, ClickAwayListener, FormControl, IconButton, List, ListItem, ListItemButton, ListItemText, Popover, Stack, TextField, Typography } from "@mui/material";
-import { PersonInfo } from "../models";
-import { Close, ArrowDropDown } from "@mui/icons-material";
-import { useState } from "react";
-
-interface CustomTextFieldProps {
-    placeHolder: string;
-    showClearIcon: boolean;
-    showDropdownIcon: boolean;
-    name: string;
-}
-
-const CustomTextField: React.FC<CustomTextFieldProps> = ({
-    placeHolder,
-    showClearIcon,
-    showDropdownIcon,
-    name,
-}) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [anchor, setAnchor] = useState<HTMLDivElement | null>(null);
-    const [currentText, setCurrentText] = useState('');
-
-    const handleClose = () => {
-        setIsOpen(false);
-        setAnchor(null);
-    };
-
-    const onInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setAnchor(e.currentTarget);
-        setIsOpen(true);
-    };
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setCurrentText(e.target.value.trim());
-    };
-
-    return (
-        <Box>
-            <TextField
-                size='medium'
-                value={currentText}
-                placeholder={placeHolder}
-                onInput={onInput}
-                onChange={handleChange}
-                name={name}
-                sx={{ maxWidth: '90%', minWidth: '100%' }}
-                InputProps={{
-                    endAdornment: (
-                        <Stack direction='row'>
-                            {currentText.length > 0 && showClearIcon && (
-                                <IconButton onClick={handleClose}>
-                                    <Close />
-                                </IconButton>
-                            )}
-                            {showDropdownIcon && (
-                                <IconButton onClick={handleClose}>
-                                    <ArrowDropDown />
-                                </IconButton>
-                            )}
-                        </Stack>
-                    ),
-                }}
-            />
-            <Popover
-                id='simple-popover'
-                open={isOpen}
-                anchorEl={anchor}
-                onClose={handleClose}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                }}
-            >
-                <ClickAwayListener onClickAway={handleClose}>
-                    <Typography>
-                        <Button onClick={handleClose}>Add "{currentText}"</Button>
-                    </Typography>
-                </ClickAwayListener>
-            </Popover>
-        </Box>
-    );
-};
+import {
+  Autocomplete,
+  AutocompleteRenderInputParams,
+  Box,
+  Button,
+  ClickAwayListener,
+  Divider,
+  FormControl,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Popover,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material';
+import { PersonInfo } from '../models';
+import { Close, ArrowDropDown } from '@mui/icons-material';
+import { ChangeEvent, ReactNode, useState } from 'react';
 
 interface ProjectSubBodyProps {
-    info: PersonInfo,
-    setInfo: (info: any) => void
+  info: PersonInfo;
+  setInfo: (info: any) => void;
 }
 
 const ProjectSubBody = (props: ProjectSubBodyProps) => {
-    const { info, setInfo } = props
-    return (
-        <Box display='flex' flexDirection='column' justifyContent='space-between' paddingX={2}>
-            <Box sx={{ backgroundColor: '#F6F6F6', px: 2, py: 2, borderRadius: '5%' }}>
-                <FormControl fullWidth>
-                    <Typography>Role</Typography>
-                    <CustomTextField
-                        placeHolder=''
-                        showDropdownIcon={true}
-                        showClearIcon={false}
-                        name=''
-                    />
-                </FormControl>
+  const { info, setInfo } = props;
+  const projects = [];
 
+  const setValue = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setInfo((prev: any) => ({
+      ...prev,
+      [`${name}`]: value,
+    }));
+  };
+  return (
+    <Box display='flex' flexDirection='column' justifyContent='space-between' paddingX={2}>
+      <Box sx={{ backgroundColor: '#F6F6F6', px: 2, py: 2, borderRadius: '5px' }}>
+        <FormControl fullWidth>
+          <Typography>Project</Typography>
+          <Autocomplete
+            multiple
+            open={projects.length > 0}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                placeholder='Type and selects projects'
+                variant='outlined'
+                value={info?.projects}
+                name='project'
+                sx={{ bgcolor: 'white' }}
+                onChange={(e) => setValue(e)}
+              />
+            )}
+            options={[]}
+          />
+        </FormControl>
+      </Box>
+      <Box sx={{ height: '30vh' }}>
+        {info.projects?.length == 0 ||
+          (info.projects == null && (
+            <Box justifyContent='center' alignContent='center' display='flex' width='100%'>
+              <Typography padding={10} fontSize={16}>
+                There are no projects assigned to this person.
+              </Typography>
             </Box>
-            <Box sx={{height: '30vh'}}>
-                <List>
-                {info.projects?.map(p => {
-                    return (
-                    <ListItem>
-                        <ListItemText>{p}</ListItemText>
-                        <ListItemButton><Close/></ListItemButton>
-                    </ListItem>);
-                })}
-            </List>
-            </Box>
-            
-        </Box>
-    );
-}
+          ))}
+        <List>
+          {info.projects?.map((p) => {
+            return (
+              <>
+                <ListItem key={p}>
+                  <ListItemText>{p}</ListItemText>
+                  <ListItemButton>
+                    <Close />
+                  </ListItemButton>
+                </ListItem>
+                <Divider />
+              </>
+            );
+          })}
+        </List>
+      </Box>
+    </Box>
+  );
+};
 
 export default ProjectSubBody;

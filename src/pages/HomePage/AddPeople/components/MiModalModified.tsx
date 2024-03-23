@@ -82,7 +82,7 @@ const MiModalModified = (props: MiModalProps) => {
       keepMounted
       onClose={handleOnClose}
       open={isOpen}
-      scroll='body'
+      scroll='paper'
       sx={
         miState.isMinimize
           ? {

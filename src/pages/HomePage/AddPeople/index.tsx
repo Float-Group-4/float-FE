@@ -1,14 +1,5 @@
 import MiModal from '@base/components/MiModal';
-import {
-  useTheme,
-  Typography,
-  TextField,
-  Box,
-  Tabs,
-  Tab,
-  Button,
-  Stack,
-} from '@mui/material';
+import { useTheme, Typography, TextField, Box, Tabs, Tab, Button, Stack } from '@mui/material';
 import React, { useState } from 'react';
 import InfoSubBody from './components/InfoTab';
 import AccessSubBody from './components/AccessTab';
@@ -17,8 +8,9 @@ import ProjectSubBody from './components/ProjectTab';
 import { PersonInfo, Availability, WorkingType, ContractType, AccountType } from './models';
 import MiModalModified from './components/MiModalModified';
 import { useAppDispatch } from '@hooks/reduxHooks';
-import { addPeople } from '../../../redux/people/peopleSlice'; 
+import { addPeople } from '../../../redux/people/peopleSlice';
 import { generateUUID } from '@base/utils/uuid';
+import ManageSubBody from './components/ManageTab';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -63,7 +55,14 @@ const ModalFooter: React.FC<ModalFooterProps> = ({ handleSave, handleClose }) =>
       <Button onClick={handleSave} variant='contained'>
         Add person
       </Button>
-      <Button onClick={handleClose} sx={{ backgroundColor: '#F5F5F5 !important', color: 'black', '&:hover': { bgcolor: '#E1E5F3 !important', color: 'black !important' } }}>
+      <Button
+        onClick={handleClose}
+        sx={{
+          backgroundColor: '#F5F5F5 !important',
+          color: 'black',
+          '&:hover': { bgcolor: '#E1E5F3 !important', color: 'black !important' },
+        }}
+      >
         Cancel
       </Button>
     </Stack>
@@ -75,10 +74,7 @@ interface ModalBodyProps {
   setInfo: (info: PersonInfo) => void;
 }
 
-const ModalBody: React.FC<ModalBodyProps> = ({
-  info,
-  setInfo,
-}) => {
+const ModalBody: React.FC<ModalBodyProps> = ({ info, setInfo }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -132,7 +128,7 @@ const ModalBody: React.FC<ModalBodyProps> = ({
             wrapped
           />
           <Tab
-            label={`Projects ${info.projects?.length ?? ''}`}
+            label={`Projects ${info.projects?.length == 0 ? '' : info.projects?.length}`}
             {...a11yProps(3)}
             sx={{
               fontSize: '15px',
@@ -141,6 +137,18 @@ const ModalBody: React.FC<ModalBodyProps> = ({
             }}
             wrapped
           />
+          {info?.accountType == AccountType.admin && (
+            <Tab
+              label={`Manages`}
+              {...a11yProps(4)}
+              sx={{
+                fontSize: '15px',
+                minWidth: 'auto',
+                '&:hover': { backgroundColor: 'transparent', color: 'black' },
+              }}
+              wrapped
+            />
+          )}
         </Tabs>
       </Box>
       <CustomTabPanel value={currentIndex} index={0}>
@@ -155,6 +163,11 @@ const ModalBody: React.FC<ModalBodyProps> = ({
       <CustomTabPanel value={currentIndex} index={3}>
         <ProjectSubBody info={info} setInfo={setInfo} />
       </CustomTabPanel>
+      {info?.accountType == AccountType.admin && (
+        <CustomTabPanel value={currentIndex} index={4}>
+          <ManageSubBody info={info} setInfo={setInfo} />
+        </CustomTabPanel>
+      )}
     </Box>
   );
 };
@@ -172,22 +185,28 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
 
   const avail: Availability = {
     startDate: new Date().toDateString(),
-    workingType: WorkingType.partTime
-  }
+    workingType: WorkingType.partTime,
+  };
   const sampleData: PersonInfo = {
-    id: "1",
+    id: '1',
     availability: avail,
     type: ContractType.employee,
     name: '',
-    accountType: AccountType.member
-  }
+    accountType: AccountType.none,
+    manages: [],
+    projects: [],
+    email: '',
+    role: '',
+    department: '',
+    tags: [],
+  };
 
   const dispatch = useAppDispatch();
 
   const [personInfoData, setPersonInfoData] = useState<PersonInfo>(sampleData);
 
   const handleSave = () => {
-    dispatch(addPeople({person: {...personInfoData, id: generateUUID()}}));
+    dispatch(addPeople({ person: { ...personInfoData, id: generateUUID() } }));
     setIsOpen(false);
   };
 
@@ -195,13 +214,13 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
     setIsOpen(false);
   };
 
-  const setValue = (e: { target: { name: any; value: any; }; }) => {
+  const setValue = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setPersonInfoData({
       ...personInfoData,
-      name: value
+      name: value,
     });
-  }
+  };
 
   return (
     <Box
@@ -236,15 +255,14 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
               variant='standard'
               size='small'
               placeholder='Email'
-              inputProps={{style: {fontSize: '15px'}}}
+              inputProps={{ style: { fontSize: '15px' } }}
               value={personInfoData.name}
               onChange={setValue}
               InputProps={{
-                disableUnderline: true
+                disableUnderline: true,
               }}
             />
           </Box>
-
         }
         size={'sm'}
         isOpen={isOpen}
@@ -252,10 +270,7 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
         footer={<ModalFooter handleSave={handleSave} handleClose={handleOnClose} />}
         isCloseByBackdrop={false}
       >
-        <ModalBody
-          info={personInfoData}
-          setInfo={setPersonInfoData}
-        />
+        <ModalBody info={personInfoData} setInfo={setPersonInfoData} />
       </MiModalModified>
     </Box>
   );

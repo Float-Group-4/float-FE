@@ -19,91 +19,9 @@ import {
   Paper,
   ButtonGroup,
 } from '@mui/material';
-import { ArrowDropDown, Close } from '@mui/icons-material';
+import { ArrowDropDown, Close, HolidayVillageSharp } from '@mui/icons-material';
 import DatePicker from '@base/components/DatePicker';
 import { PersonInfo } from '../models';
-
-interface CustomTextFieldProps {
-  placeHolder: string;
-  showClearIcon: boolean;
-  showDropdownIcon: boolean;
-  name: string;
-}
-
-const CustomTextField: React.FC<CustomTextFieldProps> = ({
-  placeHolder,
-  showClearIcon,
-  showDropdownIcon,
-  name,
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [anchor, setAnchor] = useState<HTMLDivElement | null>(null);
-  const [currentText, setCurrentText] = useState('');
-
-  const handleClose = () => {
-    setIsOpen(false);
-    setAnchor(null);
-  };
-
-  const onInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAnchor(e.currentTarget);
-    setIsOpen(true);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setCurrentText(e.target.value.trim());
-  };
-
-  return (
-    <Box>
-      <TextField
-        size='medium'
-        value={currentText}
-        placeholder={placeHolder}
-        onInput={onInput}
-        onChange={handleChange}
-        name={name}
-        sx={{ maxWidth: '90%', minWidth: '100%' }}
-        InputProps={{
-          endAdornment: (
-            <Stack direction='row'>
-              {currentText.length > 0 && showClearIcon && (
-                <IconButton onClick={handleClose}>
-                  <Close />
-                </IconButton>
-              )}
-              {showDropdownIcon && (
-                <IconButton onClick={handleClose}>
-                  <ArrowDropDown />
-                </IconButton>
-              )}
-            </Stack>
-          ),
-        }}
-      />
-      <Popover
-        id='simple-popover'
-        open={isOpen}
-        anchorEl={anchor}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-      >
-        <ClickAwayListener onClickAway={handleClose}>
-          <Typography>
-            <Button onClick={handleClose}>Add "{currentText}"</Button>
-          </Typography>
-        </ClickAwayListener>
-      </Popover>
-    </Box>
-  );
-};
 
 interface AvailProp {
   info: PersonInfo;
@@ -116,17 +34,7 @@ const AvailSubBody: React.FC<AvailProp> = ({ info, setInfo }) => {
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(today);
 
-  const setValue = (
-    event: { target: { name: any; value: any; }; },
-  ): void => {
-    const { name, value } = event.target;
-    setInfo((prevInfo: any) => ({
-      ...prevInfo,
-      [name]: value,
-    }));
-  };
-
-  console.log(info?.type);
+  const holidays = [];
 
   const handleDateChange = (date: any, isStart: boolean) => {
     try {
@@ -139,8 +47,8 @@ const AvailSubBody: React.FC<AvailProp> = ({ info, setInfo }) => {
           ...prev,
           availability: {
             ...prev.availability,
-            startDate: date
-          }
+            startDate: date,
+          },
         }));
       } else {
         if (date.isBefore(startDate)) {
@@ -148,16 +56,16 @@ const AvailSubBody: React.FC<AvailProp> = ({ info, setInfo }) => {
             ...prev,
             availability: {
               ...prev.availability,
-              startDate: date
-            }
+              startDate: date,
+            },
           }));
         }
         setInfo((prev: any) => ({
           ...prev,
           availability: {
             ...prev.availability,
-            endDate: date
-          }
+            endDate: date,
+          },
         }));
       }
     } catch (error) {
@@ -170,8 +78,8 @@ const AvailSubBody: React.FC<AvailProp> = ({ info, setInfo }) => {
       ...prevInfo,
       availability: {
         ...prevInfo.availability,
-        workingType: newType
-      }
+        workingType: newType,
+      },
     }));
   };
 
@@ -205,7 +113,6 @@ const AvailSubBody: React.FC<AvailProp> = ({ info, setInfo }) => {
             onChange={(date) => handleDateChange(date, true)}
           />
         </FormControl>
-
       </Box>
       <Box paddingY={3}>
         <ButtonGroup>
@@ -241,8 +148,27 @@ const AvailSubBody: React.FC<AvailProp> = ({ info, setInfo }) => {
       </Box>
       <FormControl>
         <Typography>Public holidays</Typography>
-        <CustomTextField
-          name='publicHoliday' placeHolder={'Ho Chi Minh'} showClearIcon={false} showDropdownIcon={false}
+        <Autocomplete
+          options={[]}
+          open={holidays.length > 0}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              autoFocus
+              variant='outlined'
+              value={info?.availability.publicHoliday}
+              name='publicHoliday'
+              onChange={(e) => {
+                setInfo((prevInfo: PersonInfo) => ({
+                  ...prevInfo,
+                  availability: {
+                    ...prevInfo.availability,
+                    publicHoliday: e.target.value,
+                  },
+                }));
+              }}
+            />
+          )}
         />
       </FormControl>
       <FormControl fullWidth sx={{ py: 2 }}>
