@@ -23,10 +23,13 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useScheduleContext } from '@pages/HomePage/Schedule/ScheduleContext';
 import dayjs from 'dayjs';
 import { useAppSelector } from '@hooks/reduxHooks';
+import { isWeekend } from '../../../../../../utilities/date';
 
 const AllocationTab = () => {
   const { allocation, setAllocation } = useScheduleContext();
   const usersByIds = useAppSelector((state) => state.general.usersById);
+
+  const projects = ['project1', 'project2']
 
   const [isSpecificTime, setIsSpecificTime] = useState<boolean>(
     allocation?.endTime != null && allocation?.startTime != null,
@@ -46,12 +49,15 @@ const AllocationTab = () => {
   }, [allocation?.startDate, allocation?.endDate]);
 
   const handleTime = (e: { target: { value: string } }) => {
-    console.log(e.target.value);
-    let value = parseInt(e.target.value ?? 0.1);
-    if (value <= 0) {
+    const inputValue = e.target.value.trim();
+    let value: number;
+    if (inputValue === '') {
       value = 0.1;
-    } else if (value > 24) {
-      value = 24;
+    } else {
+      value = parseFloat(inputValue);
+      if (isNaN(value) || value <= 0 || value > 24) {
+        value = 0.1;
+      }
     }
 
     setAllocation((prev: Allocation | null) => ({
@@ -75,39 +81,50 @@ const AllocationTab = () => {
     }));
   };
 
-  const setDate = (value: Date, type: string) => {
+  const setDate = (value: Date | null, type: string) => {
+    if (!value || value == null || !dayjs(value).isValid()) {
+      value = new Date();
+    }
+
     if (type == 'startDate') {
       setAllocation((prev: Allocation | null) => ({
         ...prev,
-        startDate: value.toISOString(),
+        startDate: dayjs(value).format('DD MMM YYYY'),
       }));
     } else {
       setAllocation((prev: Allocation | null) => ({
         ...prev,
-        endDate: value.toISOString(),
+        endDate: dayjs(value).format('DD MMM YYYY'),
       }));
     }
   };
 
-  const setTime = (value: Date | number, type: string) => {
-    if (type == 'startTime') {
-      setAllocation((prev: Allocation | null) => ({
-        ...prev,
-        startTime: value,
-      }));
-    } else {
-      setAllocation((prev: Allocation | null) => ({
-        ...prev,
-        endTime: value,
-      }));
+  const setTime = (value: Date | number | null, type: string) => {
+    if (value == null) {
+      value = new Date().getTime();
     }
+
+    setAllocation((prevAllocation: any) => {
+      if (type === 'startTime') {
+        return {
+          ...prevAllocation,
+          startTime: value,
+        };
+      } else if (type === 'endTime') {
+        return {
+          ...prevAllocation,
+          endTime: value,
+        };
+      }
+      return prevAllocation;
+    });
   };
 
   return (
     <>
       <Box sx={{ backgroundColor: '#F6F6F6', m: 1, p: 2, borderRadius: '5px' }}>
-        <Grid container columnGap={1}>
-          <Grid item xs={5}>
+        <Grid container columnGap={1} spacing={2}>
+          <Grid item xs={4}>
             {isSpecificTime ? (
               <div>
                 <Box display='flex' flexDirection='column'>
@@ -116,12 +133,12 @@ const AllocationTab = () => {
                     <Stack direction='row' spacing={1}>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <TimeField
-                          value={allocation?.startTime}
-                          onChange={(e) => setTime(e ?? 10, 'startTime')}
+                          value={allocation?.startTime ?? 8}
+                          onChange={(e) => setTime(e, 'startTime')}
                         />
                         <TimeField
-                          value={allocation?.endTime}
-                          onChange={(e) => setTime(e ?? 24, 'endTime')}
+                          value={allocation?.endTime ?? 18}
+                          onChange={(e) => setTime(e, 'endTime')}
                         />
                       </LocalizationProvider>
                     </Stack>
@@ -133,24 +150,15 @@ const AllocationTab = () => {
               </div>
             ) : (
               <div>
-                <Stack direction='row' justifyItems='left' spacing={1}>
+                <Stack direction='row' justifyItems='left' spacing={2}>
                   <FormControl>
                     <Typography>Hours/day</Typography>
-                    <TextField
-                      value={allocation?.hourEachDay}
-                      name='time'
-                      inputMode='decimal'
-                      onChange={handleTime}
-                    />
+                    <TextField variant='standard' value={allocation?.hourEachDay} name='time' onChange={handleTime} />
                   </FormControl>
                   {diffDay > 1 && (
                     <FormControl>
                       <Typography>Total hours</Typography>
-                      <TextField
-                        value={(allocation?.hourEachDay ?? 8) * diffDay}
-                        inputMode='decimal'
-                        onChange={setValue}
-                      />
+                      <TextField variant='standard' value={(allocation?.hourEachDay ?? 8) * diffDay} />
                     </FormControl>
                   )}
                 </Stack>
@@ -164,16 +172,19 @@ const AllocationTab = () => {
               </div>
             )}
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={7}>
             <FormControl>
-              <Typography>Duration {diffDay > 1 ?? `: ${diffDay} days`}</Typography>
+              <Typography>Duration {diffDay > 1 && `: ${diffDay} days`}</Typography>
               <Stack direction='row' alignItems='center' justifyContent='center'>
                 <DatePicker
+                  shouldDisableDate={isWeekend}
+                  inputSx={{ fontSize: '15px' }}
                   value={dayjs(allocation?.startDate).toDate()}
                   onChange={(e) => setDate(e ?? new Date(), 'startDate')}
                 />
                 <ArrowRight />
                 <DatePicker
+                  shouldDisableDate={isWeekend}
                   value={dayjs(allocation?.endDate).toDate()}
                   onChange={(e) => setDate(e ?? new Date(), 'endDate')}
                 />
@@ -181,7 +192,7 @@ const AllocationTab = () => {
               <Select
                 value={0}
                 size='small'
-                sx={{ width: '40%'}}
+                sx={{ width: '40%' }}
                 input={<OutlinedInput margin='dense' />}
               >
                 <MenuItem value={0}>Does not repeat</MenuItem>
@@ -195,7 +206,7 @@ const AllocationTab = () => {
           <Typography>Project</Typography>
           <Autocomplete
             clearIcon={true}
-            options={[]}
+            options={projects}
             value={allocation?.projectId}
             onChange={(_, value) => {
               setAllocation((prev: Allocation | null) => ({
@@ -203,8 +214,9 @@ const AllocationTab = () => {
                 ['projectId']: value,
               }));
             }}
-            freeSolo
-            renderInput={(params) => <TextField {...params} variant='outlined' fullWidth />}
+            renderInput={(params) => (
+              <TextField {...params} variant='outlined' fullWidth value={allocation?.projectId} />
+            )}
           />
           <Stack direction='row' justifyContent='space-between'>
             <Button size='small' sx={{ py: 0, mb: 0, mt: 1 }}>
@@ -248,15 +260,14 @@ const AllocationTab = () => {
           <Autocomplete
             clearIcon={false}
             options={['hello', 'hii']}
-            freeSolo
             multiple
             value={allocation?.assignees}
-            onChange={(_, value) =>
+            onChange={(_, value) => {
               setAllocation((prev: Allocation | null) => ({
                 ...prev,
                 ['assignees']: value,
-              }))
-            }
+              }));
+            }}
             renderTags={(value, props) =>
               value.map((option, index) => <Chip label={option} {...props({ index })} />)
             }

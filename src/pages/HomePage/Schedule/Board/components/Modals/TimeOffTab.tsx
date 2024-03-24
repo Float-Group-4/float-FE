@@ -11,15 +11,27 @@ import {
   ToggleButtonGroup,
   ToggleButton,
   Chip,
+  AutocompleteRenderInputParams,
 } from '@mui/material';
 import { LocalizationProvider, TimeField } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { useState, SetStateAction, ChangeEvent, useEffect } from 'react';
+import { useState, SetStateAction, ChangeEvent, useEffect, ReactNode } from 'react';
 import { TimeOff } from '../../common/type';
 import { useScheduleContext } from '@pages/HomePage/Schedule/ScheduleContext';
 import dayjs from 'dayjs';
 import DatePicker from '@base/components/DatePicker';
 import { useAppSelector } from '@hooks/reduxHooks';
+import { isWeekend } from '../../../../../../utilities/date';
+
+const timeOffReasons = [
+  'Annual Leave',
+  'Compassionate Leave',
+  'Paid Time Off',
+  'Parental Leave',
+  'Public Holiday',
+  'Sick Leave',
+  'Unpaid Time Off',
+];
 
 const TimeOffTab = () => {
   const { timeOff, setTimeOff } = useScheduleContext();
@@ -43,11 +55,15 @@ const TimeOffTab = () => {
   }, [timeOff?.startDate, timeOff?.endDate]);
 
   const handleTime = (e: { target: { value: string } }) => {
-    let value = parseInt(e.target.value);
-    if (value <= 0) {
+    const inputValue = e.target.value.trim();
+    let value: number;
+    if (inputValue === '') {
       value = 0.1;
-    } else if (value > 24) {
-      value = 24;
+    } else {
+      value = parseFloat(inputValue);
+      if (isNaN(value) || value <= 0 || value > 24) {
+        value = 0.1;
+      }
     }
 
     setTimeOff((prev: TimeOff | null) => ({
@@ -65,20 +81,28 @@ const TimeOffTab = () => {
   };
 
   const setDate = (value: Date, type: string) => {
+    if (!value || value == null || !dayjs(value).isValid()) {
+      value = new Date();
+    }
+
     if (type == 'startDate') {
       setTimeOff((prev: TimeOff | null) => ({
         ...prev,
-        startDate: value.toISOString(),
+        startDate: dayjs(value).format('DD MMM YYYY'),
       }));
     } else {
       setTimeOff((prev: TimeOff | null) => ({
         ...prev,
-        endDate: value.toISOString(),
+        endDate: dayjs(value).format('DD MMM YYYY'),
       }));
     }
   };
 
-  const setTime = (value: Date | number, type: string) => {
+  const setTime = (value: Date | number | null, type: string) => {
+    if (value == null) {
+      value = new Date().getTime();
+    }
+
     if (type == 'startTime') {
       setTimeOff((prev: TimeOff | null) => ({
         ...prev,
@@ -95,8 +119,8 @@ const TimeOffTab = () => {
   return (
     <>
       <Box sx={{ backgroundColor: '#F6F6F6', m: 1, p: 2, borderRadius: '5px' }}>
-        <Grid container columnGap={1}>
-          <Grid item xs={5}>
+        <Grid container columnGap={1} spacing={2}>
+          <Grid item xs={4}>
             {isSpecificTime ? (
               <div>
                 <Box display='flex' flexDirection='column'>
@@ -105,13 +129,13 @@ const TimeOffTab = () => {
                     <Stack direction='row' spacing={1}>
                       <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <TimeField
-                          value={timeOff?.startTime}
-                          onChange={(e) => setTime(e ?? 10, 'startTime')}
+                          value={timeOff?.startTime ?? 8}
+                          onChange={(e) => setTime(e, 'startTime')}
                         />
                         <TimeField
-                          value={timeOff?.endTime}
-                          onChange={(e) => setTime(e ?? 24, 'endTime')}
-                        ></TimeField>
+                          value={timeOff?.endTime ?? 18}
+                          onChange={(e) => setTime(e, 'endTime')}
+                        />
                       </LocalizationProvider>
                     </Stack>
                   </FormControl>
@@ -125,21 +149,12 @@ const TimeOffTab = () => {
                 <Stack direction='row' justifyItems='left' spacing={1}>
                   <FormControl>
                     <Typography>Hours/day</Typography>
-                    <TextField
-                      value={timeOff?.hourEachDay}
-                      name='time'
-                      inputMode='decimal'
-                      onChange={setValue}
-                    />
+                    <TextField variant='standard' value={timeOff?.hourEachDay} name='time' onChange={handleTime} />
                   </FormControl>
                   {diffDay > 1 && (
                     <FormControl>
                       <Typography>Total hours</Typography>
-                      <TextField
-                        value={(timeOff?.hourEachDay ?? 8) * diffDay}
-                        inputMode='decimal'
-                        onChange={setValue}
-                      />
+                      <TextField variant='standard' value={(timeOff?.hourEachDay ?? 8) * diffDay} />
                     </FormControl>
                   )}
                 </Stack>
@@ -149,16 +164,18 @@ const TimeOffTab = () => {
               </div>
             )}
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={7}>
             <FormControl>
-              <Typography>Duration {diffDay > 1 ?? `: ${diffDay} days`}</Typography>
+              <Typography>Duration {diffDay > 1 && `: ${diffDay} days`}</Typography>
               <Stack direction='row' alignItems='center' justifyContent='center'>
                 <DatePicker
+                  shouldDisableDate={isWeekend}
                   value={dayjs(timeOff?.startDate).toDate()}
                   onChange={(e) => setDate(e ?? new Date(), 'startDate')}
                 />
                 <ArrowRight />
                 <DatePicker
+                  shouldDisableDate={isWeekend}
                   value={dayjs(timeOff?.endDate).toDate()}
                   onChange={(e) => setDate(e ?? new Date(), 'endDate')}
                 />
@@ -166,6 +183,27 @@ const TimeOffTab = () => {
             </FormControl>
           </Grid>
         </Grid>
+      </Box>
+      <Box paddingX={3}>
+        <FormControl fullWidth>
+          <Typography>Time off</Typography>
+          <Autocomplete
+            fullWidth
+            clearIcon=''
+            options={timeOffReasons}
+            value={timeOff?.reason}
+            onChange={(e, newValue) => {
+              setTimeOff((prev: any) => ({
+                ...prev,
+                reason: newValue,
+              }));
+            }}
+            isOptionEqualToValue={(option, value) => option == value}
+            renderInput={(params) => (
+              <TextField {...params} value={timeOff?.reason} name='reason' />
+            )}
+          />
+        </FormControl>
       </Box>
       <Box display='flex' flexDirection='column' paddingX={3}>
         <ToggleButton
@@ -179,7 +217,18 @@ const TimeOffTab = () => {
             }))
           }
           aria-label='centered'
-          sx={{ alignSelf: 'flex-start' }}
+          sx={{
+            alignSelf: 'flex-start',
+            marginTop: 1,
+            paddingX: 2,
+            paddingY: 0.8,
+            bgcolor: '#E5E5E5 !important',
+            '&.Mui-selected': {
+              bgcolor: '#B0D9FB !important',
+              color: 'black',
+              '&:hover': { bgcolor: '#B0D9FB !important', color: 'black' },
+            },
+          }}
         >
           Tentative
         </ToggleButton>

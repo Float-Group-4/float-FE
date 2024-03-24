@@ -11,13 +11,15 @@ import {
   ListItemIcon,
   ListItem,
   ListItemText,
+  InputAdornment,
 } from '@mui/material';
 import { useScheduleContext } from '@pages/HomePage/Schedule/ScheduleContext';
 import dayjs from 'dayjs';
-import { useState, useEffect, SetStateAction, ChangeEvent } from 'react';
+import { useState, useEffect, ChangeEvent } from 'react';
 import { Status } from '../../common/type';
 import { useAppSelector } from '@hooks/reduxHooks';
 import DatePicker from '@base/components/DatePicker';
+import { isWeekend } from '../../../../../../utilities/date';
 
 const statusTypes = [
   { title: 'Home', icon: <Flag sx={{ color: 'orange' }} /> },
@@ -29,7 +31,7 @@ const StatusTab = () => {
   const { status, setStatus } = useScheduleContext();
   const usersByIds = useAppSelector((state) => state.general.usersById);
 
-  console.log(status?.type)
+  console.log(status?.type);
   const setValue = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setStatus((prev: Status | null) => ({
@@ -39,15 +41,19 @@ const StatusTab = () => {
   };
 
   const setDate = (value: Date, type: string) => {
+    if (!value || value == null || !dayjs(value).isValid()) {
+      value = new Date();
+    }
+
     if (type == 'startDate') {
       setStatus((prev: Status | null) => ({
         ...prev,
-        startDate: value.toISOString(),
+        startDate: dayjs(value).format('DD MMM YYYY'),
       }));
     } else {
       setStatus((prev: Status | null) => ({
         ...prev,
-        endDate: value.toISOString(),
+        endDate: dayjs(value).format('DD MMM YYYY'),
       }));
     }
   };
@@ -73,11 +79,15 @@ const StatusTab = () => {
             <Typography>Duration {diffDay > 1 ?? `: ${diffDay} days`}</Typography>
             <Stack direction='row' justifyContent='center' alignItems='center'>
               <DatePicker
+                inputSx={{ fontSize: '15px' }}
+                shouldDisableDate={isWeekend}
                 value={dayjs(status?.startDate).toDate()}
                 onChange={(e) => setDate(e ?? new Date(), 'startDate')}
               />
               <ArrowRight />
               <DatePicker
+                inputSx={{ fontSize: '15px' }}
+                shouldDisableDate={isWeekend}
                 value={dayjs(status?.endDate).toDate()}
                 onChange={(e) => setDate(e ?? new Date(), 'endDate')}
               />
@@ -88,24 +98,31 @@ const StatusTab = () => {
       <Box display='flex' flexDirection='column' paddingX={3}>
         <FormControl>
           <Typography>Set a status</Typography>
-          <Autocomplete
-            clearIcon={true}
-            options={[]}
-            value={status?.type}
-            onChange={(_, value) => {
-              setStatus((prev: Status | null) => ({
-                ...prev,
-                ['type']: value,
-              }));
+          <TextField
+            variant='outlined'
+            name='type'
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position='start' sx={{ padding: 0, margin: 0 }}>
+                  <Flag style={{ color: 'blue' }} />
+                </InputAdornment>
+              ),
             }}
-            freeSolo
-            renderInput={(params) => <TextField {...params} variant='outlined' fullWidth />}
+            fullWidth
+            value={status?.type}
+            onChange={setValue}
           />
-          {status?.type == '' || status?.type == null && (
+          {(status?.type == '' || status?.type == null) && (
             <List>
               {statusTypes.map((t) => (
                 <ListItem
-                  sx={{cursor: 'pointer', bgcolor: '#E2E5E7', borderRadius: '5px', marginY: 0.3, '&:hover': {bgcolor: '#E3E9EC'}}}
+                  sx={{
+                    cursor: 'pointer',
+                    bgcolor: '#E2E5E7',
+                    borderRadius: '5px',
+                    marginY: 0.3,
+                    '&:hover': { bgcolor: '#E3E9EC' },
+                  }}
                   key={t.title}
                   onClick={() =>
                     setStatus((prev: Status | null) => ({
@@ -127,7 +144,6 @@ const StatusTab = () => {
           <Autocomplete
             clearIcon={false}
             options={[]}
-            freeSolo
             value={status?.assignee}
             onChange={(_, value) =>
               setStatus((prev: Status | null) => ({
@@ -135,13 +151,7 @@ const StatusTab = () => {
                 ['assignee']: value,
               }))
             }
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                variant='outlined'
-                fullWidth
-              />
-            )}
+            renderInput={(params) => <TextField {...params} variant='outlined' fullWidth />}
           />
         </FormControl>
       </Box>

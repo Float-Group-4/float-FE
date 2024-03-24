@@ -1,6 +1,5 @@
-import MiModal from '@base/components/MiModal';
 import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
-import { Box, Button, Stack, Tab, Tabs, Typography } from '@mui/material';
+import { Box, Button, Stack, Tab, Tabs, Typography, styled } from '@mui/material';
 import { useImperativeHandle, useState } from 'react';
 import AllocationTab from './AllocationTab';
 import TimeOffTab from './TimeOffTab';
@@ -12,8 +11,30 @@ import dayjs from 'dayjs';
 import { generateUUID } from '@base/utils/uuid';
 import { setItemsById } from '../../../../../../redux/general/generalSlice';
 import { buildRows } from '../../../../../../redux/schedule/thunk';
-import { AllocationItem, StatusItem, TimeOffItem } from '../../../../../../types/primitive/item.interface';
+import {
+  AllocationItem,
+  StatusItem,
+  TimeOffItem,
+} from '../../../../../../types/primitive/item.interface';
 import CustomMiModal from './CustomMiModal';
+
+interface StyledTabProps {
+  label: string;
+}
+
+const PillTab = styled((props: StyledTabProps) => <Tab disableRipple {...props} />)(
+  ({ theme }) => ({
+    borderRadius: 50,
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    minWidth: 'auto',
+    padding: theme.spacing(1, 2),
+    marginRight: theme.spacing(1),
+    '&:hover': {
+      backgroundColor: theme.palette.primary.dark,
+    },
+  }),
+);
 
 interface MainModalProps {
   isOpen: boolean;
@@ -66,6 +87,7 @@ function a11yProps(index: number) {
 
 const Header = (props: HeaderProps) => {
   const { currentIndex, handleChange } = props;
+
   return (
     <Box sx={{ borderColor: 'transparent', ml: 3 }}>
       <Tabs
@@ -138,7 +160,7 @@ const MainModal = (props: MainModalProps) => {
   const [currentTab, setCurrentTab] = useState(0);
   const { setAllocation, setStatus, setTimeOff, allocation, status, timeOff } =
     useScheduleContext();
-  
+
   const itemsById = useAppSelector((state) => state.general.itemsById);
   const { mainModalRef } = useScheduleContext();
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -268,6 +290,14 @@ const MainModal = (props: MainModalProps) => {
     }
 
     setIsOpen(false);
+    reset();
+  };
+
+  const reset = () => {
+    setAllocation(null);
+    setStatus(null);
+    setTimeOff(null);
+    setCurrentTab(0);
   };
 
   return (
@@ -279,17 +309,18 @@ const MainModal = (props: MainModalProps) => {
           }}
           submitTitle={submitText}
           handleClose={() => {
-            setAllocation(null);
-            setStatus(null);
-            setTimeOff(null);
             setIsOpen(false);
+            reset();
           }}
         />
       }
       title={<Header currentIndex={currentTab} handleChange={handleChange} />}
       isOpen={isOpen}
       size={'sm'}
-      onClose={() => setIsOpen(false)}
+      onClose={() => {
+        setIsOpen(false);
+        reset();
+      }}
     >
       <Box width='100%'>
         {currentTab == 0 && (
