@@ -190,3 +190,15 @@ export enum TimelogFilterType {
   categories = 'Categories',
   workspaces = 'Workspaces',
 }
+
+export enum BudgetValue {
+  zero= 'No budget',
+  one= 'Hours by project',
+  two= 'Fee by project',
+  three= 'Hourly rate',
+}
+
+export enum ProjectType {
+  billable = "Billable",
+  nonBillable = "nonBillable",
+}

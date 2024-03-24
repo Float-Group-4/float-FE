@@ -25,9 +25,9 @@ interface TeamProps {
 
 const TeamSubBody: React.FC<TeamProps> = ({ team, setTeam }) => {
   const demoData = [
-    { department: 'it', member: [{ name: 'quan', email: 'quan@gmail.com' }] },
-    { department: 'No department', member: [{ name: 'nhat', email: 'nhat@gmail.com' }] },
-    { department: 'hr', member: [{ name: 'bao', email: 'bao@gmail.com' }] },
+    { department: 'it', member: [{ id: "1", name: 'quan', email: 'quan@gmail.com' }] },
+    { department: 'No department', member: [{ id: "3", name: 'nhat', email: 'nhat@gmail.com' }] },
+    { department: 'hr', member: [{ id: "2", name: 'bao', email: 'bao@gmail.com' }] },
   ];
 
   const [isOpen, setIsOpen] = useState(false);

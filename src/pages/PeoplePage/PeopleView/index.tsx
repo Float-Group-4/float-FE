@@ -10,28 +10,27 @@ import {
   Typography,
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { createData } from './CustomTableProp';
+import { Data, createData } from './CustomTableProp';
 import CustomizedTables from './CustomizedTable';
 import { useState } from 'react';
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
 import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
+import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
 
 // const CheckboxGroup = Checkbox.Group;
 
 const plainOptions = ['Active', 'Archived', 'AccountAccess'];
-
-const rows = [
-  createData(1, '1', 'Bảo Huỳnh Minh', 'Employee', 'IT', 'Editor', 'None', 'EB', 'Types'),
-  createData(2, '2', 'Minh', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
-  createData(3, '3', 'An', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
-  createData(4, '4', 'Bình', '__', 'IT', 'Manager', 'None', '__', 'Types'),
-  createData(5, '5', 'PP', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
-  createData(6, '6', 'Ngọc Hân', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
-  createData(7, '7', 'Minh Nhật', '__', 'IT', 'Manager', 'None', '__', 'Types'),
-  createData(8, '8', 'Quân', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
-  createData(9, '9', 'PP2', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
-];
-
+  const rows: Data[] = [
+    // createData(1, '1', 'Bảo Huỳnh Minh', 'Employee', 'IT', 'Editor', 'None', 'EB', 'Types'),
+    // createData(2, '2', 'Minh', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
+    // createData(3, '3', 'An', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
+    // createData(4, '4', 'Bình', '__', 'IT', 'Manager', 'None', '__', 'Types'),
+    // createData(5, '5', 'PP', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
+    // createData(6, '6', 'Ngọc Hân', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
+    // createData(7, '7', 'Minh Nhật', '__', 'IT', 'Manager', 'None', '__', 'Types'),
+    // createData(8, '8', 'Quân', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
+    // createData(9, '9', 'PP2', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
+  ];
 function CheckboxGroup() {
   const [cb, setCb] = useState(false);
   const [filterString, setFilterString] = useState(plainOptions[0]);
@@ -41,6 +40,7 @@ function CheckboxGroup() {
   // const [densityAnchorEl, setDensityAnchorEl] = useState<null | HTMLElement>(null);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
+
 
   const onChange = (checked: boolean, index: number) => {
     console.log('checkedList', checkedList);
@@ -81,7 +81,7 @@ function CheckboxGroup() {
   const open = Boolean(anchorEl);
 
   return (
-    <div className='bg-white' >
+    <div className='bg-white'>
       <div className='flex gap-2 items-center ps-4'>
         <IconButton aria-label='' onClick={() => {}} className='rounded-md hover:bg-white'>
           <PersonAddAlt1OutlinedIcon sx={{ color: grey[800] }} />
@@ -92,9 +92,13 @@ function CheckboxGroup() {
           aria-expanded={cb ? 'true' : undefined}
           onClick={handleClickViewModeMenu}
           className={`rounded-md flex items-center h-9 aspect-square p-0  text-black  hover:bg-white focus:outline-none focus:bg-white   text-white`}
-          sx={{ border: 0, padding: 0, minWidth: 0 ,width: '300px'}}
+          sx={{ border: 0, padding: 0, minWidth: 0, width: '300px' }}
         >
-          <Typography className={` px-4 py-1 rounded-md decoration-dotted`} fontSize={18} sx={{textDecorationStyle: 'dotted', textDecorationColor: 'blue'}}>
+          <Typography
+            className={` px-4 py-1 rounded-md decoration-dotted`}
+            fontSize={18}
+            sx={{ textDecorationStyle: 'dotted', textDecorationColor: 'blue' }}
+          >
             {filterString}
           </Typography>
 
@@ -149,10 +153,21 @@ function CheckboxGroup() {
 }
 
 export default function PeopleView() {
-  return (
+    const peopleList = useAppSelector((state) => state.people.people);
+return (
     <div className='bg-white flex-1 h-full px-9 py-3'>
       {CheckboxGroup()}
-      {CustomizedTables(rows)}
+      {CustomizedTables(peopleList.map((p) => createData(
+        p.id,
+        p.id,
+        p.name,
+        p.accountType.toString(),
+        p.role ?? '',
+        p.department ?? '',
+        p.accountType.toString(),
+        (p.tags ?? []).join(', '),
+        p.type.toString(),
+      ),))}
       <Box sx={{ width: '100%' }} className='content-center flex flex-col items-center mx-0 mr-5'>
         <Stack spacing={3} direction='column' className='flex content-center align-center'>
           <div className='content-center' style={{ marginLeft: -20 }}>
