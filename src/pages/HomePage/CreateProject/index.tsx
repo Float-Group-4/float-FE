@@ -1,23 +1,21 @@
 import MiModal from '@base/components/MiModal';
 import {
   useTheme,
-  Typography,
   TextField,
   Box,
   Tabs,
   Tab,
   Button,
   Stack,
-  Breakpoint,
 } from '@mui/material';
 import React, { useState } from 'react';
-import { ProjectInfo, ProjectMileStone, ProjectTask, ProjectTeam } from './models';
+import { Budget, ProjectInfo, ProjectMember, ProjectMileStone, ProjectTask } from './models';
 import InfoSubBody from './components/CreateProjectInfoTab';
 import MilestoneSubBody from './components/CreateProjectMilestoneTab';
 import TeamSubBody from './components/CreateProjectTeamTab';
 import TaskListSubBody from './components/CreateProjectTaskTab';
 import { ProjectType } from '../../../types/enums';
-import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
+import { useAppDispatch } from '@hooks/reduxHooks';
 import { addProject } from '../../../redux/project/projectSlice';
 import { generateUUID } from '@base/utils/uuid';
 
@@ -74,11 +72,11 @@ const ModalFooter: React.FC<ModalFooterProps> = ({ handleSave, handleClose }) =>
 
 interface ModalBodyProps {
   info: ProjectInfo;
-  team: ProjectTeam[] | null;
+  team: ProjectMember[] | null;
   mileStone: ProjectMileStone[] | null;
   task: ProjectTask[] | null;
   setInfo: (info: ProjectInfo) => void;
-  setTeam: (team: ProjectTeam[] | null) => void;
+  setTeam: (team: ProjectMember[] | null) => void;
   setMileStone: (mileStone: ProjectMileStone[] | null) => void;
   setTask: (task: ProjectTask[] | null) => void;
 }
@@ -180,7 +178,6 @@ interface CreateProjectModalProps {
 }
 
 const CreateProjectModal = (props: CreateProjectModalProps) => {
-  const theme = useTheme();
 
   const { sx, isOpen, setIsOpen } = props;
   const dispatch = useAppDispatch();
@@ -190,12 +187,12 @@ const CreateProjectModal = (props: CreateProjectModalProps) => {
   const defaultProjectInfo: ProjectInfo = {
     id: "1",
     color: defaultColor,
-    budget: 0,
+    budget: Budget.no,
     type: ProjectType.billable,
     isTentative: false,
     note: '',
     client: '',
-    name: "",
+    name: ''
   };
 
   const demoForTasks: ProjectTask[] = [
@@ -208,12 +205,12 @@ const CreateProjectModal = (props: CreateProjectModalProps) => {
 
   const [projectName, setProjectName] = useState<string>('');
   const [infoData, setInfoData] = useState<ProjectInfo>(defaultProjectInfo);
-  const [teamData, setTeamData] = useState<ProjectTeam[] | null>(null);
+  const [teamData, setTeamData] = useState<ProjectMember[] | null>(null);
   const [mileStoneData, setMileStoneData] = useState<ProjectMileStone[] | null>(null);
   const [taskData, setTaskData] = useState<ProjectTask[] | null>(demoForTasks);
 
   const handleSave = () => {
-    var p ={project: {...infoData, name: projectName, id: generateUUID(),}, members: teamData ?? [], milestones: mileStoneData ?? [], tasks: taskData ?? [],};
+    let p ={project: {...infoData, name: projectName, id: generateUUID(),}, members: teamData ?? [], milestones: mileStoneData ?? [], tasks: taskData ?? [],};
     console.log(p);
     dispatch(addProject(p));
     setIsOpen(false);

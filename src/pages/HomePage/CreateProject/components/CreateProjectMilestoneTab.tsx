@@ -15,6 +15,7 @@ import React, { useState } from 'react';
 import { ProjectMileStone } from '../models';
 import DatePicker from '@base/components/DatePicker';
 import { Stack } from '@mui/system';
+import dayjs from 'dayjs';
 
 interface MileStoneProp {
   mileStone: ProjectMileStone[] | null;
@@ -27,16 +28,21 @@ const MilestoneSubBody: React.FC<MileStoneProp> = ({ mileStone, setMileStone }) 
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(today);
 
-  const handleDateChange = (date: any, isStart: boolean) => {
+  const handleDateChange = (date: Date | null, isStart: boolean) => {
     try {
-      if (!date || typeof date !== 'object' || !date.isValid()) {
+      if (!date || !dayjs(date).isValid()) {
         console.error('Invalid date:', date);
         return;
       }
       if (isStart) {
+        const startDate = dayjs(date);
+        if (startDate.isAfter(endDate)) {
+          setEndDate(date);
+        }
         setStartDate(date);
       } else {
-        if (date.isBefore(startDate)) {
+        const endDate = dayjs(date);
+        if (endDate.isBefore(startDate)) {
           setStartDate(date);
         }
         setEndDate(date);
@@ -52,8 +58,8 @@ const MilestoneSubBody: React.FC<MileStoneProp> = ({ mileStone, setMileStone }) 
       setMileStone((prevMileStones: ProjectMileStone[] | null) => {
         const newMilestone: ProjectMileStone = {
           name: currentName.trim(),
-          startDate: startDate.toDateString(),
-          endDate: endDate.toDateString(),
+          startDate: dayjs(startDate).format('D/M/YYYY'),
+          endDate: dayjs(endDate).format('D/M/YYYY'),
         };
 
         if (prevMileStones == null) {
@@ -110,8 +116,8 @@ const MilestoneSubBody: React.FC<MileStoneProp> = ({ mileStone, setMileStone }) 
             <DatePicker
               size='medium'
               inputSx={{ backgroundColor: 'white' }}
-              value={startDate}
-              onChange={(date) => handleDateChange(date, true)}
+              value={endDate}
+              onChange={(date) => handleDateChange(date, false)}
             />
           </FormControl>
 

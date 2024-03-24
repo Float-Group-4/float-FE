@@ -3,34 +3,33 @@ import {
   Box,
   Typography,
   TextField,
-  ClickAwayListener,
-  Paper,
   ListItem,
   List,
-  ListSubheader,
   ListItemText,
   IconButton,
-  Stack,
   Checkbox,
-  Popover,
+  Autocomplete,
+  FormControlLabel,
 } from '@mui/material';
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import React, { useState } from 'react';
-import { ProjectTeam } from '../models';
+import { ProjectMember } from '../models';
 
 interface TeamProps {
-  team: ProjectTeam[] | null;
+  team: ProjectMember[] | null;
   setTeam: (team: any | null) => void;
 }
 
 const TeamSubBody: React.FC<TeamProps> = ({ team, setTeam }) => {
   const demoData = [
-    { department: 'it', member: [{ id: "1", name: 'quan', email: 'quan@gmail.com' }] },
-    { department: 'No department', member: [{ id: "3", name: 'nhat', email: 'nhat@gmail.com' }] },
-    { department: 'hr', member: [{ id: "2", name: 'bao', email: 'bao@gmail.com' }] },
+    { id: '1', name: 'quan', email: 'quan@gmail.com', department: 'it' },
+    { id: '2', name: 'bao', email: 'bao@gmail.com', department: 'it' },
+    { id: '4', name: 'quang', email: 'quang@gmail.com', department: 'it' },
+    { id: '3', name: 'nhat', email: 'nhat@gmail.com', department: 'No department' },
   ];
 
   const [isOpen, setIsOpen] = useState(false);
+  const [currentText, setCurrentText] = useState('');
   const [isSelected, setIsSelected] = useState(false);
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const handleClose = () => {};
@@ -42,99 +41,54 @@ const TeamSubBody: React.FC<TeamProps> = ({ team, setTeam }) => {
     });
   };
 
-  const addToProject = (index: number, department: string) => {
-    const newTeamMember = demoData.filter((d) => d.department === department)[index];
-    setTeam((prevTeam: any) => {
-      if (!prevTeam) return [{ member: newTeamMember }];
-      return [...prevTeam, { member: newTeamMember }];
-    });
+  const addToProject = (member: ProjectMember) => {
+    console.log(member);
+    if (team == null || team.length == 0) {
+      setTeam([member]);
+      return;
+    }
+
+    const temp = [...team];
+    if (temp.some((t) => t.id == member.id)) {
+      return;
+    }
+    setTeam([...team, member]);
   };
 
   return (
     <Box paddingX={1}>
-      <Box sx={{ backgroundColor: '#F6F6F6', px: 2, py: 2, borderRadius: '5%' }}>
+      <Box sx={{ backgroundColor: '#F6F6F6', px: 2, py: 2, borderRadius: '5px', marginBottom: 2 }}>
         <Typography>Assign a team member</Typography>
-        <TextField
-          sx={{ width: '100%', backgroundColor: 'white' }}
-          variant='outlined'
-          onClick={(e) => {
-            setIsOpen(true);
-            setAnchor(e.currentTarget);
+        <Autocomplete
+          options={demoData}
+          getOptionLabel={(option: ProjectMember) => option.name}
+          groupBy={(option: ProjectMember) => option.department}
+          renderInput={(params) => (
+            <TextField {...params} value={currentText} sx={{ bgcolor: 'white' }} />
+          )}
+          onChange={(event, newValue: ProjectMember | null) => {
+            if (newValue) {
+              setCurrentText(newValue.name);
+              addToProject(newValue);
+            }
           }}
-          onBlur={() => {
-            setIsOpen(false);
-          }}
+          isOptionEqualToValue={(option: ProjectMember, value: ProjectMember) =>
+            option.id === value.id
+          }
         />
-        <Popover
-          open={isOpen}
-          anchorEl={anchor}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
-          }}
-        >
-          <ClickAwayListener onClickAway={handleClose}>
-            <Paper>
-              <ListItem sx={{ '&:hover': { backgroundColor: '#F6F6F6' }, cursor: 'pointer' }}>
-                All team members
-              </ListItem>
-              <List>
-                {demoData.map((d, index) => (
-                  <React.Fragment key={d.department}>
-                    <ListSubheader
-                      sx={{ fontWeight: '500', display: 'flex', alignItems: 'center' }}
-                    >
-                      {d.department}
-                      <Typography variant='body2' color='primary' onClick={handleClose}>
-                        All
-                      </Typography>
-                    </ListSubheader>
-
-                    {d.member?.map((projectMember, index) => (
-                      <ListItem
-                        key={projectMember.email}
-                        sx={{
-                          '&:hover': { backgroundColor: '#F6F6F6' },
-                          cursor: 'pointer',
-                          m: 0,
-                          px: 1,
-                        }}
-                        onClick={() => addToProject(index, d.department)}
-                      >
-                        <ListItemText
-                          primary={projectMember.name}
-                          secondary={projectMember.email}
-                        />
-                      </ListItem>
-                    ))}
-                  </React.Fragment>
-                ))}
-              </List>
-            </Paper>
-          </ClickAwayListener>
-        </Popover>
       </Box>
-      <Box
-        minHeight='60%'
-        height='30vh'
-        display='flex'
-        alignContent='center'
-        justifyContent='center'
-      >
-        {team?.length == 0 || team == null ? (
-          <Typography variant='body1' alignSelf='center' color='GrayText'>
-            There are no people assigned to this project.
-          </Typography>
+      <Box sx={{ minHeight: '30vh', maxHeight: '40vh', overflow: 'auto', paddingX: 3 }}>
+        {team?.length === 0 || team == null ? (
+          <Box>
+            <Typography padding={10} fontSize={16} align='center' color='GrayText'>
+              There are no people assigned to this project.
+            </Typography>
+          </Box>
         ) : (
           <List>
-            {team?.map((projectTeam: ProjectTeam, index: number) => (
-              <ListItem key={projectTeam.member.email}>
-                <ListItemText primary={projectTeam.member.name} />
+            {team.map((projectTeam: ProjectMember, index: number) => (
+              <ListItem key={projectTeam.email}>
+                <ListItemText primary={projectTeam.name} style={{ color: 'black' }} />
                 <IconButton onClick={() => removeMember(index)} sx={{ ml: 'auto' }}>
                   <Close />
                 </IconButton>
@@ -158,17 +112,20 @@ const TeamSubBody: React.FC<TeamProps> = ({ team, setTeam }) => {
           }}
         />
       </Box>
-      <Stack direction='row' alignContent='center' sx={{ mt: 2, px: 2, pb: 4 }}>
-        <Checkbox
-          checked={isSelected}
-          sx={{ m: 0, p: 0 }}
-          onClick={() => {
-            const val = !isSelected;
-            setIsSelected(val);
-          }}
-        />
-        <Typography sx={{ ml: 2 }}>All Project Managers have edit rights</Typography>
-      </Stack>
+      <FormControlLabel
+        sx={{ paddingX: 3.5, paddingY: 1 }}
+        control={
+          <Checkbox
+            checked={isSelected}
+            sx={{ m: 0, p: 0 }}
+            onClick={() => {
+              const val = !isSelected;
+              setIsSelected(val);
+            }}
+          />
+        }
+        label={<Typography sx={{ ml: 1 }}>All Project Managers have edit rights</Typography>}
+      ></FormControlLabel>
     </Box>
   );
 };

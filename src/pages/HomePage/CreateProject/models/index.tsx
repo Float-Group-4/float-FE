@@ -1,49 +1,47 @@
-import { ProjectType } from "src/types/enums";
+import { ProjectType } from 'src/types/enums';
+
+export enum Budget {
+  no = 'No budget',
+  hourByProject = 'Hours by project',
+  fee = 'Fee by project',
+  hourly = 'Hourly rate',
+}
 
 export const BUDGET_VALUE = {
-    0: 'No budget',
-    1: 'Hours by project',
-    2: 'Fee by project',
-    3: 'Hourly rate',
-  };
+  0: Budget.no,
+  1: Budget.hourByProject,
+  2: Budget.fee,
+  3: Budget.hourly,
+};
 
-export interface ProjectInfo{
-    id: string,
-    name: string,
-    color?: string,
-    budget?: number, // enum
-    type: ProjectType,
-    tags?: string[],
-    note?: string,
-    isTentative: boolean,
-    client?: string,
-    owner?: string,
+export interface ProjectInfo {
+  id: string;
+  name: string;
+  color?: string;
+  budget?: Budget; // enum
+  type: ProjectType;
+  tags?: string[];
+  note?: string;
+  isTentative: boolean;
+  client?: string;
+  owner?: string;
 }
 
-export interface ProjectTeam {
-    member: Member,
+export interface ProjectMember {
+  id: string;
+  name: string;
+  email: string;
+  department: string;
 }
 
-export interface Member{
-    id: string,
-   name: string,
-   email: string,
+export interface ProjectMileStone {
+  name: string;
+  startDate: string;
+  endDate: string;
 }
 
-export interface ProjectMileStone{
-    name: string,
-    startDate: string,
-    endDate: string
+export interface ProjectTask {
+  id: number;
+  name: string;
+  isBillable: boolean;
 }
-
-export interface ProjectTask{
-    id: number,
-    name: string,
-    isBillable: boolean
-}
-
-
-
-
-
-

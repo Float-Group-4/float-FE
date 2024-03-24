@@ -1,27 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Box,
   Typography,
-  IconButton,
   TextField,
   Stack,
   ButtonGroup,
   Button,
   Select,
   MenuItem,
-  ClickAwayListener,
   Autocomplete,
   Chip,
-  Popover,
   FormControl,
 } from '@mui/material';
-import { ArrowDropDown, Close } from '@mui/icons-material';
 import { BUDGET_VALUE, ProjectInfo } from '../models';
 
 import ColorSelectPopover from './ColorSelectIcon';
 import { ProjectType } from '../../../../types/enums';
 
-import { adjustSectionValue } from '@mui/x-date-pickers/internals/hooks/useField/useField.utils';
 
 interface InfoProp {
   info: ProjectInfo;
@@ -189,13 +184,13 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
           onChange={(e) => {
             setInfo((prevInfo: any) => ({
               ...prevInfo,
-              budget: e.target.value as number,
+              budget: e.target.value,
             }));
           }}
           value={info?.budget}
         >
           {Object.entries(BUDGET_VALUE).map(([key, value]) => (
-            <MenuItem key={key} value={parseInt(key)}>
+            <MenuItem key={key} value={value}>
               {value}
             </MenuItem>
           ))}
