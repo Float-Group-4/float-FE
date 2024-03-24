@@ -86,6 +86,9 @@ export interface ScheduleContextType {
   timeRangeSelectionRef: MutableRefObject<HTMLDivElement> | null;
   dragItem: DragItem | null;
   dragItemRef: MutableRefObject<HTMLDivElement> | null;
+  allocation: Allocation | null;
+  status: Status | null;
+  timeOff: TimeOff | null;
   boardRef: MutableRefObject<HTMLDivElement> | null;
   itemSearchContainerRef: MutableRefObject<HTMLDivElement | null>;
   wrapperRef: MutableRefObject<HTMLDivElement | null>;
@@ -111,6 +114,9 @@ export interface ScheduleContextType {
   fastForwardDate: (_: string | Dayjs) => void;
   jumpToItem: (_: number, __: number) => void;
   setDragItem: (_: DragItem | null) => void;
+  setTimeOff: (_: any) => void;
+  setStatus: (_: any) => void;
+  setAllocation: (_: any) => void;
   onItemDragStart: (_: DragItem) => void;
   onItemDrag: () => void;
   onItemDragStop: () => void;
@@ -118,6 +124,7 @@ export interface ScheduleContextType {
   contextMenuPosition: any;
   setContextMenuPosition: any;
   addItemModalRef: MutableRefObject<{ openAddItemModal: (_?: any) => void }>;
+  mainModalRef: MutableRefObject<{ openMainModal: (_?: any) => void }>;
 }
 
 export interface RangeDate {
@@ -151,4 +158,40 @@ export interface Autoscroller {
 export interface TimeRange {
   from: { weekIndex: number; dayIndex: number };
   to: { weekIndex: number; dayIndex: number };
+}
+
+export interface Allocation {
+  startDate: string;
+  endDate: string;
+  hourEachDay: number;
+  startTime?: Date | number;
+  endTime?: Date | number;
+  id: string;
+  projectId: string;
+  userId: string;
+  type: string; // tentative, completed
+  note: string;
+  assignees: string[];
+}
+
+export interface TimeOff {
+  startDate: string;
+  endDate: string;
+  hourEachDay: number;
+  startTime?: Date | number;
+  endTime?: Date | number;
+  id: string;
+  userId: string;
+  isTentative: boolean;
+  reason: string;
+  note: string;
+  name: string;
+  assignees: string[];
+}
+
+export interface Status {
+  startDate: string;
+  endDate: string;
+  type: string;
+  assignee: string;
 }

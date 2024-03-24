@@ -10,7 +10,15 @@ import {
   useState,
 } from 'react';
 import { CALENDAR_BAR_HEIGHT, ITEM_DATE_FORMAT, STARTING_POINT } from './Board/common/constant';
-import { Autoscroller, DragInfo, DragItem, ScheduleContextType } from './Board/common/type';
+import {
+  Allocation,
+  Autoscroller,
+  DragInfo,
+  DragItem,
+  ScheduleContextType,
+  Status,
+  TimeOff,
+} from './Board/common/type';
 import { useAutoscroller } from './Board/common/hook';
 import { setItemPlaceHolder, setItemsById } from '../../../redux/general/generalSlice';
 import { getNewDateByDayIndex } from './Board/common/helper';
@@ -25,6 +33,12 @@ export const ScheduleContext = createContext<ScheduleContextType>({
   timeRangeSelectionRef: null,
   dragItem: null,
   dragItemRef: null,
+  status: null,
+  allocation: null,
+  timeOff: null,
+  setTimeOff: (any) => {},
+  setStatus: (any) => {},
+  setAllocation: (any) => {},
   boardRef: null,
   itemSearchContainerRef: { current: null },
   wrapperRef: { current: null },
@@ -50,6 +64,11 @@ export const ScheduleContext = createContext<ScheduleContextType>({
   addItemModalRef: {
     current: {
       openAddItemModal() {},
+    },
+  },
+  mainModalRef: {
+    current: {
+      openMainModal(_) {},
     },
   },
 });
@@ -90,6 +109,9 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
   const itemSearchContainerRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [dragItem, setDragItem] = useState<DragItem | null>(null);
+  const [allocation, setAllocation] = useState<Allocation | null>(null);
+  const [timeOff, setTimeOff] = useState<TimeOff | null>(null);
+  const [status, setStatus] = useState<Status | null>(null);
   const hoverRef = useRef<HTMLDivElement | null>(null);
   const hoverRelatedDateCellRef = useRef<HTMLDivElement | null>(null);
   const [rowHoverId, setRowHoverId] = useState<string | null>(null);
@@ -100,6 +122,7 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
   });
 
   const addItemModalRef = useRef<any>();
+  const mainModalRef = useRef<any>();
 
   /* -------------------------- Tracking Mouse on Board------------------------- */
 
@@ -285,6 +308,12 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
         mousePositionRef,
         dragInfo,
         selectionRef,
+        status,
+        allocation,
+        timeOff,
+        setTimeOff,
+        setStatus,
+        setAllocation,
         timeRangeSelectionRef,
         dragItem: dragItem,
         dragItemRef,
@@ -311,6 +340,7 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
         contextMenuPosition,
         setContextMenuPosition,
         addItemModalRef,
+        mainModalRef,
       }}
     >
       {children}

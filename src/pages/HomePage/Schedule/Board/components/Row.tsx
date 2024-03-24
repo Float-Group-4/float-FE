@@ -21,6 +21,7 @@ export default memo(function Row({ userId, className }: { userId: string; classN
     hoverRef,
     rowHoverId,
     addItemModalRef,
+    mainModalRef
   } = useScheduleContext();
   const rowRef = useRef<HTMLDivElement>(null);
   const itemActivity = useAppSelector((state) => state.activity.itemActivity);
@@ -72,7 +73,9 @@ export default memo(function Row({ userId, className }: { userId: string; classN
         setIsCreating(false);
         console.log('Up');
         // Open Add Item Modal
-        addItemModalRef.current.openAddItemModal({ dragInfo: dragInfo.current });
+        //addItemModalRef.current.openAddItemModal({ dragInfo: dragInfo.current });
+
+        mainModalRef.current.openMainModal({dragInfo: dragInfo.current});
         dragInfo.current = {};
         document.body.removeEventListener('mouseup', handleMouseUp);
         document.body.removeEventListener('mouseleave', handleMouseUp);
