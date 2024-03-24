@@ -194,17 +194,32 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
       selectionRef.current.style.width = `${(end - start + 1) * cellWidth}px`;
     }
   };
-  const onTimeRangeDrag = () => {};
+  const onTimeRangeDrag = () => {
+    if (!dragInfo.current) return;
+    const { smp } = dragInfo.current;
+    if (smp) {
+      dragInfo.current.emp = mousePositionRef.current;
+      const start = Math.min(smp.dayIndex, mousePositionRef.current.dayIndex);
+      const end = Math.max(smp.dayIndex, mousePositionRef.current.dayIndex);
+      if (!timeRangeSelectionRef.current) return;
+      timeRangeSelectionRef.current.style.left = `${start * cellWidth}px`;
+      timeRangeSelectionRef.current.style.width = `${(end - start + 1) * cellWidth}px`;
+      timeRangeSelectionRef.current.style.cursor = `grabbing !important`;
+    }
+  };
 
   /* -------------------------- FastForward and JumpToItem ------------------------- */
 
-  const fastForward = (destinationWeekIndex: number) => {};
+  const fastForward = (destinationWeekIndex: number) => {
+    if (destinationWeekIndex < 0) return;
+    if (scrollRef) {
+      scrollRef.current.scrollTo({ left: destinationWeekIndex * mainCellWidth });
+    }
+  };
 
   const fastForwardDate = (destinationDay: string | Dayjs) => {
-    console.log(destinationDay);
     if (!destinationDay) return;
     const date = dayjs(destinationDay, ITEM_DATE_FORMAT);
-    console.log(destinationDay, date, scrollRef);
     if (!date.isValid()) return;
     const dayIndex = date.diff(STARTING_POINT, 'days');
     if (scrollRef) {
@@ -217,7 +232,6 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
   /* -------------------------- Dragging Item Actions ------------------------- */
 
   const onItemDragStart = (dragItem: DragItem) => {
-    console.log(dragItem);
     dispatch(setItemPlaceHolder({ id: dragItem.item.id, isPlaceHolder: true }));
 
     scrollRef.current.style.cursor = 'grabbing';
@@ -248,7 +262,6 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
 
     const prevRowId = di!.rowId;
     const curRowId = mp.rowId;
-    console.log(prevRowId, curRowId);
 
     const padding = Math.floor((dragItem!.px * 1.0) / cellWidth);
     const paddingIndex = padding < 0 ? padding + 1 : padding;
@@ -279,9 +292,6 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
       // itemsById[dragItem!.item.id].userIds = [curRowId];
       // itemsById[dragItem!.item.id].startDate = newStartDate;
       // itemsById[dragItem!.item.id].endDate = newEndDate;
-
-      console.log('New User: ', curRowId);
-      console.log('New Timeline: ', newStartDate, newEndDate);
 
       const affectRow = [prevRowId!, curRowId];
       dispatch(buildRows(affectRow));

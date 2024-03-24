@@ -226,7 +226,7 @@ export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
       className='absolute touch-none cursor-pointer z-[2] tooltip-target'
       onMouseDown={handleMouseDown}
       style={{
-        top: `${y}px`, //item position
+        top: `${y * heightPerHour + MARGIN_TOP}px`, //item position
         height: `${getHeightByItem(heightPerHour, item, 8)}px`,
         width: `${w * cellWidth - MARGIN_RIGHT}px`,
         left: `${x * cellWidth + MARGIN_LEFT}px`,

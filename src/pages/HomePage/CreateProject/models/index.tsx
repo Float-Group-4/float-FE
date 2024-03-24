@@ -1,3 +1,4 @@
+import { ProjectType } from "src/types/enums";
 
 export const BUDGET_VALUE = {
     0: 'No budget',
@@ -7,13 +8,16 @@ export const BUDGET_VALUE = {
   };
 
 export interface ProjectInfo{
+    id: string,
+    name: string,
     color?: string,
     budget?: number, // enum
-    type: string,
+    type: ProjectType,
     tags?: string[],
     note?: string,
     isTentative: boolean,
-    client?: string
+    client?: string,
+    owner?: string,
 }
 
 export interface ProjectTeam {
@@ -21,6 +25,7 @@ export interface ProjectTeam {
 }
 
 export interface Member{
+    id: string,
    name: string,
    email: string,
 }

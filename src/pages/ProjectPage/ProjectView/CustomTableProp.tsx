@@ -19,7 +19,7 @@ import "./noborder.css"
 
 
 export interface Data {
-  id: number;
+  id: string;
   _id: string;
   project: string;
   client: string;
@@ -32,7 +32,7 @@ export interface Data {
 }
 
 export function createData(
-  id: number,
+  id: string,
   _id: string,
   project: string,
   tags: string,

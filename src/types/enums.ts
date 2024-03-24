@@ -108,8 +108,10 @@ export enum ResizeDirection {
 
 export enum TimeRangeMode {
   thisWeek = 'thisWeek',
+  nextWeek = 'nextWeek',
   lastWeek = 'lastWeek',
   thisMonth = 'thisMonth',
+  nextMonth = 'nextMonth',
   lastMonth = 'lastMonth',
   custom = 'custom',
 }
@@ -189,4 +191,16 @@ export enum TimelogFilterType {
   statuses = 'Statuses',
   categories = 'Categories',
   workspaces = 'Workspaces',
+}
+
+export enum BudgetValue {
+  zero = 'No budget',
+  one = 'Hours by project',
+  two = 'Fee by project',
+  three = 'Hourly rate',
+}
+
+export enum ProjectType {
+  billable = 'Billable',
+  nonBillable = 'nonBillable',
 }

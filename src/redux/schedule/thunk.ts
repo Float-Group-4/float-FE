@@ -7,12 +7,22 @@ import {
   STARTING_POINT,
 } from '../../pages/HomePage/Schedule/Board/common/constant';
 import {
+  dayIndexToDay,
+  getDayIndex,
   getHorizontalDimensions,
   isDayOverlapped,
 } from '../../pages/HomePage/Schedule/Board/common/helper';
 import { Item } from '../../types/primitive/item.interface';
-import { standardizeHour } from '../../utilities/helper';
+import {
+  diffBusinessDay,
+  diffBusinessDayOffset,
+  isNonWorkingDay,
+  standardizeHour,
+} from '../../utilities/helper';
 import moment from 'moment';
+import { TIMERANGE_CALCULATE_FORMAT } from '@constants/home';
+import dayjs from 'dayjs';
+import { setScheduledTime } from './scheduleMeasurementSlice';
 
 export const buildAllRows = createAsyncThunk(
   'schedule/buildAllRows',
@@ -103,7 +113,6 @@ export const buildRows = createAsyncThunk(
       row.items.forEach((tid: number, idx: number, items: any) => {
         const item = itemsById[tid];
         const { x, w } = getHorizontalDimensions({ from: item.startDate, to: item.endDate });
-        console.log(x, w);
         /* ---------------------------- Calculate height ---------------------------- */
         for (let i = x; i < x + w; i++) {
           const hour = standardizeHour(item, item.hour ?? defaultHour, 1);
@@ -169,150 +178,128 @@ export const buildRows = createAsyncThunk(
   },
 );
 
-// export const calculateScheduledTime = createAsyncThunk(
-//   'schedule/calculateSchedule',
-//   (rowIds: string[], { getState }) => {
-//     const state: RootState = getState() as RootState;
-//     // const defaultMinute = state.settings.defaultMinute;
-//     const mappedFieldBoards = { ...mainBoardMappingFields, ...subBoardMappingFields };
-//     const timeRange = state.scheduleMeasurement.timeRange;
-//     // const defaultHour = defaultMinute / 60;
-//     const isOffWeekend = state.settings.isOffWeekend;
-//     const isHiddenWeekend = state.settings.isHiddenWeekend;
+export const calculateScheduledTime = createAsyncThunk(
+  'schedule/calculateSchedule',
+  (rowIds: string[], { getState, dispatch }) => {
+    const state: RootState = getState() as RootState;
+    // const defaultMinute = state.settings.defaultMinute;
+    const timeRange = state.scheduleMeasurement.timeRange;
+    // const defaultHour = defaultMinute / 60;
+    const isOffWeekend = state.settings.isOffWeekend;
 
-//     const itemsById = state.general.itemsById;
-//     if (!timeRange) return;
-//     const uniqueIdList = uniq(rowIds);
-//     const calculateRange = {
-//       from: dayIndexToDay(timeRange.from.dayIndex).format(TIMERANGE_CALCULATE_FORMAT),
-//       to: dayIndexToDay(timeRange.to.dayIndex).format(TIMERANGE_CALCULATE_FORMAT),
-//     };
-//     const deltaDay = diffBusinessDayOffset(timeRange.from.dayIndex, timeRange.to.dayIndex);
-//     const calculateWidth: number =
-//       (isHiddenWeekend ? deltaDay : timeRange.to.dayIndex - timeRange.from.dayIndex) + 1;
-//     const calculatedTime = {};
-//     const groupItemsByStatus: Record<
-//       string,
-//       Record<string, { color: string; countItem: number }>
-//     > = {};
-//     uniqueIdList.forEach((uid: string) => {
-//       let total = 0;
-//       groupItemsByStatus[uid] ??= {};
+    const itemsById = state.general.itemsById;
+    if (!timeRange) return;
+    const uniqueIdList = uniq(rowIds);
+    const calculateRange = {
+      from: moment(
+        dayIndexToDay(timeRange.from.dayIndex).format(TIMERANGE_CALCULATE_FORMAT),
+      ).toDate(),
+      to: moment(dayIndexToDay(timeRange.to.dayIndex).format(TIMERANGE_CALCULATE_FORMAT)).toDate(),
+    };
+    const calculateWidth: number = timeRange.to.dayIndex - timeRange.from.dayIndex + 1;
+    const calculatedTime = {};
+    uniqueIdList.forEach((uid: string) => {
+      let total = 0;
+      const inRangeItems = Object.keys(itemsById).filter((key: string) => {
+        const itemId = key;
+        const item = itemsById[itemId];
+        if (!item.hour) return false;
 
-//       const inRangeItems = Object.keys(itemsById).filter((key: string) => {
-//         const itemId: number = parseInt(key);
-//         const item = itemsById[itemId];
+        const { userIds = [] } = itemsById[itemId] || {};
+        const users = userIds;
+        // check if this user assigned to this item
+        if (!users.includes(uid)) return false;
 
-//         const mappedField = mappedFieldBoards[item.board.id];
-//         if (!mappedField || !mappedField?.assignees || !mappedField?.timeline || !mappedField?.hour)
-//           return false;
-//         if (!itemsById[itemId].columnsById[mappedField.hour!].value) return false;
+        // check if exist time line and whether timeline overlapped with some items
+        return (
+          item &&
+          item.startDate &&
+          item.endDate &&
+          //@ts-ignore
+          isDayOverlapped(
+            {
+              from: moment(item.startDate, 'YYYY-MM-DD').toDate(),
+              to: moment(item.endDate, 'YYYY-MM-DD').toDate(),
+            },
+            calculateRange,
+          )
+        );
+      });
 
-//         const { userIds = [] } = itemsById[itemId].columnsById[mappedField.assignees!].value || {};
-//         const users = userIds;
-//         // check if this user assigned to this item
-//         if (!users.includes(uid)) return false;
+      let userTotalTime: number = 0;
+      for (let i = timeRange.from.dayIndex; i < timeRange.from.dayIndex + calculateWidth; i++) {
+        const day = dayIndexToDay(i);
+        userTotalTime += 8;
+      }
 
-//         // check if exist time line and whether timeline overlapped with some items
-//         return (
-//           item &&
-//           item.columnsById[mappedField.timeline!].value &&
-//           //@ts-ignore
-//           isDayOverlapped(item.columnsById[mappedField.timeline!].value, calculateRange)
-//         );
-//       });
+      // const totalTime = (calculateWidth - offDays) * defaultHour;
+      const overtimeRecord: Record<number, { isNonWorking: boolean; value: number }> = {};
 
-//       let userTotalTime: number = 0;
-//       for (let i = timeRange.from.dayIndex; i < timeRange.from.dayIndex + calculateWidth; i++) {
-//         const day = dayIndexToDay(i);
-//         userTotalTime += 8;
-//         //   (userWorkCapacity[day.day()] / 60)
-//       }
-//       // const totalTime = (calculateWidth - offDays) * defaultHour;
-//       const overtimeRecord: Record<number, { isNonWorking: boolean; value: number }> = {};
-//       const statusItems: Record<string, { color: string; countItem: number }> = {};
+      inRangeItems.forEach((key: string) => {
+        const itemId: string = key;
+        const item = itemsById[itemId];
+        const { from, to } = {
+          from: moment(item.startDate, 'YYYY-MM-DD').toDate(),
+          to: moment(item.endDate, 'YYYY-MM-DD').toDate(),
+        };
 
-//       inRangeItems.forEach((key: string) => {
-//         const itemId: number = parseInt(key);
-//         const item = itemsById[itemId];
+        let width = calculateWidth;
+        let start = timeRange.from.dayIndex;
 
-//         const mappedField = mappedFieldBoards[item.board.id];
-//         const { from, to } = item.columnsById[mappedField.timeline!].value;
+        if (to < calculateRange.to!) {
+          width -= dayjs(calculateRange.to).diff(dayjs(to), 'day');
+        }
 
-//         let width = calculateWidth;
-//         let start = timeRange.from.dayIndex;
+        if (from > calculateRange.from!) {
+          width -= dayjs(from).diff(dayjs(calculateRange.from), 'day');
+          start = getDayIndex(from);
+        }
 
-//         if (isHiddenWeekend) {
-//           const _end = to > calculateRange.to! ? calculateRange.to! : to;
-//           const _start = from > calculateRange.from! ? from : calculateRange.from!;
-//           width = diffBusinessDay(_start, _end);
-//           start = getDayIndex(_start) - 1;
-//         } else {
-//           if (to < calculateRange.to!) {
-//             width -= dayjs(calculateRange.to).diff(dayjs(to), 'day');
-//           }
+        // let nonWorkingDay = 0;
+        for (let i = start; i < start + width; i++) {
+          const day = dayIndexToDay(i);
 
-//           if (from > calculateRange.from!) {
-//             width -= dayjs(from).diff(dayjs(calculateRange.from), 'day');
-//             start = getDayIndex(from);
-//           }
-//         }
+          overtimeRecord[i] ??= { isNonWorking: false, value: 0 };
+          overtimeRecord[i].isNonWorking = isNonWorkingDay(i);
 
-//         // let nonWorkingDay = 0;
-//         for (let i = start; i < start + width; i++) {
-//           const day = dayIndexToDay(i);
+          const hour =
+            isOffWeekend && isNonWorkingDay(i)
+              ? 0
+              : item.hour
+                ? item.hour / 1 //same as divisor, diff name for clarity
+                : 8; // get default value of the day in user scheme
 
-//           overtimeRecord[i] ??= { isNonWorking: false, value: 0 };
-//           overtimeRecord[i].isNonWorking = false;
-
-//           const hour = isOffWeekend
-//             ? 0
-//             : mappedField.hour && item.columnsById[mappedField.hour]
-//               ? item.columnsById[mappedField.hour].value / 1 //same as divisor, diff name for clarity
-//               : 8; // get default value of the day in user scheme
-
-//           overtimeRecord[i].value += hour;
-//           //overtime calculation formula
-//           total += hour;
-//         }
-//         if (mappedField.status && item.columnsById[mappedField.status!]) {
-//           const { label, label_style } = item.columnsById[mappedField.status!] || {
-//             label_style: { color: '#c4c4c4' },
-//           };
-
-//           const color = label_style?.color || '#c4c4c4';
-//           const key = label || BLANK_STATUS_LABEL;
-//           statusItems[key] ??= { color: color, countItem: 0 };
-//           statusItems[key].countItem += 1;
-//         }
-//       });
-//       const overtimeRecordKeys = Object.keys(overtimeRecord);
-//       const overTime = Object.values(overtimeRecord).reduce(
-//         (acc, { isNonWorking, value }, index) => {
-//           const _idx = Number(overtimeRecordKeys[index]);
-//           const day = dayIndexToDay(_idx);
-//           const userDayWorkingHour = 8;
-//           // (userWorkCapacity[day.day()] / 60)
-//           return (
-//             acc +
-//             (isOffWeekend && isNonWorking
-//               ? 0
-//               : value > userDayWorkingHour
-//                 ? value - userDayWorkingHour
-//                 : 0)
-//           );
-//         },
-//         0,
-//       );
-//       Object.assign(calculatedTime, {
-//         [uid]: {
-//           scheduledTime: Number(total.toFixed(2)),
-//           totalTime: Number(userTotalTime.toFixed(2)),
-//           overtime: Number(overTime.toFixed(2)),
-//         },
-//       });
-
-//       Object.assign(groupItemsByStatus, { [uid]: statusItems });
-//     });
-//   },
-// );
+          overtimeRecord[i].value += hour;
+          //overtime calculation formula
+          total += hour;
+        }
+      });
+      const overtimeRecordKeys = Object.keys(overtimeRecord);
+      const overTime = Object.values(overtimeRecord).reduce(
+        (acc, { isNonWorking, value }, index) => {
+          const _idx = Number(overtimeRecordKeys[index]);
+          const day = dayIndexToDay(_idx);
+          const userDayWorkingHour = 8;
+          // (userWorkCapacity[day.day()] / 60)
+          return (
+            acc +
+            (isOffWeekend && isNonWorking
+              ? 0
+              : value > userDayWorkingHour
+                ? value - userDayWorkingHour
+                : 0)
+          );
+        },
+        0,
+      );
+      Object.assign(calculatedTime, {
+        [uid]: {
+          scheduledTime: Number(total.toFixed(2)),
+          totalTime: Number(userTotalTime.toFixed(2)),
+          overtime: Number(overTime.toFixed(2)),
+        },
+      });
+      dispatch(setScheduledTime(calculatedTime));
+    });
+  },
+);
