@@ -19,6 +19,7 @@ import { dayIndexToDay } from '../../common/helper';
 import {
   getFirstBusinessDayInMonth,
   getFirstBusinessDayInWeek,
+  getLastBusinessDayInMonth,
   getLastBusinessDayInWeek,
 } from '../../../../../../../src/utilities/helper';
 import { setTimeRange } from '../../../../../../../src/redux/schedule/scheduleMeasurementSlice';
@@ -28,8 +29,10 @@ import { grey } from '@mui/material/colors';
 
 const timeRangeOptions = [
   { label: 'This Week', value: TimeRangeMode.thisWeek },
+  { label: 'Next Week', value: TimeRangeMode.nextWeek },
   { label: 'Last Week', value: TimeRangeMode.lastWeek },
   { label: 'This Month', value: TimeRangeMode.thisMonth },
+  { label: 'Next Month', value: TimeRangeMode.nextMonth },
   { label: 'Last Month', value: TimeRangeMode.lastMonth },
   { label: 'Custom', value: TimeRangeMode.custom },
 ];
@@ -56,6 +59,7 @@ const CornerCell = () => {
   };
   const handleSelectTimeRangeOption = (_e: React.MouseEvent<HTMLElement>, index: number) => {
     setSelectedIndex(index);
+    console.log(index);
     timeRangeJump(timeRangeOptions[index].value);
     setTimeRangeAnchorEl(null);
   };
@@ -71,6 +75,10 @@ const CornerCell = () => {
         startOfWeek = now.startOf('week');
         endOfWeek = now.endOf('week');
         break;
+      case TimeRangeMode.nextWeek:
+        startOfWeek = now.startOf('week').add(1, 'week');
+        endOfWeek = now.endOf('week').add(1, 'week');
+        break;
       case TimeRangeMode.lastWeek:
         startOfWeek = now.startOf('week').subtract(1, 'week');
         endOfWeek = now.endOf('week').subtract(1, 'week');
@@ -78,6 +86,11 @@ const CornerCell = () => {
       case TimeRangeMode.thisMonth:
         startOfWeek = now.startOf('month');
         endOfWeek = now.endOf('month');
+        leftPadding = 1;
+        break;
+      case TimeRangeMode.nextMonth:
+        startOfWeek = now.startOf('month').add(1, 'month');
+        endOfWeek = now.endOf('month').add(1, 'month');
         leftPadding = 1;
         break;
       case TimeRangeMode.lastMonth:
@@ -102,7 +115,7 @@ const CornerCell = () => {
 
   useEffect(() => {
     if (timeRange == null) setSelectedIndex(-1);
-    if (timeRange != null && selectedTimeRangeIndex != timeRangeOptions.length - 1)
+    if (timeRange != null && selectedTimeRangeIndex == -1)
       setSelectedIndex(timeRangeOptions.length - 1);
     setRangeTitle(timeRangeTitle());
   }, [timeRange]);
@@ -130,6 +143,16 @@ const CornerCell = () => {
         type: TimeRangeMode.thisWeek,
       };
     }
+    const nextWeek = now.add(1, 'week');
+    if (
+      getFirstBusinessDayInWeek(nextWeek.format(ITEM_DATE_FORMAT), false).isSame(start, 'day') &&
+      getLastBusinessDayInWeek(nextWeek.format(ITEM_DATE_FORMAT), false).isSame(end, 'day')
+    ) {
+      return {
+        text: 'Next Week',
+        type: TimeRangeMode.nextWeek,
+      };
+    }
 
     const lastWeek = now.subtract(1, 'week');
     if (
@@ -143,7 +166,7 @@ const CornerCell = () => {
     }
     if (
       getFirstBusinessDayInMonth(now.format(ITEM_DATE_FORMAT), false).isSame(start, 'day') &&
-      getFirstBusinessDayInMonth(now.format(ITEM_DATE_FORMAT), false).isSame(end, 'day')
+      getLastBusinessDayInMonth(now.format(ITEM_DATE_FORMAT), false).isSame(end, 'day')
     ) {
       return {
         text: 'This Month',
@@ -151,10 +174,21 @@ const CornerCell = () => {
       };
     }
 
+    const nextMonth = now.add(1, 'month');
+    if (
+      getFirstBusinessDayInMonth(nextMonth.format(ITEM_DATE_FORMAT), false).isSame(start, 'day') &&
+      getLastBusinessDayInMonth(nextMonth.format(ITEM_DATE_FORMAT), false).isSame(end, 'day')
+    ) {
+      return {
+        text: 'Next Month',
+        type: TimeRangeMode.nextMonth,
+      };
+    }
+
     const lastMonth = now.subtract(1, 'month');
     if (
       getFirstBusinessDayInMonth(lastMonth.format(ITEM_DATE_FORMAT), false).isSame(start, 'day') &&
-      getFirstBusinessDayInMonth(lastMonth.format(ITEM_DATE_FORMAT), false).isSame(end, 'day')
+      getLastBusinessDayInMonth(lastMonth.format(ITEM_DATE_FORMAT), false).isSame(end, 'day')
     ) {
       return {
         text: 'Last Month',

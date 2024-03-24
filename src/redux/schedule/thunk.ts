@@ -184,7 +184,6 @@ export const calculateScheduledTime = createAsyncThunk(
     const state: RootState = getState() as RootState;
     // const defaultMinute = state.settings.defaultMinute;
     const timeRange = state.scheduleMeasurement.timeRange;
-    console.log('Start Calc Scheduled Times', timeRange);
     // const defaultHour = defaultMinute / 60;
     const isOffWeekend = state.settings.isOffWeekend;
 
@@ -201,18 +200,15 @@ export const calculateScheduledTime = createAsyncThunk(
     const calculatedTime = {};
     uniqueIdList.forEach((uid: string) => {
       let total = 0;
-      console.log(uid);
       const inRangeItems = Object.keys(itemsById).filter((key: string) => {
         const itemId = key;
         const item = itemsById[itemId];
-        console.log(item);
         if (!item.hour) return false;
 
         const { userIds = [] } = itemsById[itemId] || {};
         const users = userIds;
         // check if this user assigned to this item
         if (!users.includes(uid)) return false;
-        console.log('Check item');
 
         // check if exist time line and whether timeline overlapped with some items
         return (
@@ -229,7 +225,6 @@ export const calculateScheduledTime = createAsyncThunk(
           )
         );
       });
-      console.log(inRangeItems);
 
       let userTotalTime: number = 0;
       for (let i = timeRange.from.dayIndex; i < timeRange.from.dayIndex + calculateWidth; i++) {
@@ -243,12 +238,10 @@ export const calculateScheduledTime = createAsyncThunk(
       inRangeItems.forEach((key: string) => {
         const itemId: string = key;
         const item = itemsById[itemId];
-        console.log(item);
         const { from, to } = {
           from: moment(item.startDate, 'YYYY-MM-DD').toDate(),
           to: moment(item.endDate, 'YYYY-MM-DD').toDate(),
         };
-        console.log(item, from, to);
 
         let width = calculateWidth;
         let start = timeRange.from.dayIndex;
@@ -275,8 +268,6 @@ export const calculateScheduledTime = createAsyncThunk(
               : item.hour
                 ? item.hour / 1 //same as divisor, diff name for clarity
                 : 8; // get default value of the day in user scheme
-
-          console.log(item, hour);
 
           overtimeRecord[i].value += hour;
           //overtime calculation formula
@@ -308,9 +299,7 @@ export const calculateScheduledTime = createAsyncThunk(
           overtime: Number(overTime.toFixed(2)),
         },
       });
-      console.log(calculatedTime);
       dispatch(setScheduledTime(calculatedTime));
     });
-    console.log(calculatedTime || 'Nothing');
   },
 );
