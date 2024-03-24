@@ -20,17 +20,17 @@ import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
 // const CheckboxGroup = Checkbox.Group;
 
 const plainOptions = ['Active', 'Archived', 'AccountAccess'];
-  const rows: Data[] = [
-    // createData(1, '1', 'Bảo Huỳnh Minh', 'Employee', 'IT', 'Editor', 'None', 'EB', 'Types'),
-    // createData(2, '2', 'Minh', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
-    // createData(3, '3', 'An', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
-    // createData(4, '4', 'Bình', '__', 'IT', 'Manager', 'None', '__', 'Types'),
-    // createData(5, '5', 'PP', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
-    // createData(6, '6', 'Ngọc Hân', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
-    // createData(7, '7', 'Minh Nhật', '__', 'IT', 'Manager', 'None', '__', 'Types'),
-    // createData(8, '8', 'Quân', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
-    // createData(9, '9', 'PP2', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
-  ];
+const rows: Data[] = [
+  // createData(1, '1', 'Bảo Huỳnh Minh', 'Employee', 'IT', 'Editor', 'None', 'EB', 'Types'),
+  // createData(2, '2', 'Minh', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
+  // createData(3, '3', 'An', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
+  // createData(4, '4', 'Bình', '__', 'IT', 'Manager', 'None', '__', 'Types'),
+  // createData(5, '5', 'PP', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
+  // createData(6, '6', 'Ngọc Hân', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
+  // createData(7, '7', 'Minh Nhật', '__', 'IT', 'Manager', 'None', '__', 'Types'),
+  // createData(8, '8', 'Quân', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
+  // createData(9, '9', 'PP2', '__', 'IT', 'Account Owner', 'None', '__', 'Types'),
+];
 function CheckboxGroup() {
   const [cb, setCb] = useState(false);
   const [filterString, setFilterString] = useState(plainOptions[0]);
@@ -40,7 +40,6 @@ function CheckboxGroup() {
   // const [densityAnchorEl, setDensityAnchorEl] = useState<null | HTMLElement>(null);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
-
 
   const onChange = (checked: boolean, index: number) => {
     console.log('checkedList', checkedList);
@@ -153,21 +152,26 @@ function CheckboxGroup() {
 }
 
 export default function PeopleView() {
-    const peopleList = useAppSelector((state) => state.people.people);
-return (
+  const peopleList = useAppSelector((state) => state.people.people);
+  console.log(peopleList);
+  return (
     <div className='bg-white flex-1 h-full px-9 py-3'>
       {CheckboxGroup()}
-      {CustomizedTables(peopleList.map((p) => createData(
-        p.id,
-        p.id,
-        p.name,
-        p.accountType.toString(),
-        p.role ?? '',
-        p.department ?? '',
-        p.accountType.toString(),
-        (p.tags ?? []).join(', '),
-        p.type.toString(),
-      ),))}
+      {CustomizedTables(
+        peopleList.map((p) =>
+          createData(
+            p.id,
+            p.id,
+            p.name,
+            p.accountType.toString(),
+            p.role ?? '',
+            p.department ?? '',
+            p.accountType.toString(),
+            (p.tags ?? []).join(', '),
+            p.type.toString(),
+          ),
+        ),
+      )}
       <Box sx={{ width: '100%' }} className='content-center flex flex-col items-center mx-0 mr-5'>
         <Stack spacing={3} direction='column' className='flex content-center align-center'>
           <div className='content-center' style={{ marginLeft: -20 }}>

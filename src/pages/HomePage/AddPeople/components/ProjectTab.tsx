@@ -3,6 +3,7 @@ import {
   AutocompleteRenderInputParams,
   Box,
   Button,
+  Chip,
   ClickAwayListener,
   Divider,
   FormControl,
@@ -20,6 +21,13 @@ import { PersonInfo } from '../models';
 import { Close, ArrowDropDown } from '@mui/icons-material';
 import { ChangeEvent, ReactNode, useState } from 'react';
 
+
+const projects = [
+  { id: '1', name: 'Project 1' },
+  { id: '2', name: 'Project 2' },
+  { id: '3', name: 'Project 3' },
+];
+
 interface ProjectSubBodyProps {
   info: PersonInfo;
   setInfo: (info: any) => void;
@@ -27,7 +35,6 @@ interface ProjectSubBodyProps {
 
 const ProjectSubBody = (props: ProjectSubBodyProps) => {
   const { info, setInfo } = props;
-  const projects = [];
 
   const setValue = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -42,20 +49,20 @@ const ProjectSubBody = (props: ProjectSubBodyProps) => {
         <FormControl fullWidth>
           <Typography>Project</Typography>
           <Autocomplete
+            options={projects.map((e) => e.name)}
+            value={info.projects}
+            freeSolo
             multiple
-            open={projects.length > 0}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                placeholder='Type and selects projects'
-                variant='outlined'
-                value={info?.projects}
-                name='project'
-                sx={{ bgcolor: 'white' }}
-                onChange={(e) => setValue(e)}
-              />
-            )}
-            options={[]}
+            onChange={(_, value) =>
+              setInfo((prevInfo: any) => ({
+                ...prevInfo,
+                "projects": value,
+              }))
+            }
+            renderTags={(value, props) =>
+              value.map((option, index) => <Chip label={option} {...props({ index })} />)
+            }
+            renderInput={(params) => <TextField {...params} variant='outlined' fullWidth />}
           />
         </FormControl>
       </Box>
@@ -74,9 +81,9 @@ const ProjectSubBody = (props: ProjectSubBodyProps) => {
               <>
                 <ListItem key={p}>
                   <ListItemText>{p}</ListItemText>
-                  <ListItemButton>
+                  <IconButton>
                     <Close />
-                  </ListItemButton>
+                  </IconButton>
                 </ListItem>
                 <Divider />
               </>

@@ -7,7 +7,7 @@ import AvailSubBody from './components/AvailabilityTab';
 import ProjectSubBody from './components/ProjectTab';
 import { PersonInfo, Availability, WorkingType, ContractType, AccountType } from './models';
 import MiModalModified from './components/MiModalModified';
-import { useAppDispatch } from '@hooks/reduxHooks';
+import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
 import { addPeople } from '../../../redux/people/peopleSlice';
 import { generateUUID } from '@base/utils/uuid';
 import ManageSubBody from './components/ManageTab';
@@ -31,7 +31,7 @@ function CustomTabPanel(props: Readonly<TabPanelProps>) {
     >
       {value === index && (
         <Box sx={{ px: 1, pt: 2 }}>
-          <Typography>{children}</Typography>
+          {children}
         </Box>
       )}
     </div>
@@ -214,11 +214,27 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
     setIsOpen(false);
   };
 
+  const setName = (e: { target: { name: any; value: any } }) => {
+    const { value } = e.target;
+    setPersonInfoData({
+      ...personInfoData,
+      name: value,
+    });
+  };
+
+  const setEmail = (e: { target: { name: any; value: any } }) => {
+    const { value } = e.target;
+    setPersonInfoData({
+      ...personInfoData,
+      email: value,
+    });
+  };
+
   const setValue = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setPersonInfoData({
       ...personInfoData,
-      name: value,
+      ...value,
     });
   };
 
@@ -243,7 +259,7 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
               fullWidth
               placeholder='Person name'
               value={personInfoData.name}
-              onChange={setValue}
+              onChange={setName}
               InputProps={{
                 disableUnderline: true,
                 sx: { fontSize: '22px' },
@@ -256,8 +272,8 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
               size='small'
               placeholder='Email'
               inputProps={{ style: { fontSize: '15px' } }}
-              value={personInfoData.name}
-              onChange={setValue}
+              value={personInfoData.email}
+              onChange={setEmail}
               InputProps={{
                 disableUnderline: true,
               }}

@@ -16,10 +16,28 @@ interface InfoProp {
   setInfo: (info: any) => void;
 }
 
+const tags = [
+  { id: '1', name: 'Tag 1' },
+  { id: '2', name: 'Tag 2' },
+  { id: '3', name: 'Tag 3' },
+];
+
+const roles = [
+  { id: '1', name: 'Role 1' },
+  { id: '2', name: 'Role 2' },
+  { id: '3', name: 'Role 3' },
+];
+
+const departments = [
+  { id: '1', name: 'Dep 1' },
+  { id: '2', name: 'Dep 2' },
+  { id: '3', name: 'Dep 3' },
+];
+
 const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
-  const [tags, setTags] = useState<string[]>([]);
-  const roles = [];
-  const departments = [];
+  // const [tags, setTags] = useState<string[]>([]);
+  // const roles = [];
+  // const departments = [];
 
   const setValue = (event: { target: { name: any; value: any } }): void => {
     const { name, value } = event.target;
@@ -27,17 +45,37 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
       ...prevInfo,
       [name]: value,
     }));
+    console.log(info);
   };
 
   console.log(info?.type);
+  const [inputRole, setInputRole] = React.useState(info.role);
+  const [inputDepartment, setInputDepartment] = React.useState(info.department);
+  const [inputTags, setInputTags] = React.useState(info.tags);
 
   return (
     <Box paddingX={3}>
       <FormControl fullWidth>
         <Typography>Role</Typography>
         <Autocomplete
-          options={[]}
-          open={roles.length > 0}
+          value={info.role}
+          // onChange={(_, value) => {
+          //   setInputRole(value ?? info.role);
+          // }}
+          // inputValue={inputRole}
+          onChange={(event, newInputValue) => {
+            // setInputRole(newInputValue);
+            setValue({
+              target: {
+                name: 'role',
+                value: newInputValue,
+              },
+            });
+          }}
+          freeSolo
+          id='controllable-states-demo'
+          options={roles.map((e) => e.name)}
+          //open={roles.length > 0}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -54,8 +92,20 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
         <FormControl fullWidth>
           <Typography>Department</Typography>
           <Autocomplete
-            options={[]}
-            open={departments.length > 0}
+            value={info.department}
+            // inputValue={inputDepartment}
+            onChange={(event, newInputValue) => {
+              // setInputDepartment(newInputValue);
+              setValue({
+                target: {
+                  name: 'department',
+                  value: newInputValue,
+                },
+              });
+            }}
+            freeSolo
+            options={departments.map((e) => e.name)}
+            //open={departments.length > 0}
             renderInput={(params) => (
               <TextField
                 {...params}
@@ -74,10 +124,29 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
         <Typography>Tags</Typography>
         <Autocomplete
           clearIcon={false}
-          options={[]}
+          //value={info.tags}
+          // inputValue={inputTags}
+          // onInputChange={(event, newInputValue) => {
+          //   setInputTags(newInputValue);
+          //   setValue({
+          //     target: {
+          //       name: 'tags',
+          //       value: newInputValue,
+          //     },
+          //   });
+          // }}
+          options={tags.map((e) => e.name)}
+          value={info.tags}
           freeSolo
           multiple
-          onChange={(_, value) => setTags(value)}
+          onChange={(_, value) =>
+            setValue({
+              target: {
+                name: 'tags',
+                value: value,
+              },
+            })
+          }
           renderTags={(value, props) =>
             value.map((option, index) => <Chip label={option} {...props({ index })} />)
           }
@@ -102,7 +171,13 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
             InputProps={{ startAdornment: <span>đ</span> }}
             name='hourlyRate'
             value={info?.hourlyRate}
-            onChange={setValue}
+            onChange={(e) =>
+              setValue({
+                target: {
+                  name: 'hourlyRate',
+                  value: e.target.value,
+                },
+              })}
           />
         </FormControl>
       </Stack>

@@ -76,7 +76,7 @@ const ColorSelectPopover: React.FC<ColorSelectPopoverProps> = ({
           <Typography>Default color</Typography>
           <Grid container>
             {colors.map((color, _) => (
-              <Grid item key={color} direction='row'>
+              <Grid item container key={color} direction='row'>
                 <IconButton
                   onClick={() => {
                     onSelectColor(color);

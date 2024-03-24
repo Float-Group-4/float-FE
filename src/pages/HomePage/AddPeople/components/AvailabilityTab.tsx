@@ -28,13 +28,17 @@ interface AvailProp {
   setInfo: (info: any) => void;
 }
 
+const holidays = [
+  { id: '1', name: 'Winter break' },
+  { id: '2', name: 'Summer' },
+  { id: '3', name: 'Tet' },
+];
+
 const AvailSubBody: React.FC<AvailProp> = ({ info, setInfo }) => {
   const [tags, setTags] = useState<string[]>([]);
   const today = new Date();
   const [startDate, setStartDate] = useState(today);
   const [endDate, setEndDate] = useState(today);
-
-  const holidays = [];
 
   const handleDateChange = (date: any, isStart: boolean) => {
     try {
@@ -149,8 +153,19 @@ const AvailSubBody: React.FC<AvailProp> = ({ info, setInfo }) => {
       <FormControl>
         <Typography>Public holidays</Typography>
         <Autocomplete
-          options={[]}
-          open={holidays.length > 0}
+        value={info.availability.publicHoliday}
+        onChange={(event, newInputValue) => {
+          setInfo((prevInfo: PersonInfo) => ({
+            ...prevInfo,
+            availability: {
+              ...prevInfo.availability,
+              publicHoliday: newInputValue,
+            },
+          }));
+        }}
+        freeSolo
+        options={holidays.map((e) => e.name)}
+        // open={holidays.length > 0}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -180,7 +195,14 @@ const AvailSubBody: React.FC<AvailProp> = ({ info, setInfo }) => {
           multiline
           name='note'
           value={info?.availability.note ?? ''}
-          onChange={handleValueChange}
+          onChange={(e) => 
+            setInfo((prevInfo: PersonInfo) => ({
+              ...prevInfo,
+              availability: {
+                ...prevInfo.availability,
+                note: e.target.value,
+              },
+            }))}
           InputProps={{
             sx: { pt: 1 },
           }}

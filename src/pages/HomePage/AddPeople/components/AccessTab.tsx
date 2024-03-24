@@ -62,49 +62,88 @@ const AccessSubBody: React.FC<AccessProps> = ({ info, setInfo }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const [type, setType] = useState('');
 
-  const setValue = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { value, name } = event.target;
-    setInfo((prev: any) => ({
-      ...prev,
-      name: value,
+  const setValue = (event: { target: { name: any; value: any } }): void => {
+    const { name, value } = event.target;
+    setInfo((prevInfo: any) => ({
+      ...prevInfo,
+      [name]: value,
     }));
   };
+  console.log(info);
 
   return (
     <Box paddingX={1}>
       <Box sx={{ backgroundColor: '#F6F6F6', px: 2, py: 2, borderRadius: '5px' }}>
         <Typography>Access</Typography>
         <Autocomplete
+          value={type}
+          onChange={(event, newInputValue) => {
+            console.log('change value ' + newInputValue.title);
+            setValue({
+              target: {
+                name: 'accountType',
+                value: newInputValue.title,
+              },
+            });
+            setIsOpen(false);
+          }}
+          inputValue={info.accountType}
+          getOptionLabel={(option) => option.title || ''}
           fullWidth
           sx={{ backgroundColor: 'white' }}
           options={accountType}
-          getOptionLabel={(option) => option.title.toString()}
+          isOptionEqualToValue={(option, value) => {
+            // console.log(option.title);
+            return option.title.includes(value);
+          }}
           renderInput={(params) => (
             <TextField
               {...params}
-              autoFocus
               variant='outlined'
-              value={info?.accountType.toString()}
               name='accountType'
+              onChange={(e) => {
+                console.log('typing ' + e.target.value);
+                setValue({
+                  target: {
+                    name: 'accountType',
+                    value: e.target.value,
+                  },
+                });
+                setAnchorEl(e.currentTarget);
+                setIsOpen(true);
+              }}
               onClick={(e) => {
                 setAnchorEl(e.currentTarget);
                 setIsOpen(true);
               }}
-              onChange={(e) => setValue(e)}
             />
           )}
           renderOption={(props: object, option: any) => (
             <MenuItem
               {...props}
               key={option.id}
-              onClick={() => {
-                setInfo((prev: any) => ({
-                  ...prev,
-                  accountType: option.title,
-                }));
-                setType(option.title);
-                setIsOpen(false);
-              }}
+              // onClick={() => {
+              //   setType(option.title);
+              //   console.log("click " + option.title);
+              //   setValue({
+              //     target: {
+              //       name: 'accountType',
+              //       value: option.title,
+              //     },
+              //   });
+              //   setIsOpen(false);
+              // }}
+              // onMouseDown={() => {
+              //   setType(option.title);
+              //   console.log("mouse " + option.title);
+              //   setValue({
+              //     target: {
+              //       name: 'accountType',
+              //       value: option.title,
+              //     },
+              //   });
+              //   setIsOpen(false);
+              // }}
               sx={{ '&:hover': { bgcolor: 'lightblue !important' } }}
             >
               <ListItemText
@@ -118,10 +157,10 @@ const AccessSubBody: React.FC<AccessProps> = ({ info, setInfo }) => {
         />
       </Box>
       <Box minHeight='60%' height='30vh' width='100%'>
-        {type == AccountType.member && <MemberLayout />}
-        {type == AccountType.manager && <ManagerLayout />}
-        {type == AccountType.admin && <AdminLayout />}
-        {type === AccountType.none && (
+        {info.accountType == AccountType.member && <MemberLayout />}
+        {info.accountType == AccountType.manager && <ManagerLayout />}
+        {info.accountType == AccountType.admin && <AdminLayout />}
+        {info.accountType === AccountType.none && (
           <Typography paddingX={3} paddingY={2} fontSize={16}>
             Once access rights are selected, your teammate will receive an email invitation to join
             your team.

@@ -29,10 +29,18 @@ interface InfoProp {
 }
 
 const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
-  const [tags, setTags] = useState<string[]>([]);
 
-  const clients: string[] = [];
+  const clients = [
+    { id: '1', name: 'Client 1' },
+    { id: '2', name: 'Client 2' },
+    { id: '3', name: 'Client 3' },
+  ];
 
+  const tags = [
+    { id: '1', name: 'Tag 1' },
+    { id: '2', name: 'Tag 2' },
+    { id: '3', name: 'Tag 3' },
+  ];
   const handleButtonClick = (newType: string) => {
     setInfo((prevInfo: any) => ({
       ...prevInfo,
@@ -62,8 +70,17 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
       <FormControl fullWidth>
         <Typography>Client</Typography>
         <Autocomplete
-          open={clients.length > 0}
-          options={clients}
+          value={info.client}
+          // inputValue={inputDepartment}
+          onChange={(event, newInputValue) => {
+            // setInputDepartment(newInputValue);
+            setInfo((prevInfo: any) => ({
+              ...prevInfo,
+              client: newInputValue,
+            }));
+          }}
+          freeSolo
+          options={clients.map((e) => e.name)}
           renderInput={(params) => (
             <TextField
               {...params}
@@ -97,10 +114,16 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
         <Typography>Tags</Typography>
         <Autocomplete
           clearIcon={false}
-          options={[]}
+          options={tags.map((e) => e.name)}
+          value={info.tags}
           freeSolo
           multiple
-          onChange={(_, value) => setTags(value)}
+          onChange={(_, value) =>
+            setInfo((prevInfo: any) => ({
+              ...prevInfo,
+              tags: value,
+            }))
+          }
           renderTags={(value, props) =>
             value.map((option, index) => <Chip label={option} {...props({ index })} />)
           }
@@ -120,7 +143,7 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
             disableRipple
             disableTouchRipple
             disableElevation
-            onClick={() => handleButtonClick('billable')}
+            onClick={() => handleButtonClick(ProjectType.billable)}
           >
             Billable
           </Button>
@@ -134,7 +157,7 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
             disableRipple
             disableTouchRipple
             disableElevation
-            onClick={() => handleButtonClick('non-billable')}
+            onClick={() => handleButtonClick(ProjectType.nonBillable)}
           >
             Non-billable
           </Button>
