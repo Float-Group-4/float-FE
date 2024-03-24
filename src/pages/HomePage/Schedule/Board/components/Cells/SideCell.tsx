@@ -1,11 +1,13 @@
 import BackgroundLetterAvatar from '@components/BackgroundLetterAvatar';
 import { USER_CELL_HEIGHT } from '@constants/home';
 import { useAppSelector } from '@hooks/reduxHooks';
-import { Box, Chip, Stack, Typography, useTheme } from '@mui/material';
+import { Box, Chip, Stack, Tooltip, Typography, useTheme } from '@mui/material';
 
 export const SideCell = ({ userId }: { userId: string }) => {
   const theme = useTheme();
   const userByIds = useAppSelector((state) => state.general.usersById);
+  const timeRange = useAppSelector((state) => state.scheduleMeasurement.timeRange);
+  const scheduledTime = useAppSelector((state) => state.scheduleMeasurement.scheduledTime);
   const user = userByIds[userId];
   const cornerCellWidth = useAppSelector((state) => state.scheduleMeasurement.cornerCellWidth);
   return (
@@ -26,13 +28,30 @@ export const SideCell = ({ userId }: { userId: string }) => {
             <BackgroundLetterAvatar>{user?.name}</BackgroundLetterAvatar>
             <Typography>{user?.name}</Typography>
           </Stack>
-          <Chip
-            variant='light'
-            size='small'
-            color='secondary'
-            label={`${user?.workHour}h`}
-            sx={{ '& .MuiChip-label ': { color: theme.palette.text.primary } }}
-          />
+          {timeRange && (
+            <Tooltip
+              title={
+                <div>
+                  <div>{`${scheduledTime[user.id]?.scheduledTime.toFixed(2) || 0}h/${scheduledTime[user.id]?.totalTime.toFixed(0) || 0}h capacity`}</div>
+                  <div>{`${scheduledTime[user.id]?.overtime.toFixed(2) || 0}h overtime`}</div>
+                </div>
+              }
+              arrow
+              placement='right'
+            >
+              <Chip
+                variant='light'
+                size='small'
+                color={scheduledTime[user.id]?.overtime === 0 ? 'secondary' : 'error'}
+                label={`${scheduledTime[user.id]?.scheduledTime || 0}h`}
+                sx={
+                  scheduledTime[user.id]?.overtime === 0
+                    ? { '& .MuiChip-label ': { color: theme.palette.text.primary } }
+                    : {}
+                }
+              />
+            </Tooltip>
+          )}
         </Stack>
       </Box>
     </div>
