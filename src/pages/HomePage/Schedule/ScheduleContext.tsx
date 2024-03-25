@@ -12,9 +12,15 @@ import {
 import { CALENDAR_BAR_HEIGHT, ITEM_DATE_FORMAT, STARTING_POINT } from './Board/common/constant';
 import { Autoscroller, DragInfo, DragItem, ScheduleContextType } from './Board/common/type';
 import { useAutoscroller } from './Board/common/hook';
-import { setItemPlaceHolder, setItemsById } from '../../../redux/general/generalSlice';
+import {
+  setItemPlaceHolder,
+  setItemsById,
+  setStatusItemPlaceHolder,
+  setTimeOffItemPlaceHolder,
+} from '../../../redux/general/generalSlice';
 import { getNewDateByDayIndex } from './Board/common/helper';
 import { buildRows } from '../../../redux/schedule/thunk';
+import { Item } from 'src/types/primitive/item.interface';
 
 export const ScheduleContext = createContext<ScheduleContextType>({
   autoscroller: null,
@@ -194,8 +200,20 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
   /* -------------------------- Dragging Item Actions ------------------------- */
 
   const onItemDragStart = (dragItem: DragItem) => {
-    console.log(dragItem);
-    dispatch(setItemPlaceHolder({ id: dragItem.item.id, isPlaceHolder: true }));
+    console.log(dragItem.item.type);
+    switch (dragItem.item.type) {
+      case 'item':
+        dispatch(setItemPlaceHolder({ id: dragItem.item.id, isPlaceHolder: true }));
+        break;
+      case 'timeOffItem':
+        dispatch(setTimeOffItemPlaceHolder({ id: dragItem.item.id, isPlaceHolder: true }));
+        break;
+      case 'statusItem':
+        dispatch(setStatusItemPlaceHolder({ id: dragItem.item.id, isPlaceHolder: true }));
+        break;
+      default:
+        break;
+    }
 
     scrollRef.current.style.cursor = 'grabbing';
     const smp = mousePositionRef.current;

@@ -14,4 +14,5 @@ export interface Item {
       color: string;
     };
   };
+  type?: 'item';
 }

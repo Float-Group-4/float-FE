@@ -5,6 +5,7 @@ import { BoardType } from '../../types/enums';
 import { buildRows } from '../schedule/thunk';
 import { TimeOffItem } from 'src/types/primitive/timeOffItem.interface';
 import { StatusItem } from 'src/types/primitive/statusItem.interface';
+import { log } from 'console';
 
 interface GeneralState {
   itemsById: Record<string, Item>;
@@ -32,6 +33,7 @@ const initialState: GeneralState = {
       endDate: '2024-03-12',
       hour: 8,
       isPlaceHolder: false,
+      type: 'item',
     },
     item2: {
       id: 'item2',
@@ -41,6 +43,7 @@ const initialState: GeneralState = {
       endDate: '2024-03-28',
       hour: 10,
       isPlaceHolder: false,
+      type: 'item',
     },
     item3: {
       id: 'item3',
@@ -50,17 +53,30 @@ const initialState: GeneralState = {
       endDate: '2024-03-14',
       hour: 4,
       isPlaceHolder: false,
+      type: 'item',
     },
   },
-  timeOffItemsById: {},
-  statusItemsById: {
-    status1: {
-      id: 'status1',
+  timeOffItemsById: {
+    timeOff1: {
+      id: 'timeOff1',
       userIds: ['userId3'],
       name: 'Home',
       startDate: '2024-03-25',
       endDate: '2024-03-28',
       isPlaceHolder: false,
+      notes: 'Vacation',
+      type: 'timeOffItem',
+    },
+  },
+  statusItemsById: {
+    status1: {
+      id: 'status1',
+      userIds: ['userId3'],
+      name: 'Home',
+      startDate: '2024-04-02',
+      endDate: '2024-04-05',
+      isPlaceHolder: false,
+      type: 'statusItem',
     },
   },
   subBoardById: {},
@@ -104,7 +120,7 @@ const initialState: GeneralState = {
     userId3: {
       id: 'userId3',
       items: [],
-      timeOffItems: [],
+      timeOffItems: ['timeOff1'],
       statusItems: ['status1'],
       itemPosition: {},
       height: 0,
@@ -129,6 +145,8 @@ const generalSlice = createSlice({
       }>,
     ) => {
       const { id, isPlaceHolder } = action.payload;
+      console.log('state');
+      console.log(state);
       Object.assign(state.itemsById[id], { ...state.itemsById[id], isPlaceHolder });
     },
     addNewItem: (state, action) => {
@@ -214,7 +232,6 @@ const generalSlice = createSlice({
     addTimeOffItemIntoMap: (state, action) => {
       state.timeOffItemsById = { ...state.timeOffItemsById, ...action.payload };
     },
-
     setTimeOffItemsById: (state, action) => {
       console.log(action.payload);
       state.timeOffItemsById = action.payload;
@@ -263,7 +280,6 @@ const generalSlice = createSlice({
     addStatusItemIntoMap: (state, action) => {
       state.statusItemsById = { ...state.statusItemsById, ...action.payload };
     },
-
     setStatusItemsById: (state, action) => {
       console.log(action.payload);
       state.statusItemsById = action.payload;
@@ -278,7 +294,20 @@ const generalSlice = createSlice({
   },
 });
 
-export const { setItemPlaceHolder, addNewItem, addItemIntoMap, setFetchedIndexes, setItemsById } =
-  generalSlice.actions;
+export const {
+  setItemPlaceHolder,
+  addNewItem,
+  addItemIntoMap,
+  setFetchedIndexes,
+  setItemsById,
+  setTimeOffItemPlaceHolder,
+  addNewTimeOffItem,
+  addTimeOffItemIntoMap,
+  setTimeOffItemsById,
+  setStatusItemPlaceHolder,
+  addNewStatusItem,
+  addStatusItemIntoMap,
+  setStatusItemsById,
+} = generalSlice.actions;
 
 export default generalSlice;

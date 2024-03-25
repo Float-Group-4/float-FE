@@ -9,6 +9,8 @@ import { getActualRowHeight } from '../common/helper';
 import { SideCell } from './Cells/SideCell';
 import { ItemCard } from './Items/ItemCard';
 import { NonWorkItem } from './Items/NonWorkingItem';
+import { TimeOffItemCard } from './Items/TimeOffCard';
+import { StatusMark } from './Items/StatusMark';
 
 export default memo(function Row({ userId, className }: { userId: string; className: string }) {
   const dispatch = useAppDispatch();
@@ -84,7 +86,7 @@ export default memo(function Row({ userId, className }: { userId: string; classN
   };
 
   useEffect(() => console.log(rowMap), [null]);
-
+  console.log(useAppSelector((state) => state.general));
   return (
     <VisibilitySensor partialVisibility>
       {({ isVisible }: { isVisible: boolean }) => {
@@ -144,13 +146,18 @@ export default memo(function Row({ userId, className }: { userId: string; classN
                       height: `${rowHeight + 1 - (isWorkloadMode ? WORKLOAD_ROW_HEIGHT : 0)}px`,
                     }}
                   >
-                    {rowMap.statusItems.map((id: string) => {
-                      console.log('Status');
+                    {rowMap.timeOffItems.map((id: string) => {
                       return (
-                        <div
-                          key={id}
-                          className={'bottom-1 right-1 w-20 h-20 border-red border-2 statusMark'}
-                        ></div>
+                        <div key={id} className='timeoff'>
+                          <TimeOffItemCard id={id} rowId={id} />
+                        </div>
+                      );
+                    })}
+                    {rowMap.statusItems.map((id: string) => {
+                      return (
+                        <div className='status'>
+                          <StatusMark key={id} id={id} />
+                        </div>
                       );
                     })}
                     {rowMap.items.map((id: string) => {

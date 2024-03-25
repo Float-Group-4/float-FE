@@ -13,4 +13,5 @@ export interface StatusItem {
       color: string;
     };
   };
+  type?: 'statusItem';
 }

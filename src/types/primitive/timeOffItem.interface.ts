@@ -14,4 +14,5 @@ export interface TimeOffItem {
       color: string;
     };
   };
+  type?: 'timeOffItem';
 }
