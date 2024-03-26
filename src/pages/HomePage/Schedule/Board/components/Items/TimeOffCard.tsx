@@ -23,23 +23,7 @@ export const TimeOffItemCard = ({ id, rowId }: { id: string; rowId: string }) =>
   const cellWidth = useAppSelector((state) => state.scheduleMeasurement.cellWidth);
   const timeOffItemsById = useAppSelector((state) => state.general.timeOffItemsById);
 
-  const [isResizing, setIsResizing] = useState(false);
   const mouseDownRef = useRef<any>();
-
-  useEffect(() => {
-    const handleMouseUp = () => {
-      if (!dragItem) {
-        // Trigger your functionality here
-        console.log('Left mouse button released');
-      }
-    };
-
-    window.addEventListener('mouseup', handleMouseUp);
-
-    return () => {
-      window.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [dragItem]);
 
   if (!item) return <></>;
 
@@ -90,7 +74,6 @@ export const TimeOffItemCard = ({ id, rowId }: { id: string; rowId: string }) =>
   };
 
   const onTimeOffItemStart = (e: React.MouseEvent) => {
-    console.log('move');
     if (dragItem) return;
 
     mouseDownRef.current = {
@@ -107,13 +90,12 @@ export const TimeOffItemCard = ({ id, rowId }: { id: string; rowId: string }) =>
       window.removeEventListener('mousemove', moveHandler);
     };
     const moveHandler = async (e: MouseEvent) => {
-      console.log('movehandle');
       let newTimeRangeValue = { from: item.startDate, to: item.endDate };
       let deltaDay = 0;
       //@ts-ignore
       deltaDay = mousePositionRef.current.dayIndex - mouseDownRef.current.dayIndex;
       const mouseDownlastDeltaDay = mouseDownRef.current.lastDeltaDay;
-      console.log('deltaday');
+
       if (deltaDay !== mouseDownlastDeltaDay) {
         mouseDownRef.current.lastDeltaDay = deltaDay;
 
@@ -142,10 +124,9 @@ export const TimeOffItemCard = ({ id, rowId }: { id: string; rowId: string }) =>
     <div
       id={id}
       onClick={handleClick}
-      className='absolute touch-none cursor-pointer z-[2] tooltip-target timeoff'
+      className='absolute touch-none cursor-pointer z-[15] tooltip-target timeoff'
       onMouseDown={handleMouseDown}
       style={{
-        zIndex: 1000, //item position
         height: '100%',
         width: `${w * cellWidth}px`,
         left: `${x * cellWidth}px`,

@@ -17,6 +17,7 @@ import {
   setItemsById,
   setStatusItemPlaceHolder,
   setTimeOffItemPlaceHolder,
+  setTimeOffItemsById,
 } from '../../../redux/general/generalSlice';
 import { getNewDateByDayIndex } from './Board/common/helper';
 import { buildRows } from '../../../redux/schedule/thunk';
@@ -67,6 +68,7 @@ export const useScheduleContext = () => {
 export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) => {
   const dispatch = useAppDispatch();
   const itemsById = useAppSelector((state) => state.general.itemsById);
+  const timeOffItemsById = useAppSelector((state) => state.general.timeOffItemsById);
   const { mainCellWidth, cellWidth } = useAppSelector((state) => state.scheduleMeasurement);
   const oldHoverPositionRef = useRef<{ dayIndex: number; rowId: string; weekIndex: number } | null>(
     null,
@@ -260,17 +262,37 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
       const newEndDate = dayjs(newStartDate).add(di!.duration!, 'days').format(ITEM_DATE_FORMAT);
 
       //--- Vertical drag ------
-      dispatch(
-        setItemsById({
-          ...itemsById,
-          [dragItem!.item.id]: {
-            ...itemsById[dragItem!.item.id],
-            userIds: [curRowId],
-            startDate: newStartDate,
-            endDate: newEndDate,
-          },
-        }),
-      );
+      switch (dragItem.item.type) {
+        case 'item':
+          dispatch(
+            setItemsById({
+              ...itemsById,
+              [dragItem!.item.id]: {
+                ...itemsById[dragItem!.item.id],
+                userIds: [curRowId],
+                startDate: newStartDate,
+                endDate: newEndDate,
+              },
+            }),
+          );
+          break;
+        case 'timeOffItem':
+          dispatch(
+            setTimeOffItemsById({
+              ...timeOffItemsById,
+              [dragItem!.item.id]: {
+                ...timeOffItemsById[dragItem!.item.id],
+                userIds: [curRowId],
+                startDate: newStartDate,
+                endDate: newEndDate,
+              },
+            }),
+          );
+          break;
+        default:
+          break;
+      }
+
       // itemsById[dragItem!.item.id].userIds = [curRowId];
       // itemsById[dragItem!.item.id].startDate = newStartDate;
       // itemsById[dragItem!.item.id].endDate = newEndDate;
