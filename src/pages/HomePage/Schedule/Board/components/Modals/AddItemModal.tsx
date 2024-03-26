@@ -106,6 +106,7 @@ const AddItemModal = (props: AddItemModalProps) => {
           userIds: userIds,
           hour: parseInt(hour) || 0,
           isPlaceHolder: false,
+          type: 'item',
         };
         dispatch(
           setItemsById({

@@ -14,26 +14,14 @@ export interface Item {
       color: string;
     };
   };
-  type?: 'item';
+  type: string;
 }
 
-export interface AllocationItem extends Item{
+export interface AllocationItem extends Item {
   startTime?: Date | number;
   endTime?: Date | number;
   id: string;
   projectId: string;
-  type: string; // tentative, completed
-  note?: string;
-}
-
-export interface StatusItem extends Item{
-  name: string;
-}
-
-export interface TimeOffItem extends Item{
-  startTime?: Date | number;
-  endTime?: Date | number;
-  reason: string; // reason for type off
-  isTentative: boolean;
+  taskType: string; // tentative, completed
   note?: string;
 }

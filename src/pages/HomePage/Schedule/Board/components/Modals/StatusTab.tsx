@@ -31,7 +31,7 @@ const StatusTab = () => {
   const { status, setStatus } = useScheduleContext();
   const usersByIds = useAppSelector((state) => state.general.usersById);
 
-  console.log(status?.type);
+  console.log(status?.name);
   const setValue = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setStatus((prev: Status | null) => ({
@@ -100,7 +100,7 @@ const StatusTab = () => {
           <Typography>Set a status</Typography>
           <TextField
             variant='outlined'
-            name='type'
+            name='name'
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start' sx={{ padding: 0, margin: 0 }}>
@@ -109,10 +109,10 @@ const StatusTab = () => {
               ),
             }}
             fullWidth
-            value={status?.type}
+            value={status?.name}
             onChange={setValue}
           />
-          {(status?.type == '' || status?.type == null) && (
+          {(status?.name == '' || status?.name == null) && (
             <List>
               {statusTypes.map((t) => (
                 <ListItem
@@ -127,7 +127,7 @@ const StatusTab = () => {
                   onClick={() =>
                     setStatus((prev: Status | null) => ({
                       ...prev,
-                      ['type']: t.title,
+                      ['name']: t.title,
                     }))
                   }
                 >
