@@ -20,9 +20,16 @@ import {
   TimeOff,
 } from './Board/common/type';
 import { useAutoscroller } from './Board/common/hook';
-import { setItemPlaceHolder, setItemsById } from '../../../redux/general/generalSlice';
+import {
+  setItemPlaceHolder,
+  setItemsById,
+  setStatusItemPlaceHolder,
+  setTimeOffItemPlaceHolder,
+  setTimeOffItemsById,
+} from '../../../redux/general/generalSlice';
 import { getNewDateByDayIndex } from './Board/common/helper';
 import { buildRows } from '../../../redux/schedule/thunk';
+import { Item } from 'src/types/primitive/item.interface';
 
 export const ScheduleContext = createContext<ScheduleContextType>({
   autoscroller: null,
@@ -80,6 +87,7 @@ export const useScheduleContext = () => {
 export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) => {
   const dispatch = useAppDispatch();
   const itemsById = useAppSelector((state) => state.general.itemsById);
+  const timeOffItemsById = useAppSelector((state) => state.general.timeOffItemsById);
   const { mainCellWidth, cellWidth } = useAppSelector((state) => state.scheduleMeasurement);
   const oldHoverPositionRef = useRef<{ dayIndex: number; rowId: string; weekIndex: number } | null>(
     null,
@@ -232,7 +240,17 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
   /* -------------------------- Dragging Item Actions ------------------------- */
 
   const onItemDragStart = (dragItem: DragItem) => {
-    dispatch(setItemPlaceHolder({ id: dragItem.item.id, isPlaceHolder: true }));
+    console.log(dragItem.item.type);
+    switch (dragItem.item.type) {
+      case 'item':
+        dispatch(setItemPlaceHolder({ id: dragItem.item.id, isPlaceHolder: true }));
+        break;
+      case 'timeOffItem':
+        dispatch(setTimeOffItemPlaceHolder({ id: dragItem.item.id, isPlaceHolder: true }));
+        break;
+      default:
+        break;
+    }
 
     scrollRef.current.style.cursor = 'grabbing';
     const smp = mousePositionRef.current;
@@ -278,17 +296,37 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
       const newEndDate = dayjs(newStartDate).add(di!.duration!, 'days').format(ITEM_DATE_FORMAT);
 
       //--- Vertical drag ------
-      dispatch(
-        setItemsById({
-          ...itemsById,
-          [dragItem!.item.id]: {
-            ...itemsById[dragItem!.item.id],
-            userIds: [curRowId],
-            startDate: newStartDate,
-            endDate: newEndDate,
-          },
-        }),
-      );
+      switch (dragItem.item.type) {
+        case 'item':
+          dispatch(
+            setItemsById({
+              ...itemsById,
+              [dragItem!.item.id]: {
+                ...itemsById[dragItem!.item.id],
+                userIds: [curRowId],
+                startDate: newStartDate,
+                endDate: newEndDate,
+              },
+            }),
+          );
+          break;
+        case 'timeOffItem':
+          dispatch(
+            setTimeOffItemsById({
+              ...timeOffItemsById,
+              [dragItem!.item.id]: {
+                ...timeOffItemsById[dragItem!.item.id],
+                userIds: [curRowId],
+                startDate: newStartDate,
+                endDate: newEndDate,
+              },
+            }),
+          );
+          break;
+        default:
+          break;
+      }
+
       // itemsById[dragItem!.item.id].userIds = [curRowId];
       // itemsById[dragItem!.item.id].startDate = newStartDate;
       // itemsById[dragItem!.item.id].endDate = newEndDate;

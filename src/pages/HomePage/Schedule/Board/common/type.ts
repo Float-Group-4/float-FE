@@ -1,6 +1,8 @@
 import { MouseEvent, MutableRefObject } from 'react';
 import { Dayjs } from 'dayjs';
 import { Item } from '../../../../../types/primitive/item.interface';
+import { StatusItem } from 'src/types/primitive/statusItem.interface';
+import { TimeOffItem } from 'src/types/primitive/timeOffItem.interface';
 
 export enum ViewType {
   days = 'days',
@@ -30,14 +32,14 @@ export interface DragInfo {
   smp: MousePosition;
   emp: MousePosition;
   userId: string;
-  item?: Item | null;
+  item?: Item | TimeOffItem | StatusItem | null;
   rowId: string | null;
   stableRowId: number | null;
   isPlanning?: boolean;
   padding?: { px: number; py: number };
   dayDelta?: number;
   itemId?: string;
-  originalItem?: Item;
+  originalItem?: Item | TimeOffItem | StatusItem;
   duration?: number;
   isFromSearchBox?: boolean;
   isWaiting?: boolean;
@@ -50,7 +52,7 @@ export interface DragItem {
   width: number;
   height: number;
   element: JSX.Element;
-  item: Item;
+  item: Item | TimeOffItem | StatusItem;
   isFromSearchBox?: boolean;
   rowId: string | null;
   px: number;

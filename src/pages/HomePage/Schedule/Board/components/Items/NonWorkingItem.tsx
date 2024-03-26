@@ -11,6 +11,6 @@ export const NonWorkItem = memo(({ x }: { x: number }) => {
         left: `${x * cellWidth + 1}px`,
         background: `linear-gradient(-45deg, #9ca3af 5%, transparent 5%, transparent 50%, #9ca3af 50%, #9ca3af 55%, transparent 55%, transparent) 0% 0% / 5px 5px`,
       }}
-    />
+    ></div>
   );
 });

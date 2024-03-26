@@ -14,6 +14,7 @@ export interface Item {
       color: string;
     };
   };
+  type?: 'item';
 }
 
 export interface AllocationItem extends Item{
