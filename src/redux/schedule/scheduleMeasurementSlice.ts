@@ -21,7 +21,7 @@ interface ScheduleMeasurementState {
   isCollapseShow: boolean;
   timeRange: TimeRange | null;
   scheduledTime:
-    | Record<number, { scheduledTime: number; totalTime: number; overtime: number }>
+    | Record<string, { scheduledTime: number; totalTime: number; overtime: number }>
     | Record<string, any>;
   groupItemsByStatus: Record<number, Record<string, { color: string; countItem: number }>>;
   amountDayInWeek: number;

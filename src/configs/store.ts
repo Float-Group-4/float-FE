@@ -4,6 +4,8 @@ import scheduleMeasurementSlice from '../../src/redux/schedule/scheduleMeasureme
 import settingsSlice from '../../src/redux/setting/settingSlice';
 import generalSlice from '../../src/redux/general/generalSlice';
 import activitySlice from '../../src/redux/activity/activitySlice';
+import peopleSlice from '../../src/redux/people/peopleSlice';
+import projectSlice from '../../src/redux/project/projectSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +14,8 @@ export const store = configureStore({
     settings: settingsSlice.reducer,
     general: generalSlice.reducer,
     activity: activitySlice.reducer,
+    people: peopleSlice.reducer,
+    project: projectSlice.reducer,
   },
 });
 

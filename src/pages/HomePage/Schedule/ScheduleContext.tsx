@@ -10,7 +10,15 @@ import {
   useState,
 } from 'react';
 import { CALENDAR_BAR_HEIGHT, ITEM_DATE_FORMAT, STARTING_POINT } from './Board/common/constant';
-import { Autoscroller, DragInfo, DragItem, ScheduleContextType } from './Board/common/type';
+import {
+  Allocation,
+  Autoscroller,
+  DragInfo,
+  DragItem,
+  ScheduleContextType,
+  Status,
+  TimeOff,
+} from './Board/common/type';
 import { useAutoscroller } from './Board/common/hook';
 import {
   setItemPlaceHolder,
@@ -32,6 +40,12 @@ export const ScheduleContext = createContext<ScheduleContextType>({
   timeRangeSelectionRef: null,
   dragItem: null,
   dragItemRef: null,
+  status: null,
+  allocation: null,
+  timeOff: null,
+  setTimeOff: (any) => {},
+  setStatus: (any) => {},
+  setAllocation: (any) => {},
   boardRef: null,
   itemSearchContainerRef: { current: null },
   wrapperRef: { current: null },
@@ -57,6 +71,11 @@ export const ScheduleContext = createContext<ScheduleContextType>({
   addItemModalRef: {
     current: {
       openAddItemModal() {},
+    },
+  },
+  mainModalRef: {
+    current: {
+      openMainModal(_) {},
     },
   },
 });
@@ -98,6 +117,9 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
   const itemSearchContainerRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const [dragItem, setDragItem] = useState<DragItem | null>(null);
+  const [allocation, setAllocation] = useState<Allocation | null>(null);
+  const [timeOff, setTimeOff] = useState<TimeOff | null>(null);
+  const [status, setStatus] = useState<Status | null>(null);
   const hoverRef = useRef<HTMLDivElement | null>(null);
   const hoverRelatedDateCellRef = useRef<HTMLDivElement | null>(null);
   const [rowHoverId, setRowHoverId] = useState<string | null>(null);
@@ -108,6 +130,7 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
   });
 
   const addItemModalRef = useRef<any>();
+  const mainModalRef = useRef<any>();
 
   /* -------------------------- Tracking Mouse on Board------------------------- */
 
@@ -179,17 +202,32 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
       selectionRef.current.style.width = `${(end - start + 1) * cellWidth}px`;
     }
   };
-  const onTimeRangeDrag = () => {};
+  const onTimeRangeDrag = () => {
+    if (!dragInfo.current) return;
+    const { smp } = dragInfo.current;
+    if (smp) {
+      dragInfo.current.emp = mousePositionRef.current;
+      const start = Math.min(smp.dayIndex, mousePositionRef.current.dayIndex);
+      const end = Math.max(smp.dayIndex, mousePositionRef.current.dayIndex);
+      if (!timeRangeSelectionRef.current) return;
+      timeRangeSelectionRef.current.style.left = `${start * cellWidth}px`;
+      timeRangeSelectionRef.current.style.width = `${(end - start + 1) * cellWidth}px`;
+      timeRangeSelectionRef.current.style.cursor = `grabbing !important`;
+    }
+  };
 
   /* -------------------------- FastForward and JumpToItem ------------------------- */
 
-  const fastForward = (destinationWeekIndex: number) => {};
+  const fastForward = (destinationWeekIndex: number) => {
+    if (destinationWeekIndex < 0) return;
+    if (scrollRef) {
+      scrollRef.current.scrollTo({ left: destinationWeekIndex * mainCellWidth });
+    }
+  };
 
   const fastForwardDate = (destinationDay: string | Dayjs) => {
-    console.log(destinationDay);
     if (!destinationDay) return;
     const date = dayjs(destinationDay, ITEM_DATE_FORMAT);
-    console.log(destinationDay, date, scrollRef);
     if (!date.isValid()) return;
     const dayIndex = date.diff(STARTING_POINT, 'days');
     if (scrollRef) {
@@ -209,9 +247,6 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
         break;
       case 'timeOffItem':
         dispatch(setTimeOffItemPlaceHolder({ id: dragItem.item.id, isPlaceHolder: true }));
-        break;
-      case 'statusItem':
-        dispatch(setStatusItemPlaceHolder({ id: dragItem.item.id, isPlaceHolder: true }));
         break;
       default:
         break;
@@ -245,7 +280,6 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
 
     const prevRowId = di!.rowId;
     const curRowId = mp.rowId;
-    console.log(prevRowId, curRowId);
 
     const padding = Math.floor((dragItem!.px * 1.0) / cellWidth);
     const paddingIndex = padding < 0 ? padding + 1 : padding;
@@ -297,9 +331,6 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
       // itemsById[dragItem!.item.id].startDate = newStartDate;
       // itemsById[dragItem!.item.id].endDate = newEndDate;
 
-      console.log('New User: ', curRowId);
-      console.log('New Timeline: ', newStartDate, newEndDate);
-
       const affectRow = [prevRowId!, curRowId];
       dispatch(buildRows(affectRow));
     }
@@ -315,6 +346,12 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
         mousePositionRef,
         dragInfo,
         selectionRef,
+        status,
+        allocation,
+        timeOff,
+        setTimeOff,
+        setStatus,
+        setAllocation,
         timeRangeSelectionRef,
         dragItem: dragItem,
         dragItemRef,
@@ -341,6 +378,7 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
         contextMenuPosition,
         setContextMenuPosition,
         addItemModalRef,
+        mainModalRef,
       }}
     >
       {children}

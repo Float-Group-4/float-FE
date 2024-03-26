@@ -10,6 +10,7 @@ import {
   ITEM_MIN_HEIGHT,
 } from '../pages/HomePage/Schedule/Board/common/constant';
 import { dayIndexToDay, dayIndexToWeekIndex } from '../pages/HomePage/Schedule/Board/common/helper';
+import { Item } from 'src/types/primitive/item.interface';
 
 const durationParser = new DurationParser();
 const durationValidator = new DurationValidator();
@@ -317,8 +318,10 @@ export const getLastBusinessDayInWeek: (day: string, isHidden: boolean) => Dayjs
   return lastDayOfWeek;
 };
 
-export const standardizeHour = (item: any, defaultHour: number, divisor: number) => {
-  return Math.max(defaultHour, ITEM_MIN_HEIGHT);
+export const standardizeHour = (item: Item, defaultHour: number, divisor: number) => {
+  return item.hour
+    ? Math.max(item.hour / divisor ?? 0, ITEM_MIN_HEIGHT)
+    : Math.max(defaultHour, ITEM_MIN_HEIGHT);
 };
 
 export const getDivisor = () => {
