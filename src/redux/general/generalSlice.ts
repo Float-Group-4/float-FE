@@ -56,29 +56,8 @@ const initialState: GeneralState = {
       type: 'item',
     },
   },
-  timeOffItemsById: {
-    timeOff1: {
-      id: 'timeOff1',
-      userIds: ['userId3'],
-      name: 'Home',
-      startDate: '2024-03-25',
-      endDate: '2024-03-28',
-      isPlaceHolder: false,
-      notes: 'Vacation',
-      type: 'timeOffItem',
-    },
-  },
-  statusItemsById: {
-    status1: {
-      id: 'status1',
-      userIds: ['userId3'],
-      name: 'Home',
-      startDate: '2024-04-02',
-      endDate: '2024-04-05',
-      isPlaceHolder: false,
-      type: 'statusItem',
-    },
-  },
+  timeOffItemsById: {},
+  statusItemsById: {},
   subBoardById: {},
   itemIdsByWeekIndex: {},
   usersById: {

@@ -56,7 +56,7 @@ export const TimeOffItemCard = ({ id, rowId }: { id: string; rowId: string }) =>
           >
             <div className='w-full flex justify-between'>
               <div className='flex items-center gap-1 truncate' style={{ color: `black` }}>
-                <span className='truncate'>{item.name}</span>
+                <span className='truncate'>{item.reason}</span>
               </div>
             </div>
           </div>
@@ -148,7 +148,7 @@ export const TimeOffItemCard = ({ id, rowId }: { id: string; rowId: string }) =>
             style={{ minHeight: MIN_HEIGHT_HOURS * HEIGHT_PER_HOUR }}
           >
             <p className='text-xs ' style={{ color: 'black' }}>
-              {item.name}
+              {item.reason}
             </p>
           </div>
         </div>

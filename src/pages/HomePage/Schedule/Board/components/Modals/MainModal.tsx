@@ -9,14 +9,16 @@ import { Allocation, DragInfo, Status, TimeOff } from '../../common/type';
 import { useScheduleContext } from '@pages/HomePage/Schedule/ScheduleContext';
 import dayjs from 'dayjs';
 import { generateUUID } from '@base/utils/uuid';
-import { setItemsById } from '../../../../../../redux/general/generalSlice';
-import { buildRows } from '../../../../../../redux/schedule/thunk';
 import {
-  AllocationItem,
-  StatusItem,
-  TimeOffItem,
-} from '../../../../../../types/primitive/item.interface';
+  setItemsById,
+  setStatusItemsById,
+  setTimeOffItemsById,
+} from '../../../../../../redux/general/generalSlice';
+import { buildRows } from '../../../../../../redux/schedule/thunk';
+import { AllocationItem } from '../../../../../../types/primitive/item.interface';
 import CustomMiModal from './CustomMiModal';
+import { TimeOffItem } from 'src/types/primitive/timeOffItem.interface';
+import { StatusItem } from 'src/types/primitive/statusItem.interface';
 
 interface StyledTabProps {
   label: string;
@@ -162,6 +164,8 @@ const MainModal = (props: MainModalProps) => {
     useScheduleContext();
 
   const itemsById = useAppSelector((state) => state.general.itemsById);
+  const timeOffItemsById = useAppSelector((state) => state.general.timeOffItemsById);
+  const statusItemsById = useAppSelector((state) => state.general.statusItemsById);
   const { mainModalRef } = useScheduleContext();
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setCurrentTab(newValue);
@@ -184,6 +188,7 @@ const MainModal = (props: MainModalProps) => {
     endDate: '',
     type: '',
     assignee: '',
+    name: '',
   };
 
   const defaultTimeOff: TimeOff = {
@@ -240,8 +245,9 @@ const MainModal = (props: MainModalProps) => {
         hour: allocation?.hourEachDay ?? 0,
         isPlaceHolder: false,
         projectId: allocation?.projectId!,
-        type: allocation?.type!,
+        taskType: allocation?.type!,
         note: allocation?.note,
+        type: 'item',
       };
       dispatch(
         setItemsById({
@@ -262,10 +268,11 @@ const MainModal = (props: MainModalProps) => {
         reason: timeOff?.reason!,
         note: allocation?.note,
         isTentative: timeOff?.isTentative!,
+        type: 'timeOffItem',
       };
       dispatch(
-        setItemsById({
-          ...itemsById,
+        setTimeOffItemsById({
+          ...timeOffItemsById,
           [`${newItem.id}`]: newItem,
         }),
       );
@@ -273,16 +280,17 @@ const MainModal = (props: MainModalProps) => {
     } else {
       const newItem: StatusItem = {
         id: generateUUID(),
-        name: '',
+        name: status ? status.name : '',
         startDate: status?.startDate!,
         endDate: status?.endDate!,
         userIds: [status?.assignee!],
         hour: 0,
         isPlaceHolder: true,
+        type: 'statusItem',
       };
       dispatch(
-        setItemsById({
-          ...itemsById,
+        setStatusItemsById({
+          ...statusItemsById,
           [`${newItem.id}`]: newItem,
         }),
       );

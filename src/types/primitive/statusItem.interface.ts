@@ -1,4 +1,6 @@
-export interface StatusItem {
+import { Item } from './item.interface';
+
+export interface StatusItem extends Item {
   id: string;
   name: string;
   userIds: string[];
@@ -13,5 +15,5 @@ export interface StatusItem {
       color: string;
     };
   };
-  type?: 'statusItem';
+  type: string;
 }

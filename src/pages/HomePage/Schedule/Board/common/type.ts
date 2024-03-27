@@ -195,5 +195,6 @@ export interface Status {
   startDate: string;
   endDate: string;
   type: string;
+  name: string;
   assignee: string;
 }

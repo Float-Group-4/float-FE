@@ -11,12 +11,10 @@ import {
 import { getHeightByItem, getHorizontalDimensions, roundToQuarter } from '../../common/helper';
 import PlaceholderItem from './PlaceholderItem';
 import { useEffect, useRef, useState } from 'react';
-import { ResizeDirection } from '../../../../../../../src/types/enums';
-import { buildRows } from '../../../../../../../src/redux/schedule/thunk';
-import { setTimeOffItemsById } from '../../../../../../../src/redux/general/generalSlice';
 import _ from 'lodash';
 import Toolbar from '@pages/HomePage/Schedule/Sidebar/Toolbar';
 import { Tooltip } from '@mui/material';
+import { ArrowRight, Flag } from '@mui/icons-material';
 
 export const StatusMark = ({ id }: { id: string }) => {
   const dispatch = useAppDispatch();
@@ -25,7 +23,22 @@ export const StatusMark = ({ id }: { id: string }) => {
   const cellWidth = useAppSelector((state) => state.scheduleMeasurement.cellWidth);
   const statusItem = useAppSelector((state) => state.general.statusItemsById);
 
-  const mouseDownRef = useRef<any>();
+  const statusColors = [
+    { title: 'Home', color: 'red' },
+    { title: 'Travel', color: 'violet' },
+    { title: 'Office', color: 'green' },
+  ];
+
+  const [statusColor, setStatusColor] = useState('');
+
+  const handleStatusColor = () => {
+    const colorObj = statusColors.find((obj) => obj.title === item.name);
+    setStatusColor(colorObj ? colorObj.color : 'blue');
+  };
+
+  useEffect(() => {
+    handleStatusColor();
+  }, [item]);
 
   if (!item) return <></>;
 
@@ -54,16 +67,14 @@ export const StatusMark = ({ id }: { id: string }) => {
             onClick={handleClick}
             className='absolute touch-none cursor-pointer z-10 tooltip-target statusMark'
             style={{
-              height: '0px',
-              width: '0px',
-              bottom: '5%',
+              width: '10px',
+              height: '10px',
+              bottom: '10px',
               left: `${(x + index) * cellWidth + cellWidth * 0.83}px`,
-              borderStyle: 'solid',
-              borderWidth: '0 0 10px 10px',
-              borderColor: 'transparent transparent #FF4532 transparent',
-              transform: 'rotate(0deg)',
             }}
-          ></div>
+          >
+            <Flag sx={{ color: statusColor, fontSize: '15px' }} />
+          </div>
         </Tooltip>
       ))}
     </>

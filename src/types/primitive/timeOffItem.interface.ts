@@ -1,10 +1,11 @@
-export interface TimeOffItem {
+import { Item } from './item.interface';
+
+export interface TimeOffItem extends Item {
   id: string;
   name: string;
   userIds: string[];
   startDate: string;
   endDate: string;
-  notes: string;
   creator_id?: string;
   isPlaceHolder: boolean;
   columnsById?: any;
@@ -14,5 +15,10 @@ export interface TimeOffItem {
       color: string;
     };
   };
-  type?: 'timeOffItem';
+  type: string;
+  startTime?: Date | number;
+  endTime?: Date | number;
+  reason: string; // reason for type off
+  isTentative: boolean;
+  note?: string;
 }
