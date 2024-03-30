@@ -1,6 +1,8 @@
 import { MouseEvent, MutableRefObject } from 'react';
 import { Dayjs } from 'dayjs';
 import { Item } from '../../../../../types/primitive/item.interface';
+import { StatusItem } from 'src/types/primitive/statusItem.interface';
+import { TimeOffItem } from 'src/types/primitive/timeOffItem.interface';
 
 export enum ViewType {
   days = 'days',
@@ -30,14 +32,14 @@ export interface DragInfo {
   smp: MousePosition;
   emp: MousePosition;
   userId: string;
-  item?: Item | null;
+  item?: Item | TimeOffItem | StatusItem | null;
   rowId: string | null;
   stableRowId: number | null;
   isPlanning?: boolean;
   padding?: { px: number; py: number };
   dayDelta?: number;
   itemId?: string;
-  originalItem?: Item;
+  originalItem?: Item | TimeOffItem | StatusItem;
   duration?: number;
   isFromSearchBox?: boolean;
   isWaiting?: boolean;
@@ -50,7 +52,7 @@ export interface DragItem {
   width: number;
   height: number;
   element: JSX.Element;
-  item: Item;
+  item: Item | TimeOffItem | StatusItem;
   isFromSearchBox?: boolean;
   rowId: string | null;
   px: number;
@@ -86,6 +88,9 @@ export interface ScheduleContextType {
   timeRangeSelectionRef: MutableRefObject<HTMLDivElement> | null;
   dragItem: DragItem | null;
   dragItemRef: MutableRefObject<HTMLDivElement> | null;
+  allocation: Allocation | null;
+  status: Status | null;
+  timeOff: TimeOff | null;
   boardRef: MutableRefObject<HTMLDivElement> | null;
   itemSearchContainerRef: MutableRefObject<HTMLDivElement | null>;
   wrapperRef: MutableRefObject<HTMLDivElement | null>;
@@ -111,6 +116,9 @@ export interface ScheduleContextType {
   fastForwardDate: (_: string | Dayjs) => void;
   jumpToItem: (_: number, __: number) => void;
   setDragItem: (_: DragItem | null) => void;
+  setTimeOff: (_: any) => void;
+  setStatus: (_: any) => void;
+  setAllocation: (_: any) => void;
   onItemDragStart: (_: DragItem) => void;
   onItemDrag: () => void;
   onItemDragStop: () => void;
@@ -118,6 +126,7 @@ export interface ScheduleContextType {
   contextMenuPosition: any;
   setContextMenuPosition: any;
   addItemModalRef: MutableRefObject<{ openAddItemModal: (_?: any) => void }>;
+  mainModalRef: MutableRefObject<{ openMainModal: (_?: any) => void }>;
 }
 
 export interface RangeDate {
@@ -151,4 +160,41 @@ export interface Autoscroller {
 export interface TimeRange {
   from: { weekIndex: number; dayIndex: number };
   to: { weekIndex: number; dayIndex: number };
+}
+
+export interface Allocation {
+  startDate: string;
+  endDate: string;
+  hourEachDay: number;
+  startTime?: Date | number;
+  endTime?: Date | number;
+  id: string;
+  projectId: string;
+  userId: string;
+  type: string; // tentative, completed
+  note: string;
+  assignees: string[];
+}
+
+export interface TimeOff {
+  startDate: string;
+  endDate: string;
+  hourEachDay: number;
+  startTime?: Date | number;
+  endTime?: Date | number;
+  id: string;
+  userId: string;
+  isTentative: boolean;
+  reason: string;
+  note: string;
+  name: string;
+  assignees: string[];
+}
+
+export interface Status {
+  startDate: string;
+  endDate: string;
+  type: string;
+  name: string;
+  assignee: string;
 }

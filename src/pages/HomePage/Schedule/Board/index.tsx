@@ -5,6 +5,7 @@ import { ScrollWrapper } from './components/ScrollWrapper';
 import { DragItem } from './components/Items/DragItem';
 import { useState } from 'react';
 import AddItemModal from './components/Modals/AddItemModal';
+import MainModal from './components/Modals/MainModal';
 
 export default function Board() {
   return (
@@ -12,7 +13,13 @@ export default function Board() {
       <ScrollWrapper>
         <BoardContainer />
       </ScrollWrapper>
-      <AddItemModal
+      {/* <AddItemModal
+        isOpen={false}
+        setIsOpen={function (isOpen: boolean): void {
+          return;
+        }}
+      /> */}
+      <MainModal
         isOpen={false}
         setIsOpen={function (isOpen: boolean): void {
           return;

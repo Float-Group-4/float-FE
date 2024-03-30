@@ -1,10 +1,11 @@
-export interface Item {
+import { Item } from './item.interface';
+
+export interface TimeOffItem extends Item {
   id: string;
   name: string;
   userIds: string[];
   startDate: string;
   endDate: string;
-  hour: number;
   creator_id?: string;
   isPlaceHolder: boolean;
   columnsById?: any;
@@ -15,13 +16,9 @@ export interface Item {
     };
   };
   type: string;
-}
-
-export interface AllocationItem extends Item {
   startTime?: Date | number;
   endTime?: Date | number;
-  id: string;
-  projectId: string;
-  taskType: string; // tentative, completed
+  reason: string; // reason for type off
+  isTentative: boolean;
   note?: string;
 }

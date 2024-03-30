@@ -20,7 +20,6 @@ const HomePage = () => {
         <ActionButton />
       </div>
     </ScheduleContextWrapper>
-
   );
 };
 

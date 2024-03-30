@@ -3,8 +3,6 @@ import { LocalizationProvider, DesktopDatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 
-//import dayjs from 'dayjs';
-
 interface DatePickerProps {
   inputFormat?: string;
   value: Date | string | null;
@@ -22,7 +20,7 @@ interface DatePickerProps {
 
 const DatePicker = (props: DatePickerProps) => {
   const {
-    inputFormat = 'MM/DD/YYYY',
+    inputFormat = 'DD MMM YYYY',
     value,
     onChange,
     disabled,
@@ -43,7 +41,7 @@ const DatePicker = (props: DatePickerProps) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DesktopDatePicker
-        sx={{ width: fullWidth ? '100%' : 'auto', ...inputSx }}
+        sx={{ width: fullWidth ? '100%' : 'auto', ...inputSx, border: 'none' }}
         //label="Date Desktop"
         format={dateFormat}
         value={dayjs(value)}

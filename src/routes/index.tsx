@@ -9,6 +9,7 @@ import LandingPage from '@pages/LandingPage';
 import PeoplePage from '@pages/PeoplePage';
 import ProjectPage from '@pages/ProjectPage';
 const Layouts = lazy(() => import('@layouts/index'));
+const Report = lazy(() => import('@pages/Report'));
 const SignIn = lazy(() => import('@pages/SignIn'));
 const SignUp = lazy(() => import('@pages/SignUp'));
 
@@ -35,7 +36,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: 'report',
-        element: <h1>Report</h1>,
+        element: <Report />,
       },
       {
         path: 'sign-in',

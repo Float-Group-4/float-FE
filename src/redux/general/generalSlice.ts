@@ -3,9 +3,14 @@ import { cloneDeep, uniq } from 'lodash';
 import { Item } from 'src/types/primitive/item.interface';
 import { BoardType } from '../../types/enums';
 import { buildRows } from '../schedule/thunk';
+import { TimeOffItem } from 'src/types/primitive/timeOffItem.interface';
+import { StatusItem } from 'src/types/primitive/statusItem.interface';
+import { log } from 'console';
 
 interface GeneralState {
   itemsById: Record<string, Item>;
+  timeOffItemsById: Record<string, TimeOffItem>;
+  statusItemsById: Record<string, StatusItem>;
   subBoardById: Record<number, any>;
   itemIdsByWeekIndex: Record<number, number[]>;
   usersById: Record<string, any>;
@@ -28,15 +33,17 @@ const initialState: GeneralState = {
       endDate: '2024-03-12',
       hour: 8,
       isPlaceHolder: false,
+      type: 'item',
     },
     item2: {
       id: 'item2',
       userIds: ['userId2'],
       name: 'Item 2',
-      startDate: '2024-03-12',
-      endDate: '2024-03-15',
+      startDate: '2024-03-25',
+      endDate: '2024-03-28',
       hour: 10,
       isPlaceHolder: false,
+      type: 'item',
     },
     item3: {
       id: 'item3',
@@ -46,8 +53,11 @@ const initialState: GeneralState = {
       endDate: '2024-03-14',
       hour: 4,
       isPlaceHolder: false,
+      type: 'item',
     },
   },
+  timeOffItemsById: {},
+  statusItemsById: {},
   subBoardById: {},
   itemIdsByWeekIndex: {},
   usersById: {
@@ -71,6 +81,8 @@ const initialState: GeneralState = {
     userId1: {
       id: 'userId1',
       items: ['item1'],
+      timeOffItems: [],
+      statusItems: [],
       itemPosition: {},
       height: 0,
       dayCell: {},
@@ -78,6 +90,8 @@ const initialState: GeneralState = {
     userId2: {
       id: 'userId2',
       items: ['item2'],
+      timeOffItems: [],
+      statusItems: [],
       itemPosition: {},
       height: 0,
       dayCell: {},
@@ -85,6 +99,8 @@ const initialState: GeneralState = {
     userId3: {
       id: 'userId3',
       items: [],
+      timeOffItems: ['timeOff1'],
+      statusItems: ['status1'],
       itemPosition: {},
       height: 0,
       dayCell: {},
@@ -108,6 +124,8 @@ const generalSlice = createSlice({
       }>,
     ) => {
       const { id, isPlaceHolder } = action.payload;
+      console.log('state');
+      console.log(state);
       Object.assign(state.itemsById[id], { ...state.itemsById[id], isPlaceHolder });
     },
     addNewItem: (state, action) => {
@@ -149,6 +167,102 @@ const generalSlice = createSlice({
       console.log(action.payload);
       state.itemsById = action.payload;
     },
+
+    // Time off
+    setTimeOffItemPlaceHolder: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        isPlaceHolder: boolean;
+      }>,
+    ) => {
+      const { id, isPlaceHolder } = action.payload;
+      Object.assign(state.timeOffItemsById[id], { ...state.timeOffItemsById[id], isPlaceHolder });
+    },
+    addNewTimeOffItem: (state, action) => {
+      const { items, mappedFieldBoards } = action.payload;
+      for (const item of items) {
+        Object.assign(state.timeOffItemsById, { [item.id]: { ...item, isPlaceHolder: false } });
+        const mapField = mappedFieldBoards[item.board?.id];
+        if (mapField?.timeline) {
+          const value = item.columnsById[mapField.timeline].value;
+        }
+        if (mapField?.assignees) {
+          const { userIds = [] } = item.columnsById[mapField.assignees]?.value || {
+            userIds: [],
+          };
+          const uIds = userIds;
+          const uIdsUniq: number[] = uniq(uIds);
+          uIdsUniq.forEach((uid: number) => {
+            if (!state.rowMap[uid]) {
+              state.rowMap[uid] = {
+                id: uid,
+                items: [],
+                itemPosition: {},
+                height: 0,
+                dayCell: {},
+              };
+            }
+            state.rowMap[uid].items = uniq([...cloneDeep(state.rowMap[uid].items), item.id]);
+          });
+        }
+      }
+    },
+    addTimeOffItemIntoMap: (state, action) => {
+      state.timeOffItemsById = { ...state.timeOffItemsById, ...action.payload };
+    },
+    setTimeOffItemsById: (state, action) => {
+      console.log(action.payload);
+      state.timeOffItemsById = action.payload;
+    },
+
+    // Status
+    setStatusItemPlaceHolder: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        isPlaceHolder: boolean;
+      }>,
+    ) => {
+      const { id, isPlaceHolder } = action.payload;
+      Object.assign(state.statusItemsById[id], { ...state.statusItemsById[id], isPlaceHolder });
+    },
+    addNewStatusItem: (state, action) => {
+      const { items, mappedFieldBoards } = action.payload;
+      for (const item of items) {
+        Object.assign(state.statusItemsById, { [item.id]: { ...item, isPlaceHolder: false } });
+        const mapField = mappedFieldBoards[item.board?.id];
+        if (mapField?.timeline) {
+          const value = item.columnsById[mapField.timeline].value;
+        }
+        if (mapField?.assignees) {
+          const { userIds = [] } = item.columnsById[mapField.assignees]?.value || {
+            userIds: [],
+          };
+          const uIds = userIds;
+          const uIdsUniq: number[] = uniq(uIds);
+          uIdsUniq.forEach((uid: number) => {
+            if (!state.rowMap[uid]) {
+              state.rowMap[uid] = {
+                id: uid,
+                items: [],
+                itemPosition: {},
+                height: 0,
+                dayCell: {},
+              };
+            }
+            state.rowMap[uid].items = uniq([...cloneDeep(state.rowMap[uid].items), item.id]);
+          });
+        }
+      }
+    },
+    addStatusItemIntoMap: (state, action) => {
+      state.statusItemsById = { ...state.statusItemsById, ...action.payload };
+    },
+    setStatusItemsById: (state, action) => {
+      console.log(action.payload);
+      state.statusItemsById = action.payload;
+    },
   },
 
   extraReducers: (builder) => {
@@ -159,7 +273,20 @@ const generalSlice = createSlice({
   },
 });
 
-export const { setItemPlaceHolder, addNewItem, addItemIntoMap, setFetchedIndexes, setItemsById } =
-  generalSlice.actions;
+export const {
+  setItemPlaceHolder,
+  addNewItem,
+  addItemIntoMap,
+  setFetchedIndexes,
+  setItemsById,
+  setTimeOffItemPlaceHolder,
+  addNewTimeOffItem,
+  addTimeOffItemIntoMap,
+  setTimeOffItemsById,
+  setStatusItemPlaceHolder,
+  addNewStatusItem,
+  addStatusItemIntoMap,
+  setStatusItemsById,
+} = generalSlice.actions;
 
 export default generalSlice;
