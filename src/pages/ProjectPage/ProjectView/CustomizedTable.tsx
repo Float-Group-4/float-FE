@@ -17,7 +17,7 @@ import "./noborder.css"
 export default function CustomizedTables(rows: Data[]) {
     const [order, setOrder] = React.useState<Order>('asc');
     const [orderBy, setOrderBy] = React.useState<keyof Data>('project');
-    const [selected, setSelected] = React.useState<readonly number[]>([]);
+    const [selected, setSelected] = React.useState<readonly string[]>([]);
     const [page, setPage] = React.useState(0);
     const [dense, setDense] = React.useState(false);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -37,9 +37,9 @@ export default function CustomizedTables(rows: Data[]) {
       setSelected([]);
     };
   
-    const handleClick = (_event: React.MouseEvent<unknown>, id: number) => {
+    const handleClick = (_event: React.MouseEvent<unknown>, id: string) => {
       const selectedIndex = selected.indexOf(id);
-      let newSelected: readonly number[] = [];
+      let newSelected: readonly string[] = [];
   
       if (selectedIndex === -1) {
         newSelected = newSelected.concat(selected, id);
@@ -69,7 +69,7 @@ export default function CustomizedTables(rows: Data[]) {
       setDense(event.target.checked);
     };
   
-    const isSelected = (id: number) => selected.indexOf(id) !== -1;
+    const isSelected = (id: string) => selected.indexOf(id) !== -1;
   
     // Avoid a layout jump when reaching the last page with empty rows.
     const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -80,7 +80,7 @@ export default function CustomizedTables(rows: Data[]) {
           page * rowsPerPage,
           page * rowsPerPage + rowsPerPage,
         ),
-      [order, orderBy, page, rowsPerPage],
+      [order, orderBy, page, rowsPerPage, rows],
     );
   
     return (
