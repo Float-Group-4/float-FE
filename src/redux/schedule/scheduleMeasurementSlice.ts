@@ -1,7 +1,8 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { LocalStorageKey, ViewType } from '../../types/enums';
+import { LocalStorageKey, ViewDensity, ViewType } from '../../types/enums';
 import { TimeRange } from '@pages/HomePage/Schedule/Board/common/type';
 import {
+  CELL_HEIGHT_BY_VIEW_DENSITY,
   CELL_WIDTH_BY_VIEW_TYPE,
   DEFAULT_MIN_HOURS,
   MARGIN_BOTTOM,
@@ -10,6 +11,7 @@ import {
 
 interface ScheduleMeasurementState {
   viewType: ViewType;
+  viewDensity: ViewDensity;
   totalWeekCols: number;
   boardWidth: number;
   mainCellWidth: number;
@@ -28,14 +30,14 @@ interface ScheduleMeasurementState {
 }
 const initialState: ScheduleMeasurementState = {
   viewType: ViewType.weeks,
+  viewDensity: ViewDensity.comfortable,
   totalWeekCols: 100,
   boardWidth: 63000,
   mainCellWidth: 630,
   cellWidth: 90,
   cornerCellWidth: 270,
-  heightPerHour: 8,
-  cellBaseHeight: 8 * DEFAULT_MIN_HOURS + MARGIN_TOP + MARGIN_BOTTOM,
-  // cellBaseHeight: USER_CELL_HEIGHT,
+  heightPerHour: 16,
+  cellBaseHeight: 16 * DEFAULT_MIN_HOURS + MARGIN_TOP + MARGIN_BOTTOM,
   isCollapsed: false,
   isCollapseShow: false,
   timeRange: null,
@@ -60,6 +62,14 @@ const scheduleMeasurementSlice = createSlice({
       state.mainCellWidth = state.cellWidth * state.amountDayInWeek;
       state.boardWidth = state.mainCellWidth * state.totalWeekCols;
       state.cellBaseHeight = state.heightPerHour * DEFAULT_MIN_HOURS + MARGIN_TOP + MARGIN_BOTTOM;
+    },
+    setViewDensity: (state, action: PayloadAction<ViewDensity>) => {
+      state.viewDensity = action.payload;
+      state.heightPerHour = CELL_HEIGHT_BY_VIEW_DENSITY[action.payload];
+      state.cellBaseHeight =
+        CELL_HEIGHT_BY_VIEW_DENSITY[action.payload] * DEFAULT_MIN_HOURS +
+        MARGIN_TOP +
+        MARGIN_BOTTOM;
     },
     toggleCollapse: (state) => {
       state.isCollapsed = !state.isCollapsed;
@@ -119,6 +129,7 @@ const scheduleMeasurementSlice = createSlice({
 
 export const {
   setViewType,
+  setViewDensity,
   extendBoardWidth,
   setGroupItemsByStatus,
   toggleCollapse,

@@ -1,4 +1,4 @@
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -7,19 +7,18 @@ import DensityLargeOutlinedIcon from '@mui/icons-material/DensityLargeOutlined';
 import DensityMediumOutlinedIcon from '@mui/icons-material/DensityMediumOutlined';
 import DensitySmallOutlinedIcon from '@mui/icons-material/DensitySmallOutlined';
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
+import FolderOpenOutlinedIcon from '@mui/icons-material/FolderOpenOutlined';
 import LayersOutlinedIcon from '@mui/icons-material/LayersOutlined';
 import ManageSearchOutlinedIcon from '@mui/icons-material/ManageSearchOutlined';
-import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
-import ViewDayOutlinedIcon from '@mui/icons-material/ViewDayOutlined';
-import AccountCircleOutlinedIcon from '@mui/icons-material/AccountCircleOutlined';
 import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
-import FolderOpenOutlinedIcon from '@mui/icons-material/FolderOpenOutlined';
-import SplitscreenIcon from '@mui/icons-material/Splitscreen';
 import SearchIcon from '@mui/icons-material/Search';
+import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
+import SplitscreenIcon from '@mui/icons-material/Splitscreen';
+import ViewDayOutlinedIcon from '@mui/icons-material/ViewDayOutlined';
 
+import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
 import {
   Button,
-  Container,
   Divider,
   IconButton,
   InputBase,
@@ -29,26 +28,42 @@ import {
   ListItemText,
   Menu,
   MenuItem,
-  TextField,
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import React, { useState } from 'react';
-import { useScheduleContext } from '../Schedule/ScheduleContext';
 import dayjs from 'dayjs';
+import React, { useState } from 'react';
+import { ViewDensity } from '../../../../src/types/enums';
+import {
+  setViewDensity,
+  setViewType,
+} from '../../../../src/redux/schedule/scheduleMeasurementSlice';
+import { ViewType } from '../Schedule/Board/common/type';
+import { useScheduleContext } from '../Schedule/ScheduleContext';
 import AddButtonMultiplePurpose from './AddButtonMultiplePurpose';
 
 const options = ['Schedule', 'Project Plan', 'Log Team'];
 const densityOptions = [
-  { leftIcon: <DensitySmallOutlinedIcon fontSize='small' />, label: 'Compact', value: 0 },
-  { leftIcon: <DensityMediumOutlinedIcon fontSize='small' />, label: 'Comfortable', value: 1 },
-  { leftIcon: <DensityLargeOutlinedIcon fontSize='small' />, label: 'Spacious', value: 2 },
+  {
+    leftIcon: <DensitySmallOutlinedIcon fontSize='small' />,
+    label: 'Compact',
+    value: ViewDensity.compact,
+  },
+  {
+    leftIcon: <DensityMediumOutlinedIcon fontSize='small' />,
+    label: 'Comfortable',
+    value: ViewDensity.comfortable,
+  },
+  {
+    leftIcon: <DensityLargeOutlinedIcon fontSize='small' />,
+    label: 'Spacious',
+    value: ViewDensity.spacious,
+  },
 ];
 const zoomOptions = [
-  { label: 'Days', value: 'day' },
-  { label: 'Weeks', value: 'week' },
-  { label: 'Months', value: 'month' },
+  { label: 'Days', value: ViewType.days },
+  { label: 'Weeks', value: ViewType.weeks },
+  { label: 'Months', value: ViewType.months },
 ];
-
 const filterOptions = [
   {
     label: 'Me',
@@ -73,7 +88,9 @@ const filterOptions = [
 ];
 
 export default function TopBar() {
-  const { fastForwardDate } = useScheduleContext();
+  const dispatch = useAppDispatch();
+  const { fastForwardDate, fastForward } = useScheduleContext();
+  const { currentWeekIndex } = useAppSelector((state) => state.schedule);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [zoomModeAnchorEl, setZoomModeAnchorEl] = useState<null | HTMLElement>(null);
   const [densityAnchorEl, setDensityAnchorEl] = useState<null | HTMLElement>(null);
@@ -81,7 +98,7 @@ export default function TopBar() {
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [selectedZoomMode, setSelectedZoomMode] = useState(1);
-  const [selectedDensity, setSelectedDensity] = useState(0);
+  const [selectedDensity, setSelectedDensity] = useState(1);
 
   const open = Boolean(anchorEl);
   const openZoomModeMenu = Boolean(zoomModeAnchorEl);
@@ -106,6 +123,7 @@ export default function TopBar() {
   };
 
   const handleSelectZoomMode = (_e: React.MouseEvent<HTMLElement>, index: number) => {
+    dispatch(setViewType(zoomOptions[index].value));
     setSelectedZoomMode(index);
     setZoomModeAnchorEl(null);
   };
@@ -119,6 +137,7 @@ export default function TopBar() {
   };
 
   const handleSelectDensity = (_e: React.MouseEvent<HTMLElement>, index: number) => {
+    dispatch(setViewDensity(densityOptions[index].value));
     setSelectedDensity(index);
     setDensityAnchorEl(null);
   };
@@ -229,10 +248,18 @@ export default function TopBar() {
           {/* Move And Today */}
           <div className='flex gap-2 items-center'>
             <div>
-              <IconButton>
+              <IconButton
+                onClick={() => {
+                  fastForward(currentWeekIndex - 1);
+                }}
+              >
                 <ChevronLeftIcon />
               </IconButton>
-              <IconButton>
+              <IconButton
+                onClick={() => {
+                  fastForward(currentWeekIndex + 1);
+                }}
+              >
                 <ChevronRightIcon />
               </IconButton>
             </div>

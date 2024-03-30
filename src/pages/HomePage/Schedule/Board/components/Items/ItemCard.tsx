@@ -4,17 +4,16 @@ import { ITEM_DATE_FORMAT, MARGIN_LEFT, MARGIN_RIGHT, MARGIN_TOP } from '../../c
 import { HEIGHT_PER_HOUR, MIN_HEIGHT_HOURS, TASK_DEFAULT_COLOR } from '@constants/home';
 import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
 import { useScheduleContext } from '@pages/HomePage/Schedule/ScheduleContext';
+import _ from 'lodash';
+import { useRef, useState } from 'react';
+import { setItemsById } from '../../../../../../../src/redux/general/generalSlice';
+import { buildRows } from '../../../../../../../src/redux/schedule/thunk';
+import { ResizeDirection } from '../../../../../../../src/types/enums';
 import {
   convertMinuteToHumanRead,
   getContrastColor,
 } from '../../../../../../../src/utilities/helper';
 import { getHeightByItem, getHorizontalDimensions, roundToQuarter } from '../../common/helper';
-import PlaceholderItem from './PlaceholderItem';
-import { useRef, useState } from 'react';
-import { ResizeDirection } from '../../../../../../../src/types/enums';
-import { buildRows } from '../../../../../../../src/redux/schedule/thunk';
-import { setItemsById } from '../../../../../../../src/redux/general/generalSlice';
-import _ from 'lodash';
 
 export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
   const dispatch = useAppDispatch();
@@ -209,17 +208,17 @@ export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
     window.addEventListener('mousemove', moveHandler);
   };
 
-  return item.isPlaceHolder ? (
-    <PlaceholderItem
-      className='rounded-md'
+  return (dragItem && dragItem.item.id == id) || item.isPlaceHolder ? (
+    <div
+      className={`absolute opacity-40 rounded-md bg-blue-500 `}
       style={{
-        top: `${y}px`, //item position
-        height: `${Math.max(MIN_HEIGHT_HOURS, 480 / 60.0 ?? 0) * HEIGHT_PER_HOUR}px`,
+        top: `${y * heightPerHour + MARGIN_TOP}px`,
+        height: `${getHeightByItem(heightPerHour, item, 8)}px`,
         width: `${w * cellWidth - MARGIN_RIGHT}px`,
         left: `${x * cellWidth + MARGIN_LEFT}px`,
-        backgroundColor: TASK_DEFAULT_COLOR,
+        backgroundColor: '#3451b2',
       }}
-    />
+    ></div>
   ) : (
     <div
       id={id}
@@ -244,7 +243,7 @@ export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
           }}
         >
           <div
-            className={`truncate px-1 flex gap-2 items-center`}
+            className={`truncate px-2 flex gap-2 items-center`}
             style={{ minHeight: MIN_HEIGHT_HOURS * HEIGHT_PER_HOUR }}
           >
             <p className='text-xs' style={{ color: textColor }}>
