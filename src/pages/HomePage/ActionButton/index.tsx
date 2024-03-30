@@ -57,7 +57,7 @@ export default function ActionButton() {
   };
 
   return (
-    <div className='absolute bottom-20 right-20 rounded-md border h-10 w-10 flex items-center justify-center'>
+    <div className='absolute bottom-8 right-8 rounded-md border h-10 w-10 flex items-center justify-center'>
       <Tooltip title={toolTipTitle}>
         <IconButton
           className='h-8 w-8 bg-blue-200 hover:bg-blue-200'

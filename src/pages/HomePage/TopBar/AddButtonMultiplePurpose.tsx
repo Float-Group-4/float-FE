@@ -1,15 +1,15 @@
-import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
-import DensitySmallOutlinedIcon from '@mui/icons-material/DensitySmallOutlined';
-import SplitscreenOutlinedIcon from '@mui/icons-material/SplitscreenOutlined';
 import AccessAlarmOutlinedIcon from '@mui/icons-material/AccessAlarmOutlined';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import CreateNewFolderOutlinedIcon from '@mui/icons-material/CreateNewFolderOutlined';
+import DensitySmallOutlinedIcon from '@mui/icons-material/DensitySmallOutlined';
 import MoreTimeOutlinedIcon from '@mui/icons-material/MoreTimeOutlined';
 import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
+import SplitscreenOutlinedIcon from '@mui/icons-material/SplitscreenOutlined';
 import { Box, ListItemButton, Menu, MenuItem, SvgIconTypeMap } from '@mui/material';
-import React, { useState } from 'react';
-import CreateProjectModal from '../CreateProject';
 import { OverridableComponent } from '@mui/material/OverridableComponent';
+import React, { useState } from 'react';
 import AddPeopleModal from '../AddPeople';
+import CreateProjectModal from '../CreateProject';
 
 import CreateProjectMiddlePage from '../CreateProject/CreateProjectMiddlePage';
 
