@@ -46,6 +46,12 @@ export enum ViewType {
   months = 'months',
 }
 
+export enum ViewDensity {
+  compact = 'compact',
+  comfortable = 'comfortable',
+  spacious = 'spacious',
+}
+
 export enum AppTheme {
   light = 'light',
   dark = 'dark',
