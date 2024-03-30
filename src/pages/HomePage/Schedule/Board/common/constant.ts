@@ -1,5 +1,7 @@
 import dayjs from 'dayjs';
 import moment from 'moment';
+import { ViewDensity } from '../../../../../../src/types/enums';
+
 export enum ViewType {
   days = 'days',
   weeks = 'weeks',
@@ -29,6 +31,12 @@ export const CELL_WIDTH_BY_VIEW_TYPE = {
   [ViewType.days]: 160,
   [ViewType.weeks]: 90,
   [ViewType.months]: 45,
+};
+
+export const CELL_HEIGHT_BY_VIEW_DENSITY = {
+  [ViewDensity.compact]: 8,
+  [ViewDensity.comfortable]: 16,
+  [ViewDensity.spacious]: 24,
 };
 
 export const ITEM_DATE_FORMAT = 'YYYY-MM-DD';
