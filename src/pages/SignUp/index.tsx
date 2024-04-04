@@ -124,7 +124,7 @@ const SignUp = (props: SignUpProps) => {
       }}
     >
       <Typography sx={{ fontSize: 24, fontWeight: 700, textAlign: 'center', mb: 3 }}>
-        Sign in
+        Sign Up
       </Typography>
       <form>
         <Suspense fallback={<></>}>

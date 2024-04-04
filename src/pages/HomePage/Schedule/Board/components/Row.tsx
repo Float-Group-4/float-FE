@@ -23,7 +23,7 @@ export default memo(function Row({ userId, className }: { userId: string; classN
     hoverRef,
     rowHoverId,
     addItemModalRef,
-    mainModalRef
+    mainModalRef,
   } = useScheduleContext();
   const rowRef = useRef<HTMLDivElement>(null);
   const itemActivity = useAppSelector((state) => state.activity.itemActivity);
@@ -77,7 +77,7 @@ export default memo(function Row({ userId, className }: { userId: string; classN
         // Open Add Item Modal
         //addItemModalRef.current.openAddItemModal({ dragInfo: dragInfo.current });
 
-        mainModalRef.current.openMainModal({dragInfo: dragInfo.current});
+        mainModalRef.current.openMainModal({ dragInfo: dragInfo.current });
         dragInfo.current = {};
         document.body.removeEventListener('mouseup', handleMouseUp);
         document.body.removeEventListener('mouseleave', handleMouseUp);
@@ -88,8 +88,6 @@ export default memo(function Row({ userId, className }: { userId: string; classN
     }
   };
 
-  useEffect(() => console.log(rowMap), [null]);
-  console.log(useAppSelector((state) => state.general));
   return (
     <VisibilitySensor partialVisibility>
       {({ isVisible }: { isVisible: boolean }) => {
@@ -158,7 +156,7 @@ export default memo(function Row({ userId, className }: { userId: string; classN
                     })}
                     {rowMap.statusItems.map((id: string) => {
                       return (
-                        <div className='status'>
+                        <div key={id} className='status'>
                           <StatusMark key={id} id={id} />
                         </div>
                       );

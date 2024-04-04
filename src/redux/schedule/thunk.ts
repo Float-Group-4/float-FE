@@ -37,7 +37,6 @@ export const buildAllRows = createAsyncThunk(
 export const buildRows = createAsyncThunk(
   'schedule/buildRow',
   (rowIds: string[], { getState, dispatch }) => {
-    console.log('build row');
     const state: RootState = getState() as RootState;
 
     const { itemsById, timeOffItemsById, statusItemsById, rowMap, usersById } = state.general;

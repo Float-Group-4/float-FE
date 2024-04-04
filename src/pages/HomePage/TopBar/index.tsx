@@ -233,7 +233,7 @@ export default function TopBar() {
             </div>
             <Divider className='mb-2' />
             {filterOptions.map((option, index) => (
-              <div>
+              <div key={index}>
                 <MenuItem className='h-8 w-60 px-3 py-3 mx-2 rounded-lg my-1'>
                   <ListItemIcon>{option.icon}</ListItemIcon>
                   <ListItemText>{option.label}</ListItemText>

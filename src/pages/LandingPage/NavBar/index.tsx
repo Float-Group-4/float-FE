@@ -31,7 +31,7 @@ function NavBar() {
 
   return (
     <CssBaseline>
-      <AppBar position='sticky' elevation={2}>
+      <AppBar position='sticky' elevation={0}>
         <div style={{ backgroundColor: 'white', padding: '0 20px' }}>
           <Toolbar disableGutters style={{ justifyContent: 'space-between' }}>
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
