@@ -14,8 +14,19 @@ const Layouts = (props: LayoutsProps) => {
   const isSignIn = useMatch('sign-in');
   const isSignUp = useMatch('sign-up');
   const isLanding = useMatch('');
+  const isChooseTeam = useMatch('team');
 
-  return <>{isLanding ? <Outlet /> : isSignIn || isSignUp ? <NotAuthLayout /> : <AuthLayout />}</>;
+  return (
+    <>
+      {isLanding || isChooseTeam ? (
+        <Outlet />
+      ) : isSignIn || isSignUp ? (
+        <NotAuthLayout />
+      ) : (
+        <AuthLayout />
+      )}
+    </>
+  );
 };
 
 export default Layouts;

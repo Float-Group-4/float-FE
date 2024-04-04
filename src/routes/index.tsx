@@ -8,6 +8,8 @@ import TeamSetup from '@pages/TeamSetupModal/TeamSetup';
 import LandingPage from '@pages/LandingPage';
 import PeoplePage from '@pages/PeoplePage';
 import ProjectPage from '@pages/ProjectPage';
+import ChooseTeamPage from '@pages/ChooseTeamPage';
+import ErrorPage from '@pages/ErrorPage';
 const Layouts = lazy(() => import('@layouts/index'));
 const Report = lazy(() => import('@pages/Report'));
 const SignIn = lazy(() => import('@pages/SignIn'));
@@ -15,12 +17,16 @@ const SignUp = lazy(() => import('@pages/SignUp'));
 
 export const routes: RouteObject[] = [
   {
-    path: '*',
+    path: '/',
     element: <Layouts />,
     children: [
       {
         index: true,
         element: <LandingPage />,
+      },
+      {
+        path: 'team',
+        element: <ChooseTeamPage />,
       },
       {
         path: 'home',
@@ -65,5 +71,9 @@ export const routes: RouteObject[] = [
         ],
       },
     ],
+  },
+  {
+    path: '*',
+    element: <ErrorPage />,
   },
 ];
