@@ -30,6 +30,7 @@ export enum AccountType {
   member = 'Member',
   manager = 'Manager',
   admin = 'Admin',
+  owner = 'Owner',
   none = '',
 }
 

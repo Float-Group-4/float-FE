@@ -12,13 +12,13 @@ import {
 import { grey } from '@mui/material/colors';
 import { Data, createData } from './CustomTableProp';
 import CustomizedTables from './CustomizedTable';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
 import CreateNewFolderOutlinedIcon from '@mui/icons-material/CreateNewFolderOutlined';
 import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
+import { fetchProjects, getFetchProjectsStatus } from '../../../redux/project/projectSlice';
 
 // const CheckboxGroup = Checkbox.Group;
-
 
 const plainOptions = ['Active', 'Archived', 'My projects'];
 
@@ -148,22 +148,34 @@ function CheckboxGroup() {
 }
 
 export default function ProjectView() {
+  const dispatch = useAppDispatch();
   const projectList = useAppSelector((state) => state.project.project);
+  const projectState = useAppSelector(getFetchProjectsStatus);
+
+  useEffect(() => {
+    if (projectState === 'idle') {
+      dispatch(fetchProjects());
+    }
+  }, [projectState, dispatch]);
 
   return (
     <div className='bg-white flex-1 h-full px-9 py-3'>
       {CheckboxGroup()}
-      {CustomizedTables(projectList.map((p) =>  createData(
-        p.project.id,
-        p.project.id,
-        p.project.name,
-        (p.project.tags ?? []).join(", "),
-        p.project.client ?? "",
-        (p.project.budget ?? 0).toString(),
-        p.milestones.length > 0 ? p.milestones[0].startDate : "Null",
-        p.milestones.length > 0 ? p.milestones[0].endDate : "Null",
-        p.project.owner ?? "",
-      ),))}
+      {CustomizedTables(
+        projectList.map((p) =>
+          createData(
+            p.project.id,
+            p.project.id,
+            p.project.name,
+            (p.project.tags ?? []).join(', '),
+            p.project.client ?? '',
+            (p.project.budget ?? 0).toString(),
+            p.milestones.length > 0 ? p.milestones[0].startDate : 'Null',
+            p.milestones.length > 0 ? p.milestones[0].endDate : 'Null',
+            p.project.owner ?? '',
+          ),
+        ),
+      )}
       <Box sx={{ width: '100%' }} className='content-center flex flex-col items-center mx-0 mr-5'>
         <Stack spacing={3} direction='column' className='flex content-center align-center'>
           <div className='content-center' style={{ marginLeft: -20 }}>

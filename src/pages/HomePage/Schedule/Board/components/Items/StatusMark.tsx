@@ -32,7 +32,7 @@ export const StatusMark = ({ id }: { id: string }) => {
   const [statusColor, setStatusColor] = useState('');
 
   const handleStatusColor = () => {
-    const colorObj = statusColors.find((obj) => obj.title === item.name);
+    const colorObj = statusColors.find((obj) => obj.title === item?.name);
     setStatusColor(colorObj ? colorObj.color : 'blue');
   };
 
