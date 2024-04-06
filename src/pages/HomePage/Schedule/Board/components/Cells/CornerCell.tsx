@@ -204,7 +204,7 @@ const CornerCell = () => {
 
   return (
     <div
-      className={`sticky border-b top-0 left-0  bg-white rounded-tr-2xl flex justify-between items-center group transition delay-150 z-[9999] ${
+      className={`sticky border-b top-0 left-0  bg-white rounded-t-2xl flex justify-between items-center group transition delay-150 z-[9999] ${
         isCollapsed ? `px-2 justify-center` : `px-2`
       }`}
       style={{

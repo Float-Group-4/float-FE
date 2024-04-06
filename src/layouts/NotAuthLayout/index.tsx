@@ -1,14 +1,9 @@
-import React from 'react';
-import { Button, Stack } from '@mui/material';
+import { CONTAINER_PADDING_X, HEADER_HEIGHT_NOT_AUTH } from '@base/config/constants';
+import { Stack } from '@mui/material';
 import { Outlet } from 'react-router';
-import { CONTAINER_PADDING_X, HEADER_HEIGHT, HEADER_HEIGHT_NOT_AUTH } from '@base/config/constants';
-import { useMatch } from 'react-router-dom';
 import Header from './Header';
 
 const NotAuthLayout = () => {
-  const isHome = useMatch('/');
-  const isLogin = useMatch('/login');
-
   return (
     <Stack>
       <Header />

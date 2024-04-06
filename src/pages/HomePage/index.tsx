@@ -3,11 +3,11 @@ import ActionButton from './ActionButton';
 import Schedule from './Schedule';
 import { ScheduleContextWrapper } from './Schedule/ScheduleContext';
 import TopBar from './TopBar';
-import { axiosAPI, axiosApi } from '@base/utils/axios/api';
+import { axiosAPI } from '@base/utils/axios/api';
 
 const HomePage = () => {
   const fetchInitData = async () => {
-    const endpoint = 'http://localhost:4000/';
+    const endpoint = 'http://localhost:4000';
     const result = await axiosAPI(endpoint, 'GET');
     console.log(result);
   };

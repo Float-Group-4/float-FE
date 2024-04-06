@@ -1,7 +1,7 @@
 import LogoutIcon from '@mui/icons-material/Logout';
 import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 export interface Team {
   name: string;
@@ -57,27 +57,27 @@ export default function ChooseTeamPage() {
     <div>
       <nav className='flex-1 flex w-full relative items-center pt-2 px-4'>
         <div className='flex justify-between'>
-          <a href='/'>
+          <div onClick={() => navigate('/')}>
             <img
               src='https://www.floatui.com/logo.svg'
               width={120}
               height={50}
               alt='Float UI logo'
             />
-          </a>
+          </div>
         </div>
         <ul className={`flex-1 gap-8 justify-end mt-12 md:text-md md:font-medium md:flex md:mt-0`}>
           <div className='flex gap-4 justify-between items-center'>
             <li className='order-2 py-5 md:py-0'>
-              <a
-                href='/'
-                className=' gap-2py-2 px-5 rounded-lg font-medium text-center border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white duration-150 block md:py-3 md:inline'
+              <div
+                onClick={() => navigate('/')}
+                className=' gap-2py-2 px-5 rounded-lg font-medium text-center border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white duration-150 block md:py-3 md:inline'
               >
                 <span>
                   <LogoutIcon fontSize='small' className='me-2' />
                 </span>
                 Sign Out
-              </a>
+              </div>
             </li>
           </div>
         </ul>
@@ -89,7 +89,7 @@ export default function ChooseTeamPage() {
           {activeTeams.map((team) => {
             return (
               <div
-                className={`relative h-52 grow-0 shrink-0 bg-white py-12 rounded-lg shadow-sm border-2 border-gray-100 ${!team.isActive && 'text-gray-400'} hover:cursor-pointer hover:shadow-md hover:border-gray-200 hover:text-indigo-600 flex flex-col justify-center items-center`}
+                className={`relative h-52 grow-0 shrink-0 bg-white py-12 rounded-lg shadow-sm border-2 border-gray-100 ${!team.isActive && 'text-gray-400'} hover:cursor-pointer hover:shadow-md hover:border-gray-200 hover:text-blue-600 flex flex-col justify-center items-center`}
                 style={{
                   flexBasis: 'calc(33.33333% - 1rem)',
                 }}
@@ -108,10 +108,13 @@ export default function ChooseTeamPage() {
             );
           })}
           <div
-            className='h-52 text-indigo-600 border-dashed grow-0 shrink-0 bg-white py-12 rounded-lg shadow-sm border-2 border-indigo-600 
-            hover:cursor-pointer hover:shadow-md hover:border-indigo-500-200 flex flex-col justify-center items-center'
+            className='h-52 text-blue-600 border-dashed grow-0 shrink-0 bg-white py-12 rounded-lg shadow-sm border-2 border-blue-600 
+            hover:cursor-pointer hover:shadow-md hover:border-blue-500-200 flex flex-col justify-center items-center'
             style={{
               flexBasis: 'calc(33.33333% - 1rem)',
+            }}
+            onClick={() => {
+              navigate('/sign-up');
             }}
           >
             <GroupAddOutlinedIcon className='text-6xl m-2' />
@@ -126,7 +129,7 @@ export default function ChooseTeamPage() {
           {inactiveTeams.map((team) => {
             return (
               <div
-                className={`relative h-52 grow-0 shrink-0 bg-white py-12 rounded-lg shadow-sm border-2 border-gray-100 ${!team.isActive && 'text-gray-400'} hover:cursor-pointer hover:shadow-md hover:border-gray-200 hover:text-indigo-600 flex flex-col justify-center items-center`}
+                className={`relative h-52 grow-0 shrink-0 bg-white py-12 rounded-lg shadow-sm border-2 border-gray-100 ${!team.isActive && 'text-gray-400'} hover:cursor-pointer hover:shadow-md hover:border-gray-200 hover:text-blue-600 flex flex-col justify-center items-center`}
                 style={{
                   flexBasis: 'calc(33.33333% - 1rem)',
                 }}

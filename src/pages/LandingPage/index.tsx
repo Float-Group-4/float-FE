@@ -1,6 +1,8 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
+  const navigate = useNavigate();
   const [state, setState] = useState(false);
 
   const navigation = [
@@ -275,14 +277,14 @@ const LandingPage = () => {
       <nav className=' border-b w-full md:static md:text-sm md:border-none'>
         <div className='items-center px-4 max-w-screen-xl mx-auto md:flex md:px-8'>
           <div className='flex items-center justify-between py-3 md:py-5 md:block'>
-            <a href='/'>
+            <div onClick={() => navigate('/')} className='hover:cursor-pointer'>
               <img
                 src='https://www.floatui.com/logo.svg'
                 width={120}
                 height={50}
                 alt='Float UI logo'
               />
-            </a>
+            </div>
             <div className='md:hidden'>
               <button
                 className='text-gray-500 hover:text-gray-800'
@@ -326,30 +328,30 @@ const LandingPage = () => {
             <ul className='justify-end items-center space-y-6 md:flex md:space-x-6 md:space-y-0'>
               {navigation.map((item, idx) => {
                 return (
-                  <li key={idx} className='text-gray-700 hover:text-indigo-600'>
-                    <a href={item.path} className='block'>
+                  <li key={idx} className='text-gray-700 hover:text-blue-600'>
+                    <div onClick={() => navigate(item.path)} className='block'>
                       {item.title}
-                    </a>
+                    </div>
                   </li>
                 );
               })}
               <span className='hidden w-px h-6 bg-gray-300 md:block'></span>
               <div className='space-y-3 items-center gap-x-6 md:flex md:space-y-0'>
                 <li>
-                  <a
-                    href='/sign-in'
-                    className='block py-3 text-center text-gray-700 hover:text-indigo-600 border rounded-lg md:border-none'
+                  <div
+                    onClick={() => navigate('/sign-in')}
+                    className='block py-3 text-center text-gray-700 hover:text-blue-600 hover:cursor-pointer border rounded-lg md:border-none'
                   >
-                    Log In
-                  </a>
+                    {'Log In'}
+                  </div>
                 </li>
                 <li>
-                  <a
-                    href='/sign-up'
-                    className='block py-3 px-4 font-medium text-center text-white bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 active:shadow-none rounded-lg shadow md:inline'
+                  <div
+                    onClick={() => navigate('/sign-up')}
+                    className='block py-3 px-4 font-medium text-center text-white bg-blue-600 hover:bg-blue-500 hover:cursor-pointer active:bg-blue-700 active:shadow-none rounded-lg shadow md:inline'
                   >
                     Try For Free
-                  </a>
+                  </div>
                 </li>
               </div>
             </ul>
@@ -360,7 +362,7 @@ const LandingPage = () => {
       <section className='py-12'>
         <div className='max-w-screen-xl mx-auto text-gray-600 gap-x-12 items-center justify-between overflow-hidden md:flex md:px-8'>
           <div className='flex-none space-y-5 px-4 sm:max-w-lg md:px-0 lg:max-w-xl'>
-            <h1 className='text-sm text-indigo-600 font-medium'>Over 200 successful deals</h1>
+            <h1 className='text-sm text-blue-600 font-medium'>Over 200 successful deals</h1>
             <h2 className='text-4xl text-gray-800 font-extrabold md:text-5xl'>
               We help startups to grow and make money
             </h2>
@@ -369,12 +371,12 @@ const LandingPage = () => {
               laudantium, totam rem aperiam, eaque ipsa quae.
             </p>
             <div className='items-center gap-x-3 space-y-3 sm:flex sm:space-y-0'>
-              <a
-                href='/'
-                className='block py-2 px-4 text-center text-white font-medium bg-indigo-600 duration-150 hover:bg-indigo-500 active:bg-indigo-700 rounded-lg shadow-lg hover:shadow-none'
+              <div
+                onClick={() => navigate('/')}
+                className='block py-2 px-4 text-center text-white font-medium bg-blue-600 duration-150 hover:bg-blue-500 hover:cursor-pointer active:bg-blue-700 rounded-lg shadow-lg hover:shadow-none'
               >
                 Let's Get Started
-              </a>
+              </div>
             </div>
           </div>
           <div className='flex-none mt-14 md:mt-0 md:max-w-xl'>
@@ -387,7 +389,7 @@ const LandingPage = () => {
         </div>
       </section>
       {/* Feature Section */}
-      <section className='relative py-28 bg-indigo-600'>
+      <section className='relative py-28 bg-blue-700'>
         <div className='relative z-10 max-w-screen-xl mx-auto px-4 text-gray-300 justify-between gap-24 lg:flex md:px-8'>
           <div className='max-w-xl'>
             <h3 className='text-white text-3xl font-semibold sm:text-4xl'>
@@ -402,7 +404,7 @@ const LandingPage = () => {
             <ul className='grid gap-8 sm:grid-cols-2'>
               {features.map((item, idx) => (
                 <li key={idx} className='flex gap-x-4'>
-                  <div className='flex-none w-12 h-12 bg-indigo-400 text-white rounded-lg flex items-center justify-center'>
+                  <div className='flex-none w-12 h-12 bg-blue-400 text-white rounded-lg flex items-center justify-center'>
                     {item.icon}
                   </div>
                   <div>
@@ -443,12 +445,12 @@ const LandingPage = () => {
                   ''
                 )}
                 <div className='p-8 space-y-4 border-b'>
-                  <span className='text-indigo-600 font-medium'>{item.name}</span>
+                  <span className='text-blue-600 font-medium'>{item.name}</span>
                   <div className='text-gray-800 text-3xl font-semibold'>
                     ${item.price} <span className='text-xl text-gray-600 font-normal'>/mo</span>
                   </div>
                   <p>{item.desc}</p>
-                  <button className='px-3 py-3 rounded-lg w-full font-semibold text-sm duration-150 text-white bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700'>
+                  <button className='px-3 py-3 rounded-lg w-full font-semibold text-sm duration-150 text-white bg-blue-600 hover:bg-blue-500 active:bg-blue-700'>
                     Get Started
                   </button>
                 </div>
@@ -460,7 +462,7 @@ const LandingPage = () => {
                     <li key={idx} className='flex items-center gap-5'>
                       <svg
                         xmlns='http://www.w3.org/2000/svg'
-                        className='h-5 w-5 text-indigo-600'
+                        className='h-5 w-5 text-blue-600'
                         viewBox='0 0 20 20'
                         fill='currentColor'
                       >
@@ -513,14 +515,14 @@ const LandingPage = () => {
                     <blockquote>
                       <p className='text-gray-800 text-lg font-semibold px-4 py-1'>{item.quote}</p>
                     </blockquote>
-                    <div className='flex items-center gap-x-4 p-4 mt-6 bg-indigo-50'>
+                    <div className='flex items-center gap-x-4 p-4 mt-6 bg-blue-50'>
                       <img
                         src={item.avatar}
-                        className='w-16 h-16 rounded-full border-2 border-indigo-500'
+                        className='w-16 h-16 rounded-full border-2 border-blue-500'
                       />
                       <div>
                         <span className='block text-gray-800 font-semibold'>{item.name}</span>
-                        <span className='block text-indigo-600 text-sm mt-0.5'>{item.title}</span>
+                        <span className='block text-blue-600 text-sm mt-0.5'>{item.title}</span>
                       </div>
                     </div>
                   </figure>
@@ -532,7 +534,7 @@ const LandingPage = () => {
       </section>
       {/* Contact Section */}
       <section className='py-14 max-w-screen-xl mx-auto'>
-        <div className='relative overflow-hidden mx-4 px-4 py-14 rounded-2xl bg-indigo-600 md:px-8 md:mx-8'>
+        <div className='relative overflow-hidden mx-4 px-4 py-14 rounded-2xl bg-blue-600 md:px-8 md:mx-8'>
           <div className='relative z-10 max-w-xl mx-auto sm:text-center'>
             <div className='space-y-3'>
               <h3 className='text-3xl text-white font-bold'>Subscribe to our newsletter</h3>
@@ -551,16 +553,15 @@ const LandingPage = () => {
                   placeholder='Enter your email'
                   className='text-gray-500 w-full p-2 outline-none'
                 />
-                <button className='p-2 px-3 rounded-lg font-medium text-white bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 duration-150 outline-none shadow-md focus:shadow-none sm:px-4'>
+                <button className='p-2 px-3 rounded-lg font-medium text-white bg-blue-600 hover:bg-blue-500 active:bg-blue-700 duration-150 outline-none shadow-md focus:shadow-none sm:px-4'>
                   Subscribe
                 </button>
               </form>
               <p className='mt-3 max-w-lg text-[15px] text-blue-100 sm:mx-auto'>
                 No spam ever, we are care about the protection of your data. Read our{' '}
-                <a className='underline' href='/'>
-                  {' '}
-                  Privacy Policy{' '}
-                </a>
+                <div onClick={() => navigate('/')} className='underline hover:cursor-pointer'>
+                  Privacy Policy
+                </div>
               </p>
             </div>
           </div>
@@ -584,7 +585,7 @@ const LandingPage = () => {
                   placeholder='Enter your email'
                   className='w-full p-2.5 outline-none'
                 />
-                <button className='p-2.5 rounded-md text-white bg-indigo-600 outline-none shadow-md focus:shadow-none sm:px-5'>
+                <button className='p-2.5 rounded-md text-white bg-blue-600 outline-none shadow-md focus:shadow-none sm:px-5'>
                   Subscribe
                 </button>
               </div>
@@ -596,9 +597,12 @@ const LandingPage = () => {
                 <h4 className='text-lg font-medium'>{item.label}</h4>
                 {item.items.map((el, idx) => (
                   <li key={idx}>
-                    <a href={el.href} className='hover:underline hover:text-indigo-600'>
+                    <div
+                      onClick={() => navigate(el.href)}
+                      className='hover:underline hover:cursor-pointer hover:text-blue-600'
+                    >
                       {el.name}
-                    </a>
+                    </div>
                   </li>
                 ))}
               </ul>

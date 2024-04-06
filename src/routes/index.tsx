@@ -10,6 +10,8 @@ import PeoplePage from '@pages/PeoplePage';
 import ProjectPage from '@pages/ProjectPage';
 import ChooseTeamPage from '@pages/ChooseTeamPage';
 import ErrorPage from '@pages/ErrorPage';
+import RecoverPassword from '@pages/RecoverPassword';
+import CreateTeamPage from '@pages/CreateTeamPage';
 const Layouts = lazy(() => import('@layouts/index'));
 const Report = lazy(() => import('@pages/Report'));
 const SignIn = lazy(() => import('@pages/SignIn'));
@@ -51,6 +53,14 @@ export const routes: RouteObject[] = [
       {
         path: 'sign-up',
         element: <SignUp />,
+      },
+      {
+        path: 'recover-password',
+        element: <RecoverPassword />,
+      },
+      {
+        path: 'create-team',
+        element: <CreateTeamPage />,
       },
       {
         path: 'team-setup',
