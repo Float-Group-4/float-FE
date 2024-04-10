@@ -8,8 +8,9 @@ import {
   PersonInfo,
   WorkingType,
 } from '@pages/HomePage/AddPeople/models';
-import axios from 'axios';
+import axios, { HttpStatusCode } from 'axios';
 import { axiosApi } from '@base/utils/axios/api';
+import { generateUUID } from '@base/utils/uuid';
 
 export interface UserFilterValue {
   id: number;
@@ -19,12 +20,25 @@ export interface UserFilterValue {
 
 interface PeopleState {
   people: PersonInfo[];
-  state: String;
-  error?: String | null;
+  state: string;
+  error?: string | null;
 }
+
+interface PersonPostData {
+  teamId: string;
+  userId?: string;
+  name: string;
+  type?: string;
+  hourlyRate?: number;
+  access?: string;
+  email: string;
+  roleId?: string;
+  departmentId?: string;
+}
+
 const defaultColor = '#3451b2';
 
-const baseUrl = 'http://localhost:4000';
+const baseUrl = import.meta.env.VITE_FRONTEND_BASE_URL;
 
 const initialState: PeopleState = {
   people: [],
@@ -40,6 +54,37 @@ export const fetchPeople = createAsyncThunk('people/fetchTeamMembers', async () 
     return e.message;
   }
 });
+
+export const postNewPeople = createAsyncThunk(
+  'people/postNewTeamMembers',
+  async (personInfo: PersonInfo) => {
+    try {
+      const data: PersonPostData = {
+        teamId: personInfo.teamId,
+        // access: personInfo.accountType,
+        email: personInfo.email ?? '',
+        hourlyRate: personInfo.hourlyRate ?? 0,
+        // roleId: personInfo.role ?? '',
+        // userId: personInfo.id,
+        name: personInfo.name,
+        // departmentId: personInfo.department ?? '',
+        type: personInfo.accountType.toLowerCase(),
+      };
+      const response = await axiosApi.post(`${baseUrl}/team-members`, data);
+      if (
+        response.status == HttpStatusCode.Accepted ||
+        response.status == HttpStatusCode.Ok ||
+        response.status == HttpStatusCode.Created
+      ) {
+        return personInfo;
+      } else {
+        return null;
+      }
+    } catch (e: any) {
+      return e.message;
+    }
+  },
+);
 
 // const initialState: PeopleState = {
 //   people: [
@@ -172,6 +217,7 @@ const peopleSlice = createSlice({
             email: teamMember.email,
             type: ContractType.employee,
             projects: ['2'],
+            teamId: teamMember.teamId,
             availability: {
               startDate: new Date().toDateString(),
               endDate: new Date().toDateString(),
@@ -186,6 +232,20 @@ const peopleSlice = createSlice({
         state.people = loadedTeamMembers;
       })
       .addCase(fetchPeople.rejected, (state, action) => {
+        state.state = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(postNewPeople.pending, (state, _) => {
+        state.state = 'loading';
+      })
+      .addCase(postNewPeople.fulfilled, (state, action) => {
+        state.state = 'succeeded';
+        let data = action.payload;
+        if (data != null) {
+          state.people.push(data);
+        }
+      })
+      .addCase(postNewPeople.rejected, (state, action) => {
         state.state = 'failed';
         state.error = action.error.message;
       });

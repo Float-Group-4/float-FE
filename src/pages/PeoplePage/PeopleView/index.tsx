@@ -103,7 +103,7 @@ function CheckboxGroup() {
           <Typography
             className={` px-4 py-1 rounded-md decoration-dotted`}
             fontSize={18}
-            sx={{ textDecorationStyle: 'dotted', textDecorationColor: 'blue' }}
+            sx={{ textDecorationStyle: 'dotted', textDecorationColor: 'blue', color: 'blue' }}
           >
             {filterString}
           </Typography>
@@ -146,7 +146,7 @@ function CheckboxGroup() {
                 </div>
                 {/* {selectedIndex == index ? (
                     <div>
-                      <CheckOutlinedIcon sx={{ fontSize: 16 }} />
+                      <CheckOutlined sx={{ fontSize: 16 }} />
                     </div>
                   ) : null} */}
               </MenuItem>
@@ -193,7 +193,7 @@ export default function PeopleView() {
       <Box sx={{ width: '100%' }} className='content-center flex flex-col items-center mx-0 mr-5'>
         <Stack spacing={3} direction='column' className='flex content-center align-center'>
           <div className='content-center' style={{ marginLeft: -20 }}>
-            <img src='/src/base/assets/imgs/people_tab.png' width={200}></img>
+            <img alt='people_tab' src='/src/base/assets/imgs/people_tab.png' width={200}></img>
           </div>
           <Button
             variant='outlined'

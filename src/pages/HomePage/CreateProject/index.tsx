@@ -1,15 +1,5 @@
 import MiModal from '@base/components/MiModal';
-import {
-  useTheme,
-  Typography,
-  TextField,
-  Box,
-  Tabs,
-  Tab,
-  Button,
-  Stack,
-  Breakpoint,
-} from '@mui/material';
+import { Typography, TextField, Box, Tabs, Tab, Button, Stack } from '@mui/material';
 import React, { useState } from 'react';
 import { ProjectInfo, ProjectMileStone, ProjectTask, ProjectTeam } from './models';
 import InfoSubBody from './components/CreateProjectInfoTab';
@@ -18,10 +8,12 @@ import TeamSubBody from './components/CreateProjectTeamTab';
 import TaskListSubBody from './components/CreateProjectTaskTab';
 import { ProjectType } from '../../../types/enums';
 import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
-import { addProject } from '../../../redux/project/projectSlice';
+import { postNewProject } from '../../../redux/project/projectSlice';
 import { generateUUID } from '@base/utils/uuid';
+import { selectAllPeople } from '../../../redux/people/peopleSlice';
+import axios from 'axios';
 
-
+const baseUrl = import.meta.env.VITE_FRONTEND_BASE_URL;
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -65,7 +57,14 @@ const ModalFooter: React.FC<ModalFooterProps> = ({ handleSave, handleClose }) =>
       <Button onClick={handleSave} variant='contained'>
         Create project
       </Button>
-      <Button onClick={handleClose} sx={{ backgroundColor: '#F5F5F5 !important', color: 'black', '&:hover' :{bgcolor: '#E1E5F3 !important', color: 'black !important'} }}>
+      <Button
+        onClick={handleClose}
+        sx={{
+          backgroundColor: '#F5F5F5 !important',
+          color: 'black',
+          '&:hover': { bgcolor: '#E1E5F3 !important', color: 'black !important' },
+        }}
+      >
         Cancel
       </Button>
     </Stack>
@@ -180,22 +179,22 @@ interface CreateProjectModalProps {
 }
 
 const CreateProjectModal = (props: CreateProjectModalProps) => {
-  const theme = useTheme();
-
   const { sx, isOpen, setIsOpen } = props;
   const dispatch = useAppDispatch();
-
-
+  const people = useAppSelector(selectAllPeople);
+  
   const defaultColor = '#3451b2';
   const defaultProjectInfo: ProjectInfo = {
-    id: "1",
+    id: '1',
     color: defaultColor,
     budget: 0,
     type: ProjectType.billable,
     isTentative: false,
     note: '',
     client: '',
-    name: "",
+    name: '',
+    owner: '9d080daa-3929-4601-83a3-93a7aa86d372',
+    teamId: 'ad53cc61-a3dd-469f-98aa-ace14809239d',
   };
 
   const demoForTasks: ProjectTask[] = [
@@ -213,9 +212,18 @@ const CreateProjectModal = (props: CreateProjectModalProps) => {
   const [taskData, setTaskData] = useState<ProjectTask[] | null>(demoForTasks);
 
   const handleSave = () => {
-    var p ={project: {...infoData, name: projectName, id: generateUUID(),}, members: teamData ?? [], milestones: mileStoneData ?? [], tasks: taskData ?? [],};
+    let p = {
+      project: { ...infoData, name: projectName, id: generateUUID() },
+      members: teamData ?? [],
+      milestones: mileStoneData ?? [],
+      tasks: taskData ?? [],
+    };
     console.log(p);
-    dispatch(addProject(p));
+    // dispatch(addProject(p));
+    p.project.owner = '9d080daa-3929-4601-83a3-93a7aa86d372';
+    p.project.teamId = 'ad53cc61-a3dd-469f-98aa-ace14809239d';
+    dispatch(postNewProject(p));
+
     setIsOpen(false);
   };
 

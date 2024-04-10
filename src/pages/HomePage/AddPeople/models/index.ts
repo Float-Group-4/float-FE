@@ -1,5 +1,6 @@
 export interface PersonInfo {
   id: string;
+  teamId: string;
   name: string;
   email?: string;
   role?: string;

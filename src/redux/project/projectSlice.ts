@@ -1,7 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BudgetValue, ProjectType, RowDisplayType, UserFilterType } from '../../types/enums';
-import { INITIAL_WEEK_INDEX } from '../../pages/HomePage/Schedule/Board/common/constant';
-import { mergeListsOrder } from '../../pages/HomePage/Schedule/Board/common/helper';
+import { ProjectType } from '../../types/enums';
 import {
   ProjectInfo,
   ProjectMileStone,
@@ -9,6 +7,7 @@ import {
   ProjectTeam,
 } from '@pages/HomePage/CreateProject/models';
 import { axiosApi } from '@base/utils/axios/api';
+import { HttpStatusCode } from 'axios';
 
 export interface UserFilterValue {
   id: number;
@@ -30,13 +29,22 @@ export interface Project {
   tasks: ProjectTask[];
 }
 
-const baseUrl = 'http://localhost:4000';
+const baseUrl = import.meta.env.VITE_FRONTEND_BASE_URL;
 
 const initialState: ProjectState = {
   project: [],
   state: 'idle', // 'idle', 'loading', 'succeeded', 'failed'
   error: null,
 };
+
+interface ProjectApi {
+  name: string;
+  client?: string;
+  projectOwnerId: string;
+  budget?: string;
+  createTime: string;
+  teamId: string;
+}
 
 export const fetchProjects = createAsyncThunk('project/fetchProjects', async () => {
   try {
@@ -47,7 +55,40 @@ export const fetchProjects = createAsyncThunk('project/fetchProjects', async () 
   }
 });
 
-// const initialState: ProjectState = {
+export const postNewProject = createAsyncThunk(
+  'project/postProject',
+  async (projectData: {
+    project: ProjectInfo;
+    members: ProjectTeam[];
+    milestones: ProjectMileStone[];
+    tasks: ProjectTask[];
+  }) => {
+    try {
+      const data: ProjectApi = {
+        budget: projectData.project.budget?.toString() ?? '0',
+        createTime: new Date().toISOString(),
+        name: projectData.project.name,
+        client: projectData.project.client,
+        teamId: projectData.project.teamId,
+        projectOwnerId: projectData.project.owner,
+      };
+      const response = await axiosApi.post(`${baseUrl}/projects`, data);
+      if (
+        response.status == HttpStatusCode.Accepted ||
+        response.status == HttpStatusCode.Ok ||
+        response.status == HttpStatusCode.Created
+      ) {
+        return projectData;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  },
+);
+
+// const sample: ProjectState = {
 //   project: [
 //     {
 //       project: {
@@ -60,7 +101,7 @@ export const fetchProjects = createAsyncThunk('project/fetchProjects', async () 
 //         note: 'First Project',
 //         client: 'Quang',
 //         tags: ['hi', 'hii'],
-//         owner: "Lam",
+//         owner: 'Lam',
 //       },
 //       members: [
 //         {
@@ -125,6 +166,7 @@ export const fetchProjects = createAsyncThunk('project/fetchProjects', async () 
 //         isTentative: false,
 //         note: 'Second Project',
 //         client: 'Bao',
+//         owner: 'ksmkmkd',
 //         tags: ['hi', 'hiis'],
 //       },
 //       members: [
@@ -222,59 +264,6 @@ const projectSlice = createSlice({
         state.project[i].tasks = tasks;
       }
     },
-    // setCurrentWeekIndex: (state, action) => {
-    //   state.currentWeekIndex = action.payload;
-    // },
-    // setDisplayingWeeks: (state, action) => {
-    //   state.displayingWeeks = action.payload;
-    // },
-    // setWorkloadRow: (
-    //   state,
-    //   action: PayloadAction<{ [key: number]: { isNotCollapse: boolean } }>,
-    // ) => {
-    //   state.workloadRow = { ...state.workloadRow, ...action.payload };
-    // },
-    // setOrder: (state, action: PayloadAction<{ type: RowDisplayType; order: string[] }>) => {
-    //   const { type, order } = action.payload;
-    //   const newOrder =
-    //     state.order[type].length > 0 ? mergeListsOrder(state.order[type], order) : order;
-    //   Object.assign(state.order, { [type]: newOrder });
-    // },
-    // setUserFilter: (
-    //   state,
-    //   action: PayloadAction<{ filterList: UserFilterValue[]; type: UserFilterType }>,
-    // ) => {
-    //   const { filterList, type } = action.payload;
-    //   const userFilter = { ...state.userFilter, [type]: filterList };
-    //   state.userFilter = userFilter;
-    // },
-    // clearFilter: (state) => {
-    //   const userFilter = {
-    //     ...state.userFilter,
-    //     [UserFilterType.users]: [],
-    //     [UserFilterType.teams]: [],
-    //   };
-    //   state.userFilter = userFilter;
-    // },
-    // setDisplayItems: (state, action) => {
-    //   state.displayItems = action.payload;
-    // },
-    // setDisplayRowsTime: (state, action) => {
-    //   state.rowDisplayType = action.payload;
-    // },
-    // toggleWorkloadMode: (state) => {
-    //   state.isWorkloadMode = !state.isWorkloadMode;
-    // },
-    // setSelectedItems: (state, action) => {
-    //   state.selectedItemIds = action.payload;
-    // },
-    // toggleMultiSelectMode: (state) => {
-    //   state.isMultiSelectMode = !state.isMultiSelectMode;
-    // },
-    // setMultiSelectMode: (state, action) => {
-    //   state.isMultiSelectMode = action.payload;
-    // },
-     
   },
   extraReducers(builder) {
     builder
@@ -284,20 +273,20 @@ const projectSlice = createSlice({
       .addCase(fetchProjects.fulfilled, (state, action) => {
         state.state = 'succeeded';
         const loadedProjects = action.payload.map((project: any) => {
-          // console.log(project);
           const p: Project = {
-             members: project.members ?? [],
-             milestones: project.milestones ?? [],
-             tasks: project.task ?? [],
-             project: {
-               id: project.id,
-               name: project.name,
-               client: project.client,
-               budget: project.budget,
-               type: ProjectType.billable,
-               owner: project.projectOwnerId,
-               isTentative: false
-             },
+            members: project.members ?? [],
+            milestones: project.milestones ?? [],
+            tasks: project.task ?? [],
+            project: {
+              id: project.id,
+              name: project.name,
+              client: project.client,
+              budget: project.budget,
+              type: ProjectType.billable,
+              owner: project.projectOwnerId,
+              teamId: project.teamId,
+              isTentative: false,
+            },
           };
           return p;
         });
@@ -307,6 +296,16 @@ const projectSlice = createSlice({
       .addCase(fetchProjects.rejected, (state, action) => {
         state.state = 'failed';
         state.error = action.error.message;
+      })
+      .addCase(postNewProject.pending, (state, _) => {
+        state.state = 'loading';
+      })
+      .addCase(postNewProject.fulfilled, (state, action) => {
+        state.state = 'succeeded';
+        const newProject = action.payload;
+        if (newProject != null) {
+          state.project.push(newProject);
+        }
       });
   },
 });

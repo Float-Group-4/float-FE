@@ -1,5 +1,4 @@
-import MiModal from '@base/components/MiModal';
-import { useTheme, Typography, TextField, Box, Tabs, Tab, Button, Stack } from '@mui/material';
+import { Typography, TextField, Box, Tabs, Tab, Button, Stack } from '@mui/material';
 import React, { useState } from 'react';
 import InfoSubBody from './components/InfoTab';
 import AccessSubBody from './components/AccessTab';
@@ -7,8 +6,8 @@ import AvailSubBody from './components/AvailabilityTab';
 import ProjectSubBody from './components/ProjectTab';
 import { PersonInfo, Availability, WorkingType, ContractType, AccountType } from './models';
 import MiModalModified from './components/MiModalModified';
-import { useAppDispatch } from '@hooks/reduxHooks';
-import { addPeople } from '../../../redux/people/peopleSlice';
+import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
+import { postNewPeople } from '../../../redux/people/peopleSlice';
 import { generateUUID } from '@base/utils/uuid';
 import ManageSubBody from './components/ManageTab';
 
@@ -179,8 +178,6 @@ interface AddPeopleModalProps {
 }
 
 const AddPeopleModal = (props: AddPeopleModalProps) => {
-  const theme = useTheme();
-
   const { sx, isOpen, setIsOpen } = props;
 
   const avail: Availability = {
@@ -199,14 +196,17 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
     role: '',
     department: '',
     tags: [],
+    teamId: 'ad53cc61-a3dd-469f-98aa-ace14809239d',
   };
 
   const dispatch = useAppDispatch();
+  const projects = useAppSelector((state) => state.project.project);
 
   const [personInfoData, setPersonInfoData] = useState<PersonInfo>(sampleData);
 
   const handleSave = () => {
-    dispatch(addPeople({ person: { ...personInfoData, id: generateUUID() } }));
+    // dispatch(addPeople({ person: { ...personInfoData, id: generateUUID() } }));
+    dispatch(postNewPeople({ ...personInfoData, id: generateUUID() }));
     setIsOpen(false);
   };
 

@@ -16,63 +16,78 @@ import { useEffect, useState } from 'react';
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
 import CreateNewFolderOutlinedIcon from '@mui/icons-material/CreateNewFolderOutlined';
 import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
-import { fetchProjects, getFetchProjectsStatus } from '../../../redux/project/projectSlice';
-
-// const CheckboxGroup = Checkbox.Group;
+import {
+  Project,
+  fetchProjects,
+  getFetchProjectsStatus,
+} from '../../../redux/project/projectSlice';
+import { Edit, MarkunreadMailbox, Person } from '@mui/icons-material';
 
 const plainOptions = ['Active', 'Archived', 'My projects'];
 
-const rows: Data[] = [
-  // createData(1, '1', "Project 1", "Bảo Huỳnh Minh", "__", "5,000,000", "11 Mar 2023", "11 Mar 2024", 'owners'),
-  // createData(2, '2', "Project 1", "Nguyễn Quang", "__", "13,000,000", "09 Feb 2023", "2024", 'owners'),
-];
+interface ActionGroupProps {
+  selectedProject: Project[];
+  setSelectedProject: (projects: Project[]) => void;
+}
+
+const ActionGroup = (props: ActionGroupProps) => {
+  const { selectedProject, setSelectedProject } = props;
+  return (
+    <Stack>
+      <Typography>{selectedProject.length} selected</Typography>
+      <Button variant='contained' onClick={() => console.log('Edit project')}>
+        <Edit /> Edit
+      </Button>
+      <Button variant='contained' onClick={() => console.log('Archive')}>
+        {' '}
+        <MarkunreadMailbox /> Archive{' '}
+      </Button>
+      <Button onClick={() => setSelectedProject([])}>Clear</Button>
+    </Stack>
+  );
+};
 
 function CheckboxGroup() {
   const [cb, setCb] = useState(false);
   const [filterString, setFilterString] = useState(plainOptions[0]);
-  const [checkedList, setCheckedList] = useState([true, false, false]);
+  const [checkedList, setCheckedList] = useState<boolean[]>([true, false, false]);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  // const [zoomModeAnchorEl, setZoomModeAnchorEl] = useState<null | HTMLElement>(null);
-  // const [densityAnchorEl, setDensityAnchorEl] = useState<null | HTMLElement>(null);
-
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const onChange = (checked: boolean, index: number) => {
-    console.log('checkedList', checkedList);
-    checkedList[index] = checked;
+    const updatedCheckedList = [...checkedList];
+    updatedCheckedList[index] = checked;
     setFilterString(
       plainOptions
-        .filter((_e, v) => checkedList[v])
+        .filter((_e, i) => updatedCheckedList[i])
         .join(', ')
         .toString(),
     );
-    setCheckedList(checkedList);
+    setCheckedList(updatedCheckedList);
   };
-
-  // const onShowDropdown = () => {
-  //   setCb(!cb);
-  // };
 
   const handleClickViewModeMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleSelectViewMode = (_e: React.MouseEvent<HTMLElement>, index: number) => {
-    // setSelectedIndex(index);
-    // setAnchorEl(null);
-    checkedList[index] = !checkedList[index];
+  const handleSelectViewMode = (index: number) => {
+    setSelectedIndex(index);
+    setAnchorEl(null);
+    const updatedCheckedList = [...checkedList];
+    updatedCheckedList[index] = !checkedList[index];
     setFilterString(
       plainOptions
-        .filter((_e, v) => checkedList[v])
+        .filter((_e, i) => updatedCheckedList[i])
         .join(', ')
         .toString(),
     );
-    setCheckedList(checkedList);
+    setCheckedList(updatedCheckedList);
   };
 
   const handleClose = () => {
     setAnchorEl(null);
   };
+
   const open = Boolean(anchorEl);
 
   return (
@@ -92,7 +107,7 @@ function CheckboxGroup() {
           <Typography
             className={` px-4 py-1 rounded-md decoration-dotted`}
             fontSize={18}
-            sx={{ textDecorationStyle: 'dotted', textDecorationColor: 'blue' }}
+            sx={{ textDecorationStyle: 'dotted', textDecorationColor: 'blue', color: 'blue' }}
           >
             {filterString}
           </Typography>
@@ -115,42 +130,35 @@ function CheckboxGroup() {
           }}
           className='top-2'
         >
-          {plainOptions.map((value, index) => {
-            return (
-              <MenuItem
-                key={value}
-                selected={index === selectedIndex}
-                onClick={(event) => handleSelectViewMode(event, index)}
-                className={`flex justify-between min-w-56 rounded-md`}
-              >
-                <div className='flex items-center gap-8 min-h-8'>
-                  <Checkbox
-                    onChange={(e) => {
-                      onChange(e.target.checked, index);
-                    }}
-                    checked={checkedList[index]}
-                  />
-
-                  {value}
-                </div>
-                {/* {selectedIndex == index ? (
-                    <div>
-                      <CheckOutlinedIcon sx={{ fontSize: 16 }} />
-                    </div>
-                  ) : null} */}
-              </MenuItem>
-            );
-          })}
+          {plainOptions.map((value, index) => (
+            <MenuItem
+              key={value}
+              selected={index === selectedIndex}
+              onClick={() => handleSelectViewMode(index)}
+              className={`flex justify-between min-w-56 rounded-md`}
+            >
+              <div className='flex items-center gap-8 min-h-8'>
+                <Checkbox
+                  onChange={(e) => onChange(e.target.checked, index)}
+                  checked={checkedList[index]}
+                />
+                {value}
+              </div>
+            </MenuItem>
+          ))}
         </Menu>
       </div>
     </div>
   );
 }
 
+
 export default function ProjectView() {
   const dispatch = useAppDispatch();
   const projectList = useAppSelector((state) => state.project.project);
   const projectState = useAppSelector(getFetchProjectsStatus);
+
+  const [selectedProject, setSelectedProject] = useState<Project[]>([]);
 
   useEffect(() => {
     if (projectState === 'idle') {
@@ -160,7 +168,11 @@ export default function ProjectView() {
 
   return (
     <div className='bg-white flex-1 h-full px-9 py-3'>
-      {CheckboxGroup()}
+      {selectedProject.length > 0 ? (
+        <ActionGroup selectedProject={selectedProject} setSelectedProject={setSelectedProject} />
+      ) : (
+        CheckboxGroup()
+      )}
       {CustomizedTables(
         projectList.map((p) =>
           createData(
@@ -179,7 +191,7 @@ export default function ProjectView() {
       <Box sx={{ width: '100%' }} className='content-center flex flex-col items-center mx-0 mr-5'>
         <Stack spacing={3} direction='column' className='flex content-center align-center'>
           <div className='content-center' style={{ marginLeft: -20 }}>
-            <img src='/src/base/assets/imgs/project_tab.png' width={200}></img>
+            <img alt='project_tab' src='/src/base/assets/imgs/project_tab.png' width={200}></img>
           </div>
           <Button
             variant='outlined'
