@@ -4,7 +4,7 @@ export interface DayOfWeek {
   included: boolean;
 }
 
-const days: DayOfWeek[] = [
+var days: DayOfWeek[] = [
   {
     name: 'Sunday',
     hourPerDay: 8,

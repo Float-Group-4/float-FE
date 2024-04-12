@@ -6,6 +6,7 @@ import PeopleAltOutlinedIcon from '@mui/icons-material/PeopleAltOutlined';
 import CalendarTodayOutlinedIcon from '@mui/icons-material/CalendarTodayOutlined';
 import LocalOfferOutlinedIcon from '@mui/icons-material/LocalOfferOutlined';
 import MarginOutlinedIcon from '@mui/icons-material/MarginOutlined';
+import FlagOutlinedIcon from '@mui/icons-material/FlagOutlined';
 import React from 'react';
 
 interface SettingOption {
@@ -29,10 +30,10 @@ const settingOptions: SettingOption[] = [
         path: 'general',
       },
       {
-        icon: <NotificationsNoneIcon/>,
+        icon: <NotificationsNoneIcon />,
         label: 'Notifications',
         path: 'notifications',
-      }
+      },
     ],
   },
   {
@@ -41,35 +42,40 @@ const settingOptions: SettingOption[] = [
       {
         icon: <TuneIcon />,
         label: 'Hours & currency',
-        path: 'preferences'
+        path: 'preferences',
       },
       {
-        icon: <TimerOutlinedIcon/>,
+        icon: <TimerOutlinedIcon />,
         label: 'Time tracking',
         path: 'time-tracking',
       },
       {
-        icon: <PeopleAltOutlinedIcon/>,
+        icon: <PeopleAltOutlinedIcon />,
         label: 'Guests',
-        path: 'guests'
+        path: 'guests',
       },
       {
-        icon: <CalendarTodayOutlinedIcon/>,
+        icon: <CalendarTodayOutlinedIcon />,
         label: 'Time off',
-        path: 'timeoffs'
+        path: 'timeoffs',
       },
       {
-        icon: <LocalOfferOutlinedIcon/>,
+        icon: <FlagOutlinedIcon />,
+        label: 'Statuses',
+        path: 'statuses',
+      },
+      {
+        icon: <LocalOfferOutlinedIcon />,
         label: 'Tags',
-        path: 'tags'
+        path: 'tags',
       },
       {
-        icon: <MarginOutlinedIcon/>,
+        icon: <MarginOutlinedIcon />,
         label: 'Departments',
-        path: 'departments'
+        path: 'departments',
       },
     ],
   },
 ];
 
-export default settingOptions
+export default settingOptions;
