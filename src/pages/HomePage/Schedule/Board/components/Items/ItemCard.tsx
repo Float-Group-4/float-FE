@@ -244,7 +244,7 @@ export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
         >
           <div
             className={`truncate px-2 flex gap-2 items-center`}
-            style={{ minHeight: MIN_HEIGHT_HOURS * HEIGHT_PER_HOUR }}
+            style={{ minHeight: MIN_HEIGHT_HOURS * heightPerHour }}
           >
             <p className='text-xs' style={{ color: textColor }}>
               {item.name}

@@ -3,7 +3,6 @@ import MiModal from '@base/components/MiModal';
 import { ContentCopy, CreateNewFolder } from '@mui/icons-material';
 import { Box, Button, Grid, List, ListItem, ListItemText, Typography } from '@mui/material';
 import { useState } from 'react';
-import CreateProjectModal from '.';
 
 interface MiddlePageProps {
   isOpen: boolean;
@@ -20,7 +19,7 @@ const CreateProjectMiddlePage = (props: MiddlePageProps) => {
   return (
     <MiModal isOpen={isOpen} size='sm' onClose={() => setIsOpen(false)}>
       <Grid container width='100ch' height='90vh'>
-        <Grid item direction='column' xs={6}>
+        <Grid item container direction='column' xs={6}>
           <Box
             paddingX={6}
             paddingTop={2}
@@ -68,7 +67,7 @@ const CreateProjectMiddlePage = (props: MiddlePageProps) => {
           <img src='/src/base/assets/imgs/create-project-middle-page.png' alt='new-project' />
         </Grid>
 
-        <Grid item direction='column' bgcolor='#F8F7F9' xs={6}>
+        <Grid item container direction='column' bgcolor='#F8F7F9' xs={6}>
           <Box
             paddingX={6}
             paddingTop={2}

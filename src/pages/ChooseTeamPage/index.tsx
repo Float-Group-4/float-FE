@@ -1,56 +1,68 @@
-import LogoutIcon from '@mui/icons-material/Logout';
+import { useSnackBar } from '@base/hooks/useSnackbar';
 import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { Navigate, useNavigate } from 'react-router-dom';
+import LogoutIcon from '@mui/icons-material/Logout';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export interface Team {
+  id: string;
   name: string;
   totalProject: number;
   totalPeople: number;
-  isActive: boolean;
+  archived: boolean;
 }
 
 export default function ChooseTeamPage() {
   const navigate = useNavigate();
-  const teams = [
-    {
-      name: 'Team 1',
-      totalProject: 5,
-      totalPeople: 4,
-      isActive: true,
-    },
-    {
-      name: 'Team 2',
-      totalProject: 5,
-      totalPeople: 4,
-      isActive: true,
-    },
-    {
-      name: 'Team 3',
-      totalProject: 5,
-      totalPeople: 4,
-      isActive: false,
-    },
-    {
-      name: 'Team 4',
-      totalProject: 5,
-      totalPeople: 4,
-      isActive: false,
-    },
-    {
-      name: 'Team 5',
-      totalProject: 5,
-      totalPeople: 4,
-      isActive: false,
-    },
-  ];
+  const { enqueueSuccessBar, enqueueErrorBar } = useSnackBar();
+  const [activeTeams, setActiveTeams] = useState<Team[]>([]);
+  const [inactiveTeams, setInactiveTeams] = useState<Team[]>([]);
 
-  const activeTeams = teams.filter((team) => team.isActive);
-  const inactiveTeams = teams.filter((team) => !team.isActive);
+  const fetchTeams = async () => {
+    // Get UserId
+    const userId = '84803dd9-a9f7-4d00-9580-bb0c07043700';
+    // Fetch Init Team Data
+    try {
+      const endpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/team/user/${userId}`;
+      const res = await axios.get(endpoint);
+      const teams = res.data;
+      const result = await Promise.all(
+        teams.map(async (team: any) => {
+          const fetchTeamMemberEndpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/team-members/team/${team.id}`;
+          const fetchTeamProjectEndpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/projects/team/${team.id}`;
+          const teamMemberRes = await axios.get(fetchTeamMemberEndpoint);
+          const teamProjectRes = await axios.get(fetchTeamProjectEndpoint);
+          console.log({
+            ...team,
+            totalPeople: teamMemberRes.data.length,
+            totalProject: teamProjectRes.data.length,
+          });
+          return {
+            ...team,
+            totalPeople: teamMemberRes.data.length,
+            totalProject: teamProjectRes.data.length,
+          };
+        }),
+      );
+      const activeTeams = result.filter((team) => !team.archived);
+      const inactiveTeams = result.filter((team) => team.archived);
+      setActiveTeams(activeTeams);
+      setInactiveTeams(inactiveTeams);
+    } catch (err: any) {
+      console.log('ERROR: ', err.message);
+      enqueueErrorBar(err.message || '');
+    }
+  };
+
+  useEffect(() => {
+    fetchTeams();
+  }, []);
 
   const handleClickTeam = (team: Team) => {
     console.log(team);
-    navigate('/home');
+    navigate(`/team/${team.id}/home`);
   };
 
   return (
@@ -89,7 +101,8 @@ export default function ChooseTeamPage() {
           {activeTeams.map((team) => {
             return (
               <div
-                className={`relative h-52 grow-0 shrink-0 bg-white py-12 rounded-lg shadow-sm border-2 border-gray-100 ${!team.isActive && 'text-gray-400'} hover:cursor-pointer hover:shadow-md hover:border-gray-200 hover:text-blue-600 flex flex-col justify-center items-center`}
+                key={team.id}
+                className={`relative h-52 grow-0 shrink-0 bg-white py-12 rounded-lg shadow-sm border-2 border-gray-100 ${team.archived && 'text-gray-400'} hover:cursor-pointer hover:shadow-md hover:border-gray-200 hover:text-blue-600 flex flex-col justify-center items-center`}
                 style={{
                   flexBasis: 'calc(33.33333% - 1rem)',
                 }}
@@ -99,7 +112,7 @@ export default function ChooseTeamPage() {
               >
                 <p className='text-xl font-medium'>{team.name}</p>
                 <p className='my-2'>{`${team.totalProject} Project / ${team.totalPeople} People`}</p>
-                {!team.isActive && (
+                {team.archived && (
                   <div className='absolute top-4 left-4'>
                     <LockOutlinedIcon />
                   </div>
@@ -129,13 +142,14 @@ export default function ChooseTeamPage() {
           {inactiveTeams.map((team) => {
             return (
               <div
-                className={`relative h-52 grow-0 shrink-0 bg-white py-12 rounded-lg shadow-sm border-2 border-gray-100 ${!team.isActive && 'text-gray-400'} hover:cursor-pointer hover:shadow-md hover:border-gray-200 hover:text-blue-600 flex flex-col justify-center items-center`}
+                key={team.id}
+                className={`relative h-52 grow-0 shrink-0 bg-white py-12 rounded-lg shadow-sm border-2 border-gray-100 ${team.archived && 'text-gray-400'} hover:cursor-pointer hover:shadow-md hover:border-gray-200 hover:text-blue-600 flex flex-col justify-center items-center`}
                 style={{
                   flexBasis: 'calc(33.33333% - 1rem)',
                 }}
               >
                 <p className='text-xl font-medium'>{team.name}</p>
-                {!team.isActive && (
+                {team.archived && (
                   <>
                     <p className='my-2'>Your free trial has ended</p>
                     <p className='text-gray-600 font-medium'>Upgrade to a paid plan</p>

@@ -17,10 +17,11 @@ const Layouts = (props: LayoutsProps) => {
   const isChooseTeam = useMatch('team');
   const isRecoverPassword = useMatch('recover-password');
   const isCreateTeam = useMatch('create-team');
+  const isTutorial = useMatch('team/:teamId/tutorial');
 
   return (
     <>
-      {isLanding || isChooseTeam || isCreateTeam ? (
+      {isLanding || isChooseTeam || isCreateTeam || isTutorial ? (
         <Outlet />
       ) : isSignIn || isSignUp || isRecoverPassword ? (
         <NotAuthLayout />

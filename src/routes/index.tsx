@@ -12,6 +12,7 @@ import ChooseTeamPage from '@pages/ChooseTeamPage';
 import ErrorPage from '@pages/ErrorPage';
 import RecoverPassword from '@pages/RecoverPassword';
 import CreateTeamPage from '@pages/CreateTeamPage';
+import TutorialPage from '@pages/TutorialPage';
 const Layouts = lazy(() => import('@layouts/index'));
 const Report = lazy(() => import('@pages/Report'));
 const SignIn = lazy(() => import('@pages/SignIn'));
@@ -29,6 +30,14 @@ export const routes: RouteObject[] = [
       {
         path: 'team',
         element: <ChooseTeamPage />,
+      },
+      {
+        path: 'team/:teamId/home',
+        element: <HomePage />,
+      },
+      {
+        path: '/team/:teamId/tutorial',
+        element: <TutorialPage />,
       },
       {
         path: 'home',
