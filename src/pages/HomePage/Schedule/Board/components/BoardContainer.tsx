@@ -35,7 +35,7 @@ export const BoardContainer = () => {
   const { rowDisplayType, displayItems, currentWeekIndex, order } = useAppSelector(
     (state) => state.schedule,
   );
-  const rowMap = useAppSelector((state) => state.general.rowMap);
+  const rowMap = useAppSelector((state) => state.general.rowMap) || {};
   const isOffWeekend = false;
 
   const data: number[] = useMemo(() => {
@@ -51,17 +51,19 @@ export const BoardContainer = () => {
         return (orderIndex[a] ?? 999999) - (orderIndex[b] ?? 999999);
       })
       .map((id) => parseInt(id));
-  }, [order, rowDisplayType]);
+  }, [order, rowDisplayType, usersById]);
 
   const rowIds: string[] = useMemo(() => {
-    return ['userId1', 'userId2', 'userId3'];
-  }, [data]);
+    console.log(usersById);
+    const ids = Object.keys(usersById);
+    return ids;
+  }, [data, usersById]);
 
   const viewRow = rowIds.map((id: string) => rowMap[id]);
 
   const boardHeight = Object.values(viewRow).reduce((a, c) => {
-    const rowHeight = c.height * heightPerHour + MARGIN_BOTTOM + MARGIN_TOP;
-    return c.height < DEFAULT_MIN_HOURS ? a + cellBaseHeight : a + rowHeight;
+    const rowHeight = (c?.height || 0) * heightPerHour + MARGIN_BOTTOM + MARGIN_TOP;
+    return c?.height < DEFAULT_MIN_HOURS ? a + cellBaseHeight : a + rowHeight;
   }, 0);
 
   const onContextMenuHandler = (event: React.MouseEvent) => {
@@ -129,7 +131,18 @@ export const BoardContainer = () => {
 
   useEffect(() => {
     calculateWeekAndBuildRow();
-  }, [currentWeekIndex, windowDimensions, rowDisplayType, viewType, displayItems, amountDayInWeek]);
+  }, [
+    currentWeekIndex,
+    windowDimensions,
+    rowDisplayType,
+    viewType,
+    displayItems,
+    amountDayInWeek,
+    usersById,
+  ]);
+  useEffect(() => {
+    console.log('USERS BY ID CHANGED: ', usersById);
+  }, [usersById]);
 
   // ----- TimeRange Color ------
   const timeRangeBoard = useMemo(() => {

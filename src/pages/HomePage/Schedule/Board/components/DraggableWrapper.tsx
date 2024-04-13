@@ -31,7 +31,7 @@ export const DraggableWrapper = ({ children }: { children: ReactNode[] | null })
     let accumulateHeight = 0;
     const curY =
       getRowY(
-        rowMap,
+        rowMap || {},
         rowId,
         order.current,
         heightPerHour,

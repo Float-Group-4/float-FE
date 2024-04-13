@@ -1,21 +1,42 @@
+import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
+import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
 import ActionButton from './ActionButton';
 import Schedule from './Schedule';
 import { ScheduleContextWrapper } from './Schedule/ScheduleContext';
 import TopBar from './TopBar';
-import { axiosAPI } from '@base/utils/axios/api';
+import { setUsersById } from '../../../src/redux/general/generalSlice';
 
 const HomePage = () => {
-  const [teamId, setTeamId] = useState('337b3b37-9f81-4c0a-be03-8445dabe513a');
-  const fetchInitData = async () => {
-    const endpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/allocation/team/${teamId}`;
-    const result = await axiosAPI(endpoint, 'GET');
-    console.log(result);
+  const dispatch = useAppDispatch();
+  const usersById = useAppSelector((state) => state.general.usersById);
+  const [loading, setLoading] = useState(true);
+  const params = useParams();
+  const [teamId, setTeamId] = useState('');
+
+  const fetchInit = async () => {
+    const id = params.teamId || '';
+    setTeamId(teamId);
+    console.log('Render Home Page');
+    console.log('Fetch');
+    const allocationEndpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/allocation/team/${id}`;
+    const teamMemberEndpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/team-members/team/${id}`;
+    const allocationResult = await axios.get(allocationEndpoint);
+    const teamMemberResult = await axios.get(teamMemberEndpoint);
+    console.log('TEAM ALLOCATION: ', allocationResult);
+    console.log('TEAM MEMBERS: ', teamMemberResult, usersById);
+    const teamMemberObj = (teamMemberResult.data || []).reduce(function (acc: any, curr: any) {
+      acc[curr.id] = curr;
+      return acc;
+    }, {});
+    dispatch(setUsersById(teamMemberObj));
+    console.log(teamMemberObj);
+    setLoading(false);
   };
   useEffect(() => {
-    setTeamId('337b3b37-9f81-4c0a-be03-8445dabe513a');
-    console.log('Render Home Page');
-    fetchInitData();
+    fetchInit();
   }, []);
   return (
     <ScheduleContextWrapper>
@@ -28,7 +49,7 @@ const HomePage = () => {
         {/* Top Bar */}
         <TopBar />
         {/* Schedule Board */}
-        <Schedule />
+        {!loading && <Schedule />}
         {/* Action Button*/}
         <ActionButton />
       </div>

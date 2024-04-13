@@ -5,7 +5,6 @@ import { BoardType } from '../../types/enums';
 import { buildRows } from '../schedule/thunk';
 import { TimeOffItem } from 'src/types/primitive/timeOffItem.interface';
 import { StatusItem } from 'src/types/primitive/statusItem.interface';
-import { log } from 'console';
 
 interface GeneralState {
   itemsById: Record<string, Item>;
@@ -25,88 +24,56 @@ interface GeneralState {
 
 const initialState: GeneralState = {
   itemsById: {
-    item1: {
-      id: 'item1',
-      userIds: ['userId1'],
-      name: 'Item 1',
-      startDate: '2024-03-10',
-      endDate: '2024-03-12',
-      hour: 8,
-      isPlaceHolder: false,
-      type: 'item',
-    },
-    item2: {
-      id: 'item2',
-      userIds: ['userId2'],
-      name: 'Item 2',
-      startDate: '2024-03-25',
-      endDate: '2024-03-28',
-      hour: 10,
-      isPlaceHolder: false,
-      type: 'item',
-    },
-    item3: {
-      id: 'item3',
-      userIds: ['userId3'],
-      name: 'Item 3',
-      startDate: '2024-03-11',
-      endDate: '2024-03-14',
-      hour: 4,
-      isPlaceHolder: false,
-      type: 'item',
-    },
+    // item1: {
+    //   id: 'item1',
+    //   userIds: ['userId1'],
+    //   name: 'Item 1',
+    //   startDate: '2024-03-10',
+    //   endDate: '2024-03-12',
+    //   hour: 8,
+    //   isPlaceHolder: false,
+    //   type: 'item',
+    // },
+    // item2: {
+    //   id: 'item2',
+    //   userIds: ['userId2'],
+    //   name: 'Item 2',
+    //   startDate: '2024-03-25',
+    //   endDate: '2024-03-28',
+    //   hour: 10,
+    //   isPlaceHolder: false,
+    //   type: 'item',
+    // },
+    // item3: {
+    //   id: 'item3',
+    //   userIds: ['userId3'],
+    //   name: 'Item 3',
+    //   startDate: '2024-03-11',
+    //   endDate: '2024-03-14',
+    //   hour: 4,
+    //   isPlaceHolder: false,
+    //   type: 'item',
+    // },
   },
   timeOffItemsById: {},
   statusItemsById: {},
   subBoardById: {},
   itemIdsByWeekIndex: {},
   usersById: {
-    userId1: {
-      id: 'userId1',
-      name: 'Nguyen Ngoc Quang',
-      workHour: 40,
-    },
-    userId2: {
-      id: 'userId2',
-      name: 'Ha Tuan Lam',
-      workHour: 40,
-    },
-    userId3: {
-      id: 'userId3',
-      name: 'Truong Gia Huy',
-      workHour: 40,
-    },
+    // userId1: {
+    //   id: 'userId1',
+    //   name: 'Nguyen Ngoc Quang',
+    // },
+    // userId2: {
+    //   id: 'userId2',
+    //   name: 'Ha Tuan Lam',
+    // },
+    // userId3: {
+    //   id: 'userId3',
+    //   name: 'Truong Gia Huy',
+    // },
   },
-  rowMap: {
-    userId1: {
-      id: 'userId1',
-      items: ['item1'],
-      timeOffItems: [],
-      statusItems: [],
-      itemPosition: {},
-      height: 0,
-      dayCell: {},
-    },
-    userId2: {
-      id: 'userId2',
-      items: ['item2'],
-      timeOffItems: [],
-      statusItems: [],
-      itemPosition: {},
-      height: 0,
-      dayCell: {},
-    },
-    userId3: {
-      id: 'userId3',
-      items: [],
-      timeOffItems: ['timeOff1'],
-      statusItems: ['status1'],
-      itemPosition: {},
-      height: 0,
-      dayCell: {},
-    },
-  },
-
+  rowMap: {},
   visibility: BoardType.public,
   visibledUserIds: [],
   fetchedWeekIndexes: {},
@@ -166,6 +133,11 @@ const generalSlice = createSlice({
     setItemsById: (state, action) => {
       console.log(action.payload);
       state.itemsById = action.payload;
+    },
+    setUsersById: (state, action) => {
+      state.usersById = action.payload;
+      const rows = Object.values(action.payload);
+      rows.forEach((r: any) => (state.rowMap[r.id] = r));
     },
 
     // Time off
@@ -279,6 +251,7 @@ export const {
   addItemIntoMap,
   setFetchedIndexes,
   setItemsById,
+  setUsersById,
   setTimeOffItemPlaceHolder,
   addNewTimeOffItem,
   addTimeOffItemIntoMap,
