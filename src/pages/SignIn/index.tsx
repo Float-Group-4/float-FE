@@ -9,14 +9,12 @@ import * as keyNames from './config/keyNames';
 import { finalizeParams } from './payload';
 import WriteFields from './WriteFields';
 import { getWriteForm } from '@base/utils/getWriteForm';
-import { SET_TIMEOUT } from '@base/config/constants';
-import MiModal from '@base/components/MiModal';
 import LoadingButton from '@base/components/LoadingButton';
 import { useAuthMutation } from '@hooks/useAuthMutation';
-import { queryKeys } from '@base/config/queryKeys';
-import signInBackgroundUrl from '@base/assets/imgs/signIn-background.svg';
 import { useNavigate } from 'react-router-dom';
 import { indigo } from '@mui/material/colors';
+import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
+import { clientId } from '@constants/oAuth2';
 
 interface LoginProps {}
 
@@ -120,6 +118,27 @@ const Login = (props: LoginProps) => {
           </svg>
           Continue with Google
         </button>
+
+        {/* <LoadingButton
+          size='large'
+          variant='contained'
+          loading={false}
+          color='error'
+          onClick={() => {
+            // handleSubmit((data) => onSubmit(data), onError)();
+          }}
+          sx={{ width: '100%', fontWeight: 500 }}
+        >
+          Login with google
+        </LoadingButton> */}
+
+        <GoogleLogin
+          clientId={clientId}
+          onSuccess={(response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
+            console.log('🚀 ~ response:', response);
+          }}
+          isSignedIn={true}
+        />
 
         <Stack direction='row' spacing={1} mt={3}>
           <Typography color='secondary' sx={{ fontSize: 12 }}>

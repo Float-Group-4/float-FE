@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Route, RouteObject, Routes } from 'react-router-dom';
 
 import { Toaster } from 'react-hot-toast';
@@ -18,6 +18,8 @@ import { CircularProgress } from '@mui/material';
 import { routes } from '@routes/index';
 import LinearLoader from './LinearLoader';
 import ThemeCustomization from '@base/themes';
+import { gapi } from 'gapi-script';
+import { clientId } from '@constants/oAuth2';
 
 // Create a client
 const queryClient = new QueryClient({
@@ -31,6 +33,17 @@ const queryClient = new QueryClient({
 // const router = createBrowserRouter(routes);
 
 function App() {
+  useEffect(() => {
+    const start = () => {
+      gapi.client.init({
+        clientId: clientId,
+        scope: '',
+      });
+
+      gapi.load('client:auth2', start);
+    };
+  }, []);
+
   const getRoutes = (routes: RouteObject[]) => {
     const recursion = (routes: RouteObject[]) => (
       <>
