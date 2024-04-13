@@ -173,7 +173,7 @@ export default function ProjectView() {
       ) : (
         CheckboxGroup()
       )}
-      {CustomizedTables(
+      {CustomizedTables(projectList,
         projectList.map((p) =>
           createData(
             p.project.id,

@@ -42,7 +42,7 @@ interface ProjectApi {
   client?: string;
   projectOwnerId: string;
   budget?: string;
-  createTime: string;
+  createTime?: string;
   teamId: string;
 }
 
@@ -73,6 +73,33 @@ export const postNewProject = createAsyncThunk(
         projectOwnerId: projectData.project.owner,
       };
       const response = await axiosApi.post(`${baseUrl}/projects`, data);
+      if (
+        response.status == HttpStatusCode.Accepted ||
+        response.status == HttpStatusCode.Ok ||
+        response.status == HttpStatusCode.Created
+      ) {
+        return projectData;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  },
+);
+
+export const updateSingleProject = createAsyncThunk(
+  'project/updateSingleProject',
+  async (projectData: Project) => {
+    try {
+      const data: ProjectApi = {
+        budget: projectData.project.budget?.toString() ?? '0',
+        name: projectData.project.name ?? 'test',
+        client: projectData.project.client ?? 'test',
+        teamId: projectData.project.teamId,
+        projectOwnerId: projectData.project.owner,
+      };
+      const response = await axiosApi.patch(`${baseUrl}/projects/${projectData.project.id}`, data);
       if (
         response.status == HttpStatusCode.Accepted ||
         response.status == HttpStatusCode.Ok ||
@@ -306,6 +333,23 @@ const projectSlice = createSlice({
         if (newProject != null) {
           state.project.push(newProject);
         }
+      }).addCase(postNewProject.rejected, (state, action) => {
+        state.state = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(updateSingleProject.pending, (state, _) => {
+        state.state = 'loading';
+      })
+      .addCase(updateSingleProject.fulfilled, (state, action) => {
+        state.state = 'succeeded';
+        const updateProject = action.payload;
+        const index = state.project.findIndex((p) => p.project.id === updateProject?.project.id);
+        if (index !== -1) {
+          state.project[index] = updateProject!;
+        }
+      }).addCase(updateSingleProject.rejected, (state, action) => {
+        state.state = 'failed';
+        state.error = action.error.message;
       });
   },
 });

@@ -84,7 +84,7 @@ const AccessSubBody: React.FC<AccessProps> = ({ info, setInfo }) => {
               {...params}
               autoFocus
               variant='outlined'
-              value={info?.accountType.toString()}
+              value={info?.accountType}
               name='accountType'
               onClick={(e) => {
                 setAnchorEl(e.currentTarget);

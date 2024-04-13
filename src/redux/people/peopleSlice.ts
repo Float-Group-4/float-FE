@@ -86,6 +86,68 @@ export const postNewPeople = createAsyncThunk(
   },
 );
 
+export const updateTeamMember = createAsyncThunk(
+  'people/updateTeamMember',
+  async (personInfo: PersonInfo) => {
+    try {
+      const data: PersonPostData = {
+        teamId: personInfo.teamId,
+        // access: personInfo.accountType,
+        email: personInfo.email ?? '',
+        hourlyRate: personInfo.hourlyRate ?? 0,
+        // roleId: personInfo.role ?? '',
+        // userId: personInfo.id,
+        name: personInfo.name,
+        // departmentId: personInfo.department ?? '',
+        type: personInfo.accountType.toLowerCase(),
+      };
+      const response = await axiosApi.patch(`${baseUrl}/team-members/${personInfo.id}`, data);
+      if (
+        response.status == HttpStatusCode.Accepted ||
+        response.status == HttpStatusCode.Ok ||
+        response.status == HttpStatusCode.Created
+      ) {
+        return personInfo;
+      } else {
+        return null;
+      }
+    } catch (e: any) {
+      return e.message;
+    }
+  },
+);
+
+export const deleteTeamMember = createAsyncThunk(
+  'people/deleteTeamMember',
+  async (personInfo: PersonInfo) => {
+    try {
+      const data: PersonPostData = {
+        teamId: personInfo.teamId,
+        // access: personInfo.accountType,
+        email: personInfo.email ?? '',
+        hourlyRate: personInfo.hourlyRate ?? 0,
+        // roleId: personInfo.role ?? '',
+        // userId: personInfo.id,
+        name: personInfo.name,
+        // departmentId: personInfo.department ?? '',
+        type: personInfo.accountType.toLowerCase(),
+      };
+      const response = await axiosApi.delete(`${baseUrl}/team-members/${personInfo.id}`);
+      if (
+        response.status == HttpStatusCode.Accepted ||
+        response.status == HttpStatusCode.Ok ||
+        response.status == HttpStatusCode.Created
+      ) {
+        return personInfo;
+      } else {
+        return null;
+      }
+    } catch (e: any) {
+      return e.message;
+    }
+  },
+);
+
 // const initialState: PeopleState = {
 //   people: [
 //     {
@@ -207,12 +269,13 @@ const peopleSlice = createSlice({
         const loadedTeamMembers = action.payload.map((teamMember: any) => {
           // console.log(teamMember);
           const t: PersonInfo = {
-            department: teamMember.departmentId,
-            accountType: AccountType[teamMember.type as keyof typeof AccountType],
+            //department: teamMember.departmentId,
+            department: 'it',
+            accountType: AccountType.member,
             id: teamMember.id,
             tags: ['t1', 't2', 't3'],
             name: teamMember.name,
-            role: teamMember.roleId,
+            role: 'Employee',
             hourlyRate: teamMember.hourlyRate,
             email: teamMember.email,
             type: ContractType.employee,
@@ -248,7 +311,37 @@ const peopleSlice = createSlice({
       .addCase(postNewPeople.rejected, (state, action) => {
         state.state = 'failed';
         state.error = action.error.message;
-      });
+      })
+      .addCase(updateTeamMember.pending, (state, _) => {
+        state.state = 'loading';
+      })
+      .addCase(updateTeamMember.fulfilled, (state, action) => {
+        state.state = 'succeeded';
+        const updatedPerson = action.payload;
+        const index = state.people.findIndex((person) => person.id === updatedPerson.id);
+        if (index !== -1) {
+          state.people[index] = updatedPerson;
+        }
+      })
+      .addCase(updateTeamMember.rejected, (state, action) => {
+        state.state = 'failed';
+        state.error = action.error.message;
+      })
+      .addCase(deleteTeamMember.pending, (state, _) => {
+        state.state = 'loading';
+      })
+      .addCase(deleteTeamMember.fulfilled, (state, action) => {
+        state.state = 'succeeded';
+        const deletedPerson = action.payload;
+        if(deletedPerson != null){
+          state.people = state.people.filter(person => person.id !== deletedPerson.id);
+        }
+      })
+      .addCase(deleteTeamMember.rejected, (state, action) => {
+        state.state = 'failed';
+        state.error = action.error.message;
+      })
+      ;
   },
 });
 

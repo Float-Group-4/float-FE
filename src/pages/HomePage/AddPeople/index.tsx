@@ -7,9 +7,15 @@ import ProjectSubBody from './components/ProjectTab';
 import { PersonInfo, Availability, WorkingType, ContractType, AccountType } from './models';
 import MiModalModified from './components/MiModalModified';
 import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
-import { postNewPeople } from '../../../redux/people/peopleSlice';
+import {
+  deleteTeamMember,
+  postNewPeople,
+  updatePeople,
+  updateTeamMember,
+} from '../../../redux/people/peopleSlice';
 import { generateUUID } from '@base/utils/uuid';
 import ManageSubBody from './components/ManageTab';
+import { Data } from '@pages/PeoplePage/PeopleView/CustomTableProp';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -46,14 +52,36 @@ function a11yProps(index: number) {
 interface ModalFooterProps {
   handleSave: (e: any) => void;
   handleClose: (e: any) => void;
+  isUpdate: boolean;
+  handleUpdate?: (e: any) => void;
+  handleDelete?: (e: any) => void;
 }
 
-const ModalFooter: React.FC<ModalFooterProps> = ({ handleSave, handleClose }) => {
+const ModalFooter: React.FC<ModalFooterProps> = ({
+  handleSave,
+  handleClose,
+  isUpdate,
+  handleUpdate,
+  handleDelete,
+}) => {
   return (
-    <Stack direction='row' spacing={1} paddingY={3} alignItems={'left'} justifyItems={'left'}>
-      <Button onClick={handleSave} variant='contained'>
-        Add person
-      </Button>
+    <Stack
+      direction='row'
+      spacing={1}
+      paddingY={3}
+      alignItems={'left'}
+      justifyItems={'left'}
+      sx={{ flexGrow: 1 }}
+    >
+      {!isUpdate ? (
+        <Button onClick={handleSave} variant='contained'>
+          Add person
+        </Button>
+      ) : (
+        <Button onClick={handleUpdate} variant='contained'>
+          Update person
+        </Button>
+      )}
       <Button
         onClick={handleClose}
         sx={{
@@ -64,6 +92,22 @@ const ModalFooter: React.FC<ModalFooterProps> = ({ handleSave, handleClose }) =>
       >
         Cancel
       </Button>
+
+      {isUpdate && (
+        <div style={{ marginLeft: 'auto' }}>
+          <Button
+            variant='contained'
+            onClick={handleDelete}
+            sx={{
+              backgroundColor: 'red !important',
+              color: 'white',
+              '&:hover': { bgcolor: 'red !important', color: 'white !important' },
+            }}
+          >
+            Archive
+          </Button>
+        </div>
+      )}
     </Stack>
   );
 };
@@ -175,29 +219,56 @@ interface AddPeopleModalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   sx?: any;
+  info?: PersonInfo;
+}
+
+function findEnumValue(enumObj: any, searchValue: string): any | undefined {
+  const keys = Object.keys(enumObj).filter((key) => isNaN(Number(enumObj[key])));
+  const foundKey = keys.find((key) => enumObj[key] === searchValue);
+  return foundKey ? enumObj[foundKey] : undefined;
 }
 
 const AddPeopleModal = (props: AddPeopleModalProps) => {
-  const { sx, isOpen, setIsOpen } = props;
+  const { sx, isOpen, setIsOpen, info } = props;
 
   const avail: Availability = {
     startDate: new Date().toDateString(),
     workingType: WorkingType.partTime,
   };
-  const sampleData: PersonInfo = {
-    id: '1',
-    availability: avail,
-    type: ContractType.employee,
-    name: '',
-    accountType: AccountType.none,
-    manages: [],
-    projects: [],
-    email: '',
-    role: '',
-    department: '',
-    tags: [],
-    teamId: 'ad53cc61-a3dd-469f-98aa-ace14809239d',
-  };
+  let isUpdate = info != null;
+  console.log(isUpdate);
+  let sampleData: PersonInfo;
+  if (info != null) {
+    sampleData = {
+      id: info.id,
+      accountType: findEnumValue(AccountType, info.accountType),
+      availability: avail,
+      name: info.name,
+      department: info.department,
+      role: info.role,
+      manages: [],
+      projects: [],
+      email: info.email,
+      tags: [],
+      type: findEnumValue(ContractType, info.type),
+      teamId: 'ad53cc61-a3dd-469f-98aa-ace14809239d',
+    };
+  } else {
+    sampleData = {
+      id: '1',
+      availability: avail,
+      type: ContractType.employee,
+      name: '',
+      accountType: AccountType.none,
+      manages: [],
+      projects: [],
+      email: '',
+      role: '',
+      department: '',
+      tags: [],
+      teamId: 'ad53cc61-a3dd-469f-98aa-ace14809239d',
+    };
+  }
 
   const dispatch = useAppDispatch();
   const projects = useAppSelector((state) => state.project.project);
@@ -214,11 +285,21 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
     setIsOpen(false);
   };
 
+  const handleUpdate = () => {
+    dispatch(updateTeamMember(personInfoData));
+    setIsOpen(false);
+  };
+
+  const handleDelete = () => {
+    dispatch(deleteTeamMember(personInfoData));
+    setIsOpen(false);
+  };
+
   const setValue = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setPersonInfoData({
       ...personInfoData,
-      name: value,
+      [name]: value,
     });
   };
 
@@ -238,7 +319,7 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
           <Box display='flex' flexDirection='column'>
             <TextField
               id='person-name'
-              name='personName'
+              name='name'
               variant='standard'
               fullWidth
               placeholder='Person name'
@@ -250,13 +331,13 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
               }}
             />
             <TextField
-              id='project-title'
-              name='projectTitle'
+              id='person-email'
+              name='email'
               variant='standard'
               size='small'
               placeholder='Email'
               inputProps={{ style: { fontSize: '15px' } }}
-              value={personInfoData.name}
+              value={personInfoData.email}
               onChange={setValue}
               InputProps={{
                 disableUnderline: true,
@@ -267,7 +348,15 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
         size={'sm'}
         isOpen={isOpen}
         onClose={handleOnClose}
-        footer={<ModalFooter handleSave={handleSave} handleClose={handleOnClose} />}
+        footer={
+          <ModalFooter
+            isUpdate={isUpdate}
+            handleSave={handleSave}
+            handleClose={handleOnClose}
+            handleUpdate={handleUpdate}
+            handleDelete={handleDelete}
+          />
+        }
         isCloseByBackdrop={false}
       >
         <ModalBody info={personInfoData} setInfo={setPersonInfoData} />

@@ -11,18 +11,12 @@ import MoreTimeOutlinedIcon from '@mui/icons-material/MoreTimeOutlined';
 import PersonAddAlt1OutlinedIcon from '@mui/icons-material/PersonAddAlt1Outlined';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 
-import {
-  Button,
-  IconButton,
-  List,
-  ListItemButton,
-  Menu,
-  SvgIconTypeMap,
-} from '@mui/material';
+import { Button, IconButton, List, ListItemButton, Menu, SvgIconTypeMap } from '@mui/material';
 import { OverridableComponent } from '@mui/material/OverridableComponent';
 import { grey } from '@mui/material/colors';
 import React, { useState } from 'react';
 import AddButtonMultiplePurpose from '@pages/HomePage/TopBar/AddButtonMultiplePurpose';
+import { useAppSelector } from '@hooks/reduxHooks';
 
 class Item {
   constructor(
@@ -64,6 +58,8 @@ export default function TopBar() {
   const open = Boolean(anchorEl);
   const openZoomModeMenu = Boolean(zoomModeAnchorEl);
   const openDensityMenu = Boolean(densityAnchorEl);
+
+  const projectLength = useAppSelector((state) => state.project.project).length ?? 0;
 
   const handleClickViewModeMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -116,7 +112,7 @@ export default function TopBar() {
                 aria-expanded={open ? 'true' : undefined}
                 className={`text-xl font-medium px-4 py-1 rounded-md`}
               >
-                {3} Project
+                {projectLength} Project
               </ListItemButton>
             </List>
             <Menu
@@ -178,7 +174,7 @@ export default function TopBar() {
           </div>
 
           {/* Share & Add */}
-          <AddButtonMultiplePurpose/>
+          <AddButtonMultiplePurpose />
         </div>
       </div>
     </div>
