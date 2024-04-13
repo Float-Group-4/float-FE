@@ -1,5 +1,6 @@
 export interface PersonInfo {
   id: string;
+  teamId: string;
   name: string;
   email?: string;
   role?: string;
@@ -30,6 +31,7 @@ export enum AccountType {
   member = 'Member',
   manager = 'Manager',
   admin = 'Admin',
+  owner = 'Owner',
   none = '',
 }
 
