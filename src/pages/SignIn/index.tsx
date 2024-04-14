@@ -22,7 +22,7 @@ const Login = (props: LoginProps) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const layoutFields: string[] = [
-    keyNames.KEY_NAME_SIGN_IN_USERNAME,
+    keyNames.KEY_NAME_SIGN_IN_EMAIL,
     keyNames.KEY_NAME_SIGN_IN_PASSWORD,
   ];
 
@@ -62,6 +62,7 @@ const Login = (props: LoginProps) => {
         // }, SET_TIMEOUT);
 
         // onClose && onClose();
+        navigate('/home');
         reset && reset();
       },
     });
@@ -103,6 +104,15 @@ const Login = (props: LoginProps) => {
             console.log('🚀 ~ response:', response);
           }}
           isSignedIn={true}
+          // render={(renderProps) => (
+          //   <Button
+          //     variant='outlined'
+          //     onClick={renderProps.onClick}
+          //     disabled={renderProps.disabled}
+          //   >
+          //     Sign in with google
+          //   </Button>
+          // )}
         />
 
         <Stack direction='row' spacing={1} mt={3}>

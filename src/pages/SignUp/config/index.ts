@@ -6,14 +6,23 @@ import { WriteConfig } from '@base/types/common';
 import * as keyNames from './keyNames';
 
 const writeConfig: WriteConfig = {
-  [keyNames.KEY_NAME_SIGN_UP_NAME]: {
-    languageKey: 'Your name',
+  [keyNames.KEY_NAME_SIGN_UP_FIRST_NAME]: {
+    languageKey: 'First name',
     Component: TextField,
     defaultValue: '',
     componentProps: {
-      placeholder: 'First and last name',
+      placeholder: 'Enter first name',
     },
-    validate: (value: any) => !!value || 'Enter your name',
+    validate: (value: any) => !!value || 'Enter your first name',
+  },
+  [keyNames.KEY_NAME_SIGN_UP_LAST_NAME]: {
+    languageKey: 'List name',
+    Component: TextField,
+    defaultValue: '',
+    componentProps: {
+      placeholder: 'Enter last name',
+    },
+    validate: (value: any) => !!value || 'Enter your last name',
   },
   [keyNames.KEY_NAME_SIGN_UP_EMAIL]: {
     languageKey: 'Email',

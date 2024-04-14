@@ -1,4 +1,4 @@
-import { queryKeys } from '@base/config/queryKeys';
+import { queryKeys } from '@configs/queryKeys';
 import useMutationCustom from '../base/hooks/useMutationCustom';
 import { useSnackBar } from '../base/hooks/useSnackbar';
 
@@ -7,14 +7,14 @@ export const useAuthMutation = () => {
 
   const mSignIn = useMutationCustom(
     [queryKeys.auth_signIn],
-    'auth/signin',
+    '/api/user-login',
     'POST',
     {
       onSuccess: (data: any, variables: any, context: any) => {
-        enqueueSuccessBar('Success');
+        enqueueSuccessBar('Sign in successfully');
       },
       onError: (error: any, variables: any, context: any) => {
-        enqueueErrorBar('Fail');
+        enqueueErrorBar('Sign in Fail');
       },
     },
     undefined,
@@ -25,14 +25,14 @@ export const useAuthMutation = () => {
 
   const mSignUp = useMutationCustom(
     [queryKeys.auth_signUp],
-    'auth/sign up',
+    '/api/register',
     'POST',
     {
       onSuccess: (data: any, variables: any, context: any) => {
-        enqueueSuccessBar('Success');
+        enqueueSuccessBar('Register successfully');
       },
       onError: (error: any, variables: any, context: any) => {
-        enqueueErrorBar('Fail');
+        enqueueErrorBar('Register fail');
       },
     },
     undefined,

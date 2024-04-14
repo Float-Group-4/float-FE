@@ -27,7 +27,8 @@
       "@constants/*": ["src/constants/*"],
       "@components/*": ["src/components/*"],
       "@routes/*": ["src/routes/*"],
-      "@layouts/*": ["src/layouts/*"]
+      "@layouts/*": ["src/layouts/*"],
+      "@configs/*": ["src/configs/*"]
     }
   },
   "include": ["src"],

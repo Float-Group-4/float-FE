@@ -26,7 +26,7 @@ export const axiosNoInterceptors = axios.create({
     Accept: 'application/json',
     'Access-Control-Allow-Origin': '*',
   },
-  baseURL: 'api/v1',
+  baseURL: 'http://localhost:4005',
 });
 
 axiosApi.interceptors.request.use(

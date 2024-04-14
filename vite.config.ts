@@ -24,6 +24,7 @@ export default defineConfig({
       { find: '@components', replacement: path.resolve(__dirname, 'src/components') },
       { find: '@routes', replacement: path.resolve(__dirname, 'src/routes') },
       { find: '@layouts', replacement: path.resolve(__dirname, 'src/layouts') },
+      { find: '@configs', replacement: path.resolve(__dirname, 'src/configs') },
     ],
   },
   server: {
