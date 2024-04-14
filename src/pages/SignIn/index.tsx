@@ -18,6 +18,7 @@ import {
   LOCAL_STORAGE_KEY_ACCESS_TOKEN,
   LOCAL_STORAGE_KEY_REFRESH_TOKEN,
 } from '@configs/localStorage';
+import { useSnackBar } from '@base/hooks/useSnackbar';
 
 interface LoginProps {}
 
@@ -25,6 +26,7 @@ const Login = (props: LoginProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { enqueueSuccessBar, enqueueErrorBar } = useSnackBar();
   const layoutFields: string[] = [
     keyNames.KEY_NAME_SIGN_IN_EMAIL,
     keyNames.KEY_NAME_SIGN_IN_PASSWORD,
@@ -58,24 +60,16 @@ const Login = (props: LoginProps) => {
   const onSubmit = async (formData: any) => {
     const params = getParams(formData);
     const parsedParams = finalizeParams(params); // define add or update here
-    navigate('/home');
-    const res = await mSignIn.mutateAsync(parsedParams, {
-      onSuccess(data, variables: any, context) {
-        // setTimeout(() => {
-        //   queryClient.invalidateQueries([queryKeys.requests]);
-        // }, SET_TIMEOUT);
+    const res = await mSignIn.mutateAsync(parsedParams);
+    if (typeof res?.access_token == 'string' && typeof res?.refresh_token == 'string') {
+      enqueueSuccessBar('Sign in successfully');
 
-        // onClose && onClose();
-        navigate('/home');
-        reset && reset();
-      },
-    });
-
-    if (typeof res?.access_token == 'string') {
       localStorage.setItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN, res?.access_token);
-    }
-    if (typeof res?.refresh_token == 'string') {
       localStorage.setItem(LOCAL_STORAGE_KEY_REFRESH_TOKEN, res?.refresh_token);
+      navigate('/home');
+      reset && reset();
+    } else if (res?.error_description) {
+      enqueueErrorBar(res?.error_description);
     }
   };
 
@@ -96,26 +90,19 @@ const Login = (props: LoginProps) => {
           Sign In
         </LoadingButton>
 
-        {/* <LoadingButton
-          size='large'
-          variant='contained'
-          loading={false}
-          color='error'
-          onClick={() => {
-            // handleSubmit((data) => onSubmit(data), onError)();
-          }}
-          sx={{ width: '100%', fontWeight: 500 }}
-        >
-          Login with google
-        </LoadingButton> */}
-
         <GoogleLogin
           clientId={clientId}
-          onSuccess={(response: any) => {
+          onSuccess={async (response: any) => {
             if (response?.accessToken) {
-              mGoogleSignIn.mutate({
+              const res: any = await mGoogleSignIn.mutateAsync({
                 token: response?.accessToken,
               });
+              if (typeof res?.access_token == 'string' || typeof res?.refresh_token == 'string') {
+                localStorage.setItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN, res?.access_token);
+                localStorage.setItem(LOCAL_STORAGE_KEY_REFRESH_TOKEN, res?.refresh_token);
+                navigate('/home');
+                reset && reset();
+              }
             }
           }}
           isSignedIn={true}

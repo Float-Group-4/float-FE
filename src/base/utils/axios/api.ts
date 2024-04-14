@@ -26,11 +26,11 @@ export const axiosApi = axios.create({
 
 export const axiosNoInterceptors = axios.create({
   headers: {
-    'Content-Type': 'application/json',
     // Host: 'localhost:4005',
     // Origin: 'http://localhost:4005',
     // Referer: 'http://localhost:4005/swagger/index.html',
-    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    Accept: '*/*',
     'Access-Control-Allow-Origin': '*',
   },
   baseURL: 'http://localhost:4005',

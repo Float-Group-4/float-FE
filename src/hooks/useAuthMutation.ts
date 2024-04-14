@@ -12,9 +12,7 @@ export const useAuthMutation = () => {
     '/api/user-login',
     'POST',
     {
-      onSuccess: (data: any, variables: any, context: any) => {
-        enqueueSuccessBar('Sign in successfully');
-      },
+      onSuccess: (data: any, variables: any, context: any) => {},
       onError: (error: any, variables: any, context: any) => {
         enqueueErrorBar('Sign in Fail');
       },
@@ -64,5 +62,26 @@ export const useAuthMutation = () => {
     },
   });
 
-  return { mSignIn, mSignUp, mGoogleSignIn };
+  const mLogout = useMutation({
+    mutationKey: [queryKeys.auth_googleSignIn],
+    mutationFn: (payload: any) => {
+      return axiosAPI(
+        `/api/logout?RefreshToken=${payload?.token}`,
+        'POST',
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        false,
+      );
+    },
+    onSuccess: (data: any, variables: any, context: any) => {
+      enqueueSuccessBar('Sign in be google successfully');
+    },
+    onError: (error: any, variables: any, context: any) => {
+      enqueueErrorBar('Sign in by google fail');
+    },
+  });
+
+  return { mSignIn, mSignUp, mGoogleSignIn, mLogout };
 };

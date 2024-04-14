@@ -16,7 +16,7 @@ const writeConfig: WriteConfig = {
     validate: (value: any) => !!value || 'Enter your first name',
   },
   [keyNames.KEY_NAME_SIGN_UP_LAST_NAME]: {
-    languageKey: 'List name',
+    languageKey: 'Last name',
     Component: TextField,
     defaultValue: '',
     componentProps: {
