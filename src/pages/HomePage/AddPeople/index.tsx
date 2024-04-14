@@ -6,16 +6,15 @@ import AvailSubBody from './components/AvailabilityTab';
 import ProjectSubBody from './components/ProjectTab';
 import { PersonInfo, Availability, WorkingType, ContractType, AccountType } from './models';
 import MiModalModified from './components/MiModalModified';
-import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
+import { useAppDispatch } from '@hooks/reduxHooks';
 import {
   deleteTeamMember,
   postNewPeople,
-  updatePeople,
   updateTeamMember,
 } from '../../../redux/people/peopleSlice';
 import { generateUUID } from '@base/utils/uuid';
 import ManageSubBody from './components/ManageTab';
-import { Data } from '@pages/PeoplePage/PeopleView/CustomTableProp';
+import { useParams } from 'react-router-dom';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -236,7 +235,10 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
     workingType: WorkingType.partTime,
   };
   let isUpdate = info != null;
-  console.log(isUpdate);
+  
+  const params = useParams();
+  const teamId = params.teamId;
+
   let sampleData: PersonInfo;
   if (info != null) {
     sampleData = {
@@ -251,7 +253,7 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
       email: info.email,
       tags: [],
       type: findEnumValue(ContractType, info.type),
-      teamId: 'ad53cc61-a3dd-469f-98aa-ace14809239d',
+      teamId: teamId ?? 'ad53cc61-a3dd-469f-98aa-ace14809239d',
     };
   } else {
     sampleData = {
@@ -266,17 +268,15 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
       role: '',
       department: '',
       tags: [],
-      teamId: 'ad53cc61-a3dd-469f-98aa-ace14809239d',
+      teamId: teamId ?? 'ad53cc61-a3dd-469f-98aa-ace14809239d',
     };
   }
 
   const dispatch = useAppDispatch();
-  const projects = useAppSelector((state) => state.project.project);
 
   const [personInfoData, setPersonInfoData] = useState<PersonInfo>(sampleData);
 
   const handleSave = () => {
-    // dispatch(addPeople({ person: { ...personInfoData, id: generateUUID() } }));
     dispatch(postNewPeople({ ...personInfoData, id: generateUUID() }));
     setIsOpen(false);
   };
