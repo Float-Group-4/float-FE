@@ -1,6 +1,8 @@
 import { queryKeys } from '@configs/queryKeys';
 import useMutationCustom from '../base/hooks/useMutationCustom';
 import { useSnackBar } from '../base/hooks/useSnackbar';
+import { useMutation } from '@tanstack/react-query';
+import { axiosAPI } from '@base/utils/axios/api';
 
 export const useAuthMutation = () => {
   const { enqueueSuccessBar, enqueueErrorBar } = useSnackBar();
@@ -41,5 +43,26 @@ export const useAuthMutation = () => {
     false,
   );
 
-  return { mSignIn, mSignUp };
+  const mGoogleSignIn = useMutation({
+    mutationKey: [queryKeys.auth_googleSignIn],
+    mutationFn: (payload: any) => {
+      return axiosAPI(
+        `/api/google-login?token=${payload?.token}`,
+        'POST',
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        false,
+      );
+    },
+    onSuccess: (data: any, variables: any, context: any) => {
+      enqueueSuccessBar('Sign in be google successfully');
+    },
+    onError: (error: any, variables: any, context: any) => {
+      enqueueErrorBar('Sign in by google fail');
+    },
+  });
+
+  return { mSignIn, mSignUp, mGoogleSignIn };
 };

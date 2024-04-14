@@ -14,6 +14,10 @@ import { useAuthMutation } from '@hooks/useAuthMutation';
 import { useNavigate } from 'react-router-dom';
 import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
 import { clientId } from '@constants/oAuth2';
+import {
+  LOCAL_STORAGE_KEY_ACCESS_TOKEN,
+  LOCAL_STORAGE_KEY_REFRESH_TOKEN,
+} from '@configs/localStorage';
 
 interface LoginProps {}
 
@@ -43,7 +47,7 @@ const Login = (props: LoginProps) => {
     mode: 'onChange',
   });
 
-  const { mSignIn } = useAuthMutation();
+  const { mSignIn, mGoogleSignIn } = useAuthMutation();
 
   //when submit error, call this
   const onError = (errors: any, e: any) => {
@@ -55,7 +59,7 @@ const Login = (props: LoginProps) => {
     const params = getParams(formData);
     const parsedParams = finalizeParams(params); // define add or update here
     navigate('/home');
-    mSignIn.mutate(parsedParams, {
+    const res = await mSignIn.mutateAsync(parsedParams, {
       onSuccess(data, variables: any, context) {
         // setTimeout(() => {
         //   queryClient.invalidateQueries([queryKeys.requests]);
@@ -66,6 +70,13 @@ const Login = (props: LoginProps) => {
         reset && reset();
       },
     });
+
+    if (typeof res?.access_token == 'string') {
+      localStorage.setItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN, res?.access_token);
+    }
+    if (typeof res?.refresh_token == 'string') {
+      localStorage.setItem(LOCAL_STORAGE_KEY_REFRESH_TOKEN, res?.refresh_token);
+    }
   };
 
   const border = `1px solid ${theme.palette.divider}`;
@@ -100,8 +111,12 @@ const Login = (props: LoginProps) => {
 
         <GoogleLogin
           clientId={clientId}
-          onSuccess={(response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-            console.log('🚀 ~ response:', response);
+          onSuccess={(response: any) => {
+            if (response?.accessToken) {
+              mGoogleSignIn.mutate({
+                token: response?.accessToken,
+              });
+            }
           }}
           isSignedIn={true}
           // render={(renderProps) => (
