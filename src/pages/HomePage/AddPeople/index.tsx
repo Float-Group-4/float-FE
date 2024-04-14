@@ -266,7 +266,7 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
       role: '',
       department: '',
       tags: [],
-      teamId: 'ad53cc61-a3dd-469f-98aa-ace14809239d',
+      teamId: '15790e68-9afa-4c4b-9f3d-e7460ffb1e74',
     };
   }
 
@@ -277,7 +277,7 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
 
   const handleSave = () => {
     // dispatch(addPeople({ person: { ...personInfoData, id: generateUUID() } }));
-    dispatch(postNewPeople({ ...personInfoData, id: generateUUID() }));
+    dispatch(postNewPeople({ ...personInfoData }));
     setIsOpen(false);
   };
 

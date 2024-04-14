@@ -8,7 +8,12 @@ import TeamSubBody from './components/CreateProjectTeamTab';
 import TaskListSubBody from './components/CreateProjectTaskTab';
 import { ProjectType } from '../../../types/enums';
 import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
-import { Project, postNewProject, updateProject, updateSingleProject } from '../../../redux/project/projectSlice';
+import {
+  Project,
+  postNewProject,
+  updateProject,
+  updateSingleProject,
+} from '../../../redux/project/projectSlice';
 import { generateUUID } from '@base/utils/uuid';
 import { selectAllPeople } from '../../../redux/people/peopleSlice';
 import axios from 'axios';
@@ -227,8 +232,8 @@ const CreateProjectModal = (props: CreateProjectModalProps) => {
       note: '',
       client: '',
       name: '',
-      owner: '9d080daa-3929-4601-83a3-93a7aa86d372',
-      teamId: 'ad53cc61-a3dd-469f-98aa-ace14809239d',
+      owner: '5859846f-d30d-4cae-b52c-c922d7203f27',
+      teamId: '15790e68-9afa-4c4b-9f3d-e7460ffb1e74',
     };
   }
 
@@ -284,8 +289,8 @@ const CreateProjectModal = (props: CreateProjectModalProps) => {
     };
     console.log(p);
     // dispatch(addProject(p));
-    p.project.owner = '9d080daa-3929-4601-83a3-93a7aa86d372';
-    p.project.teamId = 'ad53cc61-a3dd-469f-98aa-ace14809239d';
+    p.project.owner = '5859846f-d30d-4cae-b52c-c922d7203f27';
+    p.project.teamId = '15790e68-9afa-4c4b-9f3d-e7460ffb1e74';
     dispatch(postNewProject(p));
 
     setIsOpen(false);

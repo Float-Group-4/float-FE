@@ -26,7 +26,7 @@ import { setScheduledTime } from './scheduleMeasurementSlice';
 
 export const buildAllRows = createAsyncThunk(
   'schedule/buildAllRows',
-  (_: any, { getState, dispatch }) => {
+  (_, { getState, dispatch }) => {
     const state: RootState = getState() as RootState;
     const rowMap = state.general.rowMap;
     const allRowIds = Object.keys(rowMap);

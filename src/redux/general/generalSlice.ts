@@ -10,10 +10,11 @@ interface GeneralState {
   itemsById: Record<string, Item>;
   timeOffItemsById: Record<string, TimeOffItem>;
   statusItemsById: Record<string, StatusItem>;
-  subBoardById: Record<number, any>;
   itemIdsByWeekIndex: Record<number, number[]>;
   usersById: Record<string, any>;
   rowMap: Record<string, any>;
+  teamProjects: Record<string, any>;
+  teamProjectTasks: Record<string, any>;
   // visibility
   visibility: BoardType;
   visibledUserIds: number[];
@@ -57,7 +58,6 @@ const initialState: GeneralState = {
   },
   timeOffItemsById: {},
   statusItemsById: {},
-  subBoardById: {},
   itemIdsByWeekIndex: {},
   usersById: {
     // userId1: {
@@ -74,6 +74,8 @@ const initialState: GeneralState = {
     // },
   },
   rowMap: {},
+  teamProjects: {},
+  teamProjectTasks: {},
   visibility: BoardType.public,
   visibledUserIds: [],
   fetchedWeekIndexes: {},
@@ -235,6 +237,16 @@ const generalSlice = createSlice({
       console.log(action.payload);
       state.statusItemsById = action.payload;
     },
+
+    setTeamProjects: (state, action) => {
+      state.teamProjects = action.payload;
+    },
+    setTeamProjectTasks: (state, action) => {
+      state.teamProjectTasks = action.payload;
+    },
+    resetData: (state) => {
+      state = initialState;
+    },
   },
 
   extraReducers: (builder) => {
@@ -260,6 +272,9 @@ export const {
   addNewStatusItem,
   addStatusItemIntoMap,
   setStatusItemsById,
+  setTeamProjects,
+  setTeamProjectTasks,
+  resetData,
 } = generalSlice.actions;
 
 export default generalSlice;

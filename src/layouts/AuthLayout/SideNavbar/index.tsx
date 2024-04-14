@@ -8,11 +8,13 @@ import PeopleOutlinedIcon from '@mui/icons-material/PeopleOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import { Avatar } from '@mui/material';
 import { deepOrange, grey } from '@mui/material/colors';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import SettingButton from './SettingButton';
 
 export default function SideNavbar() {
   const navigate = useNavigate();
+  const params = useParams();
+  const teamId = params.teamId;
   return (
     <div className='bg-gray-100 h-screen w-[68px] px-2 py-4 flex flex-col justify-between'>
       {/* Top Button Group */}
@@ -21,7 +23,7 @@ export default function SideNavbar() {
         <div
           className='w-full aspect-square flex flex-col items-center group hover:cursor-pointer gap-1'
           onClick={(_e) => {
-            navigate('/home');
+            navigate(teamId ? `/team/${teamId}/home` : '/home');
           }}
         >
           <IconButton
@@ -39,7 +41,7 @@ export default function SideNavbar() {
         <div
           className='w-full aspect-square flex flex-col items-center group hover:cursor-pointer gap-1'
           onClick={(_e) => {
-            navigate('/people');
+            navigate(teamId ? `/team/${teamId}/people` : '/people');
           }}
         >
           <IconButton
@@ -57,7 +59,7 @@ export default function SideNavbar() {
         <div
           className='w-full aspect-square flex flex-col items-center group hover:cursor-pointer gap-1'
           onClick={(_e) => {
-            navigate('/project');
+            navigate(teamId ? `/team/${teamId}/project` : '/project');
           }}
         >
           <IconButton
@@ -75,7 +77,7 @@ export default function SideNavbar() {
         <div
           className='w-full aspect-square flex flex-col items-center group hover:cursor-pointer gap-1'
           onClick={(_e) => {
-            navigate('/report');
+            navigate(teamId ? `/team/${teamId}/report` : '/report');
           }}
         >
           <IconButton

@@ -147,21 +147,21 @@ export default memo(function Row({ userId, className }: { userId: string; classN
                       height: `${rowHeight + 1 - (isWorkloadMode ? WORKLOAD_ROW_HEIGHT : 0)}px`,
                     }}
                   >
-                    {rowMap.timeOffItems.map((id: string) => {
+                    {rowMap.timeOffItems?.map((id: string) => {
                       return (
                         <div key={id} className='timeoff'>
                           <TimeOffItemCard id={id} rowId={id} />
                         </div>
                       );
                     })}
-                    {rowMap.statusItems.map((id: string) => {
+                    {rowMap.statusItems?.map((id: string) => {
                       return (
                         <div key={id} className='status'>
                           <StatusMark key={id} id={id} />
                         </div>
                       );
                     })}
-                    {rowMap.items.map((id: string) => {
+                    {rowMap.items?.map((id: string) => {
                       return <ItemCard key={id} id={id} rowId={rowMap.id} />;
                     })}
                     {rowMap.dayCell &&

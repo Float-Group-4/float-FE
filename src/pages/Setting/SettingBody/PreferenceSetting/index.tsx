@@ -114,6 +114,7 @@ const PreferenceSetting = () => {
           <List>
             {dayOfWeek.map((value, index) => (
               <ListItem
+                key={index}
                 sx={{
                   bgcolor: index % 2 == 0 ? '#EFEFEF' : 'inherit',
                   display: 'flex',

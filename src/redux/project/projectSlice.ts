@@ -72,16 +72,17 @@ export const postNewProject = createAsyncThunk(
         teamId: projectData.project.teamId,
         projectOwnerId: projectData.project.owner,
       };
-      const response = await axiosApi.post(`${baseUrl}/projects`, data);
-      if (
-        response.status == HttpStatusCode.Accepted ||
-        response.status == HttpStatusCode.Ok ||
-        response.status == HttpStatusCode.Created
-      ) {
-        return projectData;
-      } else {
-        return null;
-      }
+      console.log(projectData);
+      // const response = await axiosApi.post(`${baseUrl}/projects`, data);
+      // if (
+      //   response.status == HttpStatusCode.Accepted ||
+      //   response.status == HttpStatusCode.Ok ||
+      //   response.status == HttpStatusCode.Created
+      // ) {
+      //   return projectData;
+      // } else {
+      //   return null;
+      // }
     } catch (e) {
       console.log(e);
     }
@@ -333,7 +334,8 @@ const projectSlice = createSlice({
         if (newProject != null) {
           state.project.push(newProject);
         }
-      }).addCase(postNewProject.rejected, (state, action) => {
+      })
+      .addCase(postNewProject.rejected, (state, action) => {
         state.state = 'failed';
         state.error = action.error.message;
       })
@@ -347,7 +349,8 @@ const projectSlice = createSlice({
         if (index !== -1) {
           state.project[index] = updateProject!;
         }
-      }).addCase(updateSingleProject.rejected, (state, action) => {
+      })
+      .addCase(updateSingleProject.rejected, (state, action) => {
         state.state = 'failed';
         state.error = action.error.message;
       });
