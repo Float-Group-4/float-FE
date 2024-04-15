@@ -24,6 +24,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import DeleteIcon from '@mui/icons-material/Delete';
+import axios from 'axios';
 
 const defaultColors = [
   '#f44336',
@@ -37,15 +38,19 @@ const defaultColors = [
 ];
 
 interface MyDialogProps {
-  data: TimeOffTypeSetting;
-  onEdit: (editedData: TimeOffTypeSetting) => void;
+  teamId: string;
   open: boolean;
   onClose: () => void;
-  onDelete: (editedData: TimeOffTypeSetting) => void;
 }
 
-const EditTimeOffDialog = ({ data, onEdit, open, onClose, onDelete }: MyDialogProps) => {
-  const [editedData, setEditedData] = useState<TimeOffTypeSetting>(data);
+const AddTimeOffDialog = ({ teamId, open, onClose }: MyDialogProps) => {
+  const baseURL = 'http://localhost:4000';
+  const [data, setData] = useState<TimeOffTypeSetting>();
+  const [name, setName] = useState<string>('');
+  const [color, setColor] = useState<string>('#FF0000');
+  const [balance, setBalance] = useState<string>('Unlimited');
+  const [days, setDays] = useState<number>(0);
+  const [effectiveDate, setEffectiveDate] = useState<Dayjs>(dayjs());
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [colorPickerAnchor, setColorPickerAnchor] = useState<HTMLElement | null>(null);
   const [colorPickerValue, setColorPickerValue] = useState<string>('');
@@ -55,12 +60,6 @@ const EditTimeOffDialog = ({ data, onEdit, open, onClose, onDelete }: MyDialogPr
       colorPickerInputRef.current.click();
     }
   });
-
-  useEffect(() => {
-    if (open) {
-      setEditedData(data);
-    }
-  }, [open, data]);
 
   const handleColorPickerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newColor = event.target.value;
@@ -74,49 +73,46 @@ const EditTimeOffDialog = ({ data, onEdit, open, onClose, onDelete }: MyDialogPr
     setAnchorEl(event.currentTarget);
   };
 
-  const handleSave = () => {
-    onEdit(editedData);
-    handleClose();
-  };
-
-  const handleDelete = () => {
-    onDelete(editedData);
-    handleClose();
+  const handleAdd = async () => {
+    try {
+      let newTimeOffType = {
+        teamId: teamId,
+        name: name,
+        color: color,
+        balance: balance,
+        days: days,
+        EffectiveDate: effectiveDate,
+      };
+      const response = await axios.post(`${baseURL}/time-off-types`, newTimeOffType);
+      handleClose();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleClose = () => {
+    setName('');
+    setColor('#FF0000');
+    setDays(0);
+    setBalance('Unlimited');
+    setEffectiveDate(dayjs());
     onClose();
   };
 
-  const handleEditNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newName = event.target.value;
-    setEditedData((prevData) => {
-      if (prevData) {
-        return { ...prevData, name: newName };
-      }
-      return prevData;
-    });
+    setName(newName);
   };
 
   const handleEditDaysChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     let newDays = event.target.value;
 
-    setEditedData((prevData) => {
-      if (prevData) {
-        return { ...prevData, days: Number(newDays) };
-      }
-      return prevData;
-    });
+    setDays(Number(newDays));
   };
 
   const handleEditBalanceChange = (event: React.ChangeEvent<{}>, newBalance: string | null) => {
     var value = newBalance ? newBalance : 'Unlimited';
-    setEditedData((prevData) => {
-      if (prevData) {
-        return { ...prevData, balance: value };
-      }
-      return prevData;
-    });
+    setBalance(value);
   };
 
   const handleClickAway = () => {
@@ -125,37 +121,22 @@ const EditTimeOffDialog = ({ data, onEdit, open, onClose, onDelete }: MyDialogPr
 
   const handleClickAwayColor = () => {
     setColorPickerAnchor(null);
-    setEditedData((prevData) => {
-      if (prevData) {
-        return { ...prevData, color: colorPickerValue };
-      }
-      return prevData;
-    });
+    setColor(colorPickerValue);
   };
 
   const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newColor = event.target.value;
-    setEditedData((prevData) => {
-      if (prevData) {
-        return { ...prevData, color: newColor };
-      }
-      return prevData;
-    });
+    setColor(newColor);
   };
 
   const handleDefaultColorClick = (colorCode: string) => {
-    setEditedData((prevData) => {
-      if (prevData) {
-        return { ...prevData, color: colorCode };
-      }
-      return prevData;
-    });
+    setColor(colorCode);
     setAnchorEl(null);
   };
 
   const colorPickerOpen = Boolean(colorPickerAnchor);
   const handleColorPickerClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setColorPickerValue(editedData.color);
+    setColorPickerValue(color);
     setColorPickerAnchor(event.currentTarget);
     if (colorPickerInputRef.current) {
       colorPickerInputRef.current.click();
@@ -188,8 +169,8 @@ const EditTimeOffDialog = ({ data, onEdit, open, onClose, onDelete }: MyDialogPr
             id='statusName'
             type='text'
             fullWidth
-            value={editedData.name}
-            onChange={handleEditNameChange}
+            value={name}
+            onChange={handleNameChange}
           />
 
           <Typography marginTop={3}>Color</Typography>
@@ -205,7 +186,7 @@ const EditTimeOffDialog = ({ data, onEdit, open, onClose, onDelete }: MyDialogPr
                 alignItems: 'center',
               }}
             >
-              <FontAwesomeIcon icon={faCircle} size='2x' color={editedData.color} />
+              <FontAwesomeIcon icon={faCircle} size='2x' color={color} />
               <FontAwesomeIcon icon={faChevronDown} />
             </IconButton>
           </Box>
@@ -218,35 +199,35 @@ const EditTimeOffDialog = ({ data, onEdit, open, onClose, onDelete }: MyDialogPr
                 fullWidth
                 options={balanceType}
                 renderInput={(params) => <TextField {...params} />}
-                value={editedData.balance}
+                value={balance}
                 onChange={handleEditBalanceChange}
                 disableClearable
               />
             </Box>
-            {editedData.balance !== 'Unlimited' && (
+            {balance !== 'Unlimited' && (
               <Box width={'70px'}>
                 <Typography marginTop={3}>Days</Typography>
                 <TextField
                   autoFocus
                   fullWidth
                   type='number'
-                  value={editedData.days}
+                  value={days}
                   onChange={handleEditDaysChange}
                 />
               </Box>
             )}
           </Box>
 
-          {editedData.balance !== 'Unlimited' && (
+          {balance !== 'Unlimited' && (
             <Box display='flex'>
               <Box width={'500px'}>
                 <Typography marginTop={3}>Effective Date</Typography>
                 <LocalizationProvider dateAdapter={AdapterDayjs}>
                   <DemoContainer components={['DatePicker']}>
                     <DatePicker
-                      value={dayjs(editedData.EffectiveDate)}
+                      value={dayjs(effectiveDate)}
                       onChange={(newDate: Dayjs | null) => {
-                        setEditedData((prevData) => {
+                        setData((prevData) => {
                           if (prevData) {
                             return {
                               ...prevData,
@@ -264,23 +245,13 @@ const EditTimeOffDialog = ({ data, onEdit, open, onClose, onDelete }: MyDialogPr
           )}
         </DialogContent>
         <DialogActions
-          style={{ justifyContent: 'space-between', marginLeft: '20px', marginRight: '20px' }}
+          style={{ justifyContent: 'flex-start', marginLeft: '20px', marginRight: '20px' }}
         >
-          <Box width={'150px'} display={'flex'} justifyContent={'space-between'}>
-            <Button variant='contained' color='primary' onClick={handleSave}>
-              Save
-            </Button>
-            <Button variant='outlined' color='primary' onClick={handleClose}>
-              Cancel
-            </Button>
-          </Box>
-          <Button
-            variant='text'
-            sx={{ color: 'blue' }}
-            onClick={handleDelete}
-            startIcon={<DeleteIcon />}
-          >
-            Delete
+          <Button variant='contained' color='primary' onClick={handleAdd}>
+            Save
+          </Button>
+          <Button variant='outlined' color='primary' onClick={handleClose}>
+            Cancel
           </Button>
         </DialogActions>
       </Dialog>
@@ -294,7 +265,7 @@ const EditTimeOffDialog = ({ data, onEdit, open, onClose, onDelete }: MyDialogPr
                 autoFocus
                 type='text'
                 fullWidth
-                value={editedData.color}
+                value={color}
                 onChange={handleColorChange}
                 onKeyDown={(ev) => {
                   if (ev.key === 'Enter') {
@@ -342,4 +313,4 @@ const EditTimeOffDialog = ({ data, onEdit, open, onClose, onDelete }: MyDialogPr
   );
 };
 
-export default EditTimeOffDialog;
+export default AddTimeOffDialog;

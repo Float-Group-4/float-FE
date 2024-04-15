@@ -22,11 +22,16 @@ import {
   styled,
   toggleButtonGroupClasses,
   Grid,
+  Dialog,
 } from '@mui/material';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import { balanceType } from './enum';
+import { TimeOffTypeSetting } from './types/type.interface';
+import EditTimeOffDialog from './components/editTimeOffDialog';
+import dayjs, { Dayjs } from 'dayjs';
+import AddTimeOffDialog from './components/addTimeOffDialog';
 
 const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   [`& .${toggleButtonGroupClasses.grouped}`]: {
@@ -43,31 +48,36 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   },
 }));
 
-const timeOffList: TimeOff[] = [
-  {
-    id: '995e2bbf-c6b6-41b3-99ca-478b375a49b8',
-    teamId: 'a12c6faa-13d4-444c-8231-ef10182f9258',
-    name: 'Home',
-    color: '#ff5800',
-    balance: '2',
-    days: 0.5,
-    EffectiveDate: new Date(),
-  },
-];
-
-interface TimeOff {
-  id: string;
-  teamId: string;
-  name: string;
-  color: string;
-  balance: string;
-  days: number;
-  EffectiveDate: Date;
-}
-
 const TimeoffSetting = () => {
+  const teamId = '87cbe9dc-1b26-4519-a546-30563a9687d4';
+  const baseURL = 'http://localhost:4000';
   const [isTimeOffApproval, setIsTimeOffApproval] = useState<boolean>(true);
   const [hoveredRowIndex, setHoveredRowIndex] = useState<number | null>(null);
+  const [data, setData] = useState<TimeOffTypeSetting[]>([]);
+  const [editingData, setEditingData] = useState<TimeOffTypeSetting>({
+    id: '',
+    teamId: '',
+    name: '',
+    color: '',
+    balance: '',
+    days: 0,
+    EffectiveDate: dayjs(),
+  });
+  const [openEditDialog, setOpenEditDialog] = useState<boolean>(false);
+  const [openAddDialog, setOpenAddDialog] = useState<boolean>(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${baseURL}/time-off-types/team/${teamId}`);
+        setData(response.data);
+      } catch (e) {
+        console.log('error: ' + e);
+      }
+    };
+
+    fetchData();
+  }, [data]);
 
   const handleChangeApproval = (event: React.MouseEvent<HTMLElement>, approval: boolean) => {
     setIsTimeOffApproval(approval);
@@ -80,6 +90,42 @@ const TimeoffSetting = () => {
   const handleMouseLeave = () => {
     setHoveredRowIndex(null);
   };
+
+  const handleCloseAddDialog = () => {
+    setOpenAddDialog(false);
+  };
+
+  const handleOpenAddDialog = () => {
+    setOpenAddDialog(true);
+  };
+
+  const handleOpenEditDialog = (item: TimeOffTypeSetting) => {
+    setOpenEditDialog(true);
+    setEditingData(item);
+  };
+
+  const handleCloseEditDialog = () => {
+    setOpenEditDialog(false);
+  };
+
+  const handleSaveEditDialog = async (data: TimeOffTypeSetting) => {
+    try {
+      const id = data.id;
+      const response = await axios.patch(`${baseURL}/time-off-types/${id}`, data);
+    } catch (error) {
+      console.log('error');
+    }
+  };
+
+  const handleDelete = async (data: TimeOffTypeSetting) => {
+    try {
+      const id = data.id;
+      const response = await axios.delete(`${baseURL}/time-off-types/${id}`);
+    } catch (error) {
+      console.log('error');
+    }
+  };
+
   return (
     <Box bgcolor='inherit' padding='20px 100px'>
       <Typography variant='h2' fontWeight={500}>
@@ -140,7 +186,7 @@ const TimeoffSetting = () => {
           <Typography variant='body2' fontWeight={600} fontSize={26}>
             Time off types
           </Typography>
-          <Button variant='contained' sx={{ borderRadius: 2 }}>
+          <Button variant='contained' sx={{ borderRadius: 2 }} onClick={handleOpenAddDialog}>
             Add
           </Button>
         </Box>
@@ -159,7 +205,7 @@ const TimeoffSetting = () => {
           </Grid>
           <Grid item xs={0.9}></Grid>
         </Grid>
-        {timeOffList.map((item, index) => (
+        {data.map((item, index) => (
           <Box
             display={'flex'}
             alignItems={'center'}
@@ -186,15 +232,17 @@ const TimeoffSetting = () => {
                 </Typography>
               </Grid>
               <Grid item xs={4}>
-                <Typography fontSize={18}>{balanceType[parseInt(item.balance)]}</Typography>
+                <Typography fontSize={18}>{item.balance}</Typography>
               </Grid>
               <Grid item xs={3.5}>
-                <Typography fontSize={18}>{item.days}</Typography>
+                <Typography fontSize={18}>
+                  {item.balance === 'Unlimited' ? '' : item.days}
+                </Typography>
               </Grid>
               <Grid item xs={0.5}>
                 {hoveredRowIndex === index && (
                   <IconButton>
-                    <FontAwesomeIcon icon={faPen} />
+                    <FontAwesomeIcon icon={faPen} onClick={() => handleOpenEditDialog(item)} />
                   </IconButton>
                 )}
               </Grid>
@@ -202,6 +250,14 @@ const TimeoffSetting = () => {
           </Box>
         ))}
       </Box>
+      <EditTimeOffDialog
+        data={editingData}
+        open={openEditDialog}
+        onClose={handleCloseEditDialog}
+        onEdit={handleSaveEditDialog}
+        onDelete={handleDelete}
+      />
+      <AddTimeOffDialog teamId={teamId} open={openAddDialog} onClose={handleCloseAddDialog} />
     </Box>
   );
 };
