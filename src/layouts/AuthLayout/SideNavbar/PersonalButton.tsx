@@ -46,7 +46,6 @@ const PersonalButton = (props: PersonalButtonProps) => {
 
   const handleSignOut = () => {
     const token = localStorage.getItem(LOCAL_STORAGE_KEY_REFRESH_TOKEN);
-    console.log('🚀 ~ token:', token);
 
     const params: any = {
       token: token,
@@ -54,7 +53,7 @@ const PersonalButton = (props: PersonalButtonProps) => {
     mSignOut.mutate(params);
     localStorage.removeItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN);
     localStorage.removeItem(LOCAL_STORAGE_KEY_REFRESH_TOKEN);
-    navigate('/sign-in');
+    navigate('/');
   };
 
   const open = Boolean(anchorEl);
