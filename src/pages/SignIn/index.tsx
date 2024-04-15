@@ -9,13 +9,16 @@ import * as keyNames from './config/keyNames';
 import { finalizeParams } from './payload';
 import WriteFields from './WriteFields';
 import { getWriteForm } from '@base/utils/getWriteForm';
-import { SET_TIMEOUT } from '@base/config/constants';
-import MiModal from '@base/components/MiModal';
 import LoadingButton from '@base/components/LoadingButton';
 import { useAuthMutation } from '@hooks/useAuthMutation';
-import { queryKeys } from '@base/config/queryKeys';
-import signInBackgroundUrl from '@base/assets/imgs/signIn-background.svg';
 import { useNavigate } from 'react-router-dom';
+import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
+import { clientId } from '@constants/oAuth2';
+import {
+  LOCAL_STORAGE_KEY_ACCESS_TOKEN,
+  LOCAL_STORAGE_KEY_REFRESH_TOKEN,
+} from '@configs/localStorage';
+import { useSnackBar } from '@base/hooks/useSnackbar';
 
 interface LoginProps {}
 
@@ -23,8 +26,9 @@ const Login = (props: LoginProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { enqueueSuccessBar, enqueueErrorBar } = useSnackBar();
   const layoutFields: string[] = [
-    keyNames.KEY_NAME_SIGN_IN_USERNAME,
+    keyNames.KEY_NAME_SIGN_IN_EMAIL,
     keyNames.KEY_NAME_SIGN_IN_PASSWORD,
   ];
 
@@ -45,7 +49,7 @@ const Login = (props: LoginProps) => {
     mode: 'onChange',
   });
 
-  const { mSignIn } = useAuthMutation();
+  const { mSignIn, mGoogleSignIn } = useAuthMutation();
 
   //when submit error, call this
   const onError = (errors: any, e: any) => {
@@ -56,17 +60,13 @@ const Login = (props: LoginProps) => {
   const onSubmit = async (formData: any) => {
     const params = getParams(formData);
     const parsedParams = finalizeParams(params); // define add or update here
-    navigate('/home');
-    mSignIn.mutate(parsedParams, {
-      onSuccess(data, variables: any, context) {
-        // setTimeout(() => {
-        //   queryClient.invalidateQueries([queryKeys.requests]);
-        // }, SET_TIMEOUT);
-
-        // onClose && onClose();
-        reset && reset();
-      },
-    });
+    const res = await mSignIn.mutateAsync(parsedParams);
+    if (typeof res?.access_token == 'string' && typeof res?.refresh_token == 'string') {
+      localStorage.setItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN, res?.access_token);
+      localStorage.setItem(LOCAL_STORAGE_KEY_REFRESH_TOKEN, res?.refresh_token);
+      navigate('/home');
+      reset && reset();
+    }
   };
 
   const border = `1px solid ${theme.palette.divider}`;
@@ -85,6 +85,34 @@ const Login = (props: LoginProps) => {
         >
           Sign In
         </LoadingButton>
+
+        <GoogleLogin
+          clientId={clientId}
+          onSuccess={async (response: any) => {
+            console.log('🚀 ~ response:', response);
+            // if (response?.accessToken) {
+            //   const res: any = await mGoogleSignIn.mutateAsync({
+            //     token: response?.accessToken,
+            //   });
+            //   if (typeof res?.access_token == 'string' || typeof res?.refresh_token == 'string') {
+            //     localStorage.setItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN, res?.access_token);
+            //     localStorage.setItem(LOCAL_STORAGE_KEY_REFRESH_TOKEN, res?.refresh_token);
+            //     navigate('/home');
+            //     reset && reset();
+            //   }
+            // }
+          }}
+          isSignedIn={true}
+          // render={(renderProps) => (
+          //   <Button
+          //     variant='outlined'
+          //     onClick={renderProps.onClick}
+          //     disabled={renderProps.disabled}
+          //   >
+          //     Sign in with google
+          //   </Button>
+          // )}
+        />
 
         <Stack direction='row' spacing={1} mt={3}>
           <Typography color='secondary' sx={{ fontSize: 12 }}>

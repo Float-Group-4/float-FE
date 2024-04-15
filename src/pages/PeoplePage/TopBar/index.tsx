@@ -15,6 +15,7 @@ import {
 import { grey } from '@mui/material/colors';
 import React, { useState } from 'react';
 import AddButtonMultiplePurpose from '@pages/HomePage/TopBar/AddButtonMultiplePurpose';
+import { useAppSelector } from '@hooks/reduxHooks';
 
 
 const densityOptions = [
@@ -40,6 +41,8 @@ export default function TopBar() {
   const open = Boolean(anchorEl);
   const openZoomModeMenu = Boolean(zoomModeAnchorEl);
   const openDensityMenu = Boolean(densityAnchorEl);
+
+  const peopleLength = useAppSelector((state) => state.people.people).length ?? 0;
 
   const handleClickViewModeMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -92,7 +95,7 @@ export default function TopBar() {
                 aria-expanded={open ? 'true' : undefined}
                 className={`text-xl font-medium px-4 py-1 rounded-md`}
               >
-                {9} People
+                {peopleLength} People
               </ListItemButton>
             </List>
             <Menu

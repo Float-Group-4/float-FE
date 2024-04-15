@@ -1,3 +1,7 @@
+import {
+  LOCAL_STORAGE_KEY_ACCESS_TOKEN,
+  LOCAL_STORAGE_KEY_REFRESH_TOKEN,
+} from '@configs/localStorage';
 import axios, { AxiosRequestConfig, AxiosResponse, ResponseType } from 'axios';
 import isEmpty from 'lodash/isEmpty';
 import merge from 'lodash/merge';
@@ -22,16 +26,19 @@ export const axiosApi = axios.create({
 
 export const axiosNoInterceptors = axios.create({
   headers: {
+    // Host: 'localhost:4005',
+    // Origin: 'http://localhost:4005',
+    // Referer: 'http://localhost:4005/swagger/index.html',
     'Content-Type': 'application/json',
     Accept: 'application/json',
     'Access-Control-Allow-Origin': '*',
   },
-  baseURL: 'api/v1',
+  baseURL: 'http://localhost:4000',
 });
 
 axiosApi.interceptors.request.use(
   (config: any) => {
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = localStorage.getItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN);
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
@@ -48,22 +55,24 @@ axiosApi.interceptors.response.use(
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
-      try {
-        const refreshToken = localStorage.getItem('refreshToken');
-        const response = await axiosNoInterceptors.get('auth/refresh', {
-          headers: {
-            Authorization: `Bearer ${refreshToken}`,
-          },
-        });
+      document.location.href = '/sign-in';
 
-        localStorage.setItem('accessToken', response.data.accessToken);
-        localStorage.setItem('refreshToken', response.data.refreshToken);
+      // try {
+      //   const refreshToken = localStorage.getItem('refreshToken');
+      //   const response = await axiosNoInterceptors.get('auth/refresh', {
+      //     headers: {
+      //       Authorization: `Bearer ${refreshToken}`,
+      //     },
+      //   });
 
-        originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
-        return axios(originalRequest);
-      } catch (error) {
-        /* empty */
-      }
+      //   localStorage.setItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN, response.data.accessToken);
+      //   localStorage.setItem(LOCAL_STORAGE_KEY_REFRESH_TOKEN, response.data.refreshToken);
+
+      //   originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
+      //   return axios(originalRequest);
+      // } catch (error) {
+      //   /* empty */
+      // }
     }
 
     return Promise.reject(error);

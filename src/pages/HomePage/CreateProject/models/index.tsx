@@ -17,7 +17,8 @@ export interface ProjectInfo{
     note?: string,
     isTentative: boolean,
     client?: string,
-    owner?: string,
+    owner: string,
+    teamId: string,
 }
 
 export interface ProjectTeam {

@@ -7,11 +7,11 @@ import * as keyNames from './keyNames';
 
 const writeConfig: WriteConfig = {
   [keyNames.KEY_NAME_SIGN_UP_NAME]: {
-    languageKey: 'Your name',
+    languageKey: 'Name',
     Component: TextField,
     defaultValue: '',
     componentProps: {
-      placeholder: 'First and last name',
+      placeholder: 'Enter name',
     },
     validate: (value: any) => !!value || 'Enter your name',
   },

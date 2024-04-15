@@ -27,6 +27,7 @@ export interface Data {
   manages: string;
   tags: string;
   type: string;
+  email: string;
 }
 
 export function createData(
@@ -39,6 +40,7 @@ export function createData(
   manages: string,
   tags: string,
   type: string,
+  email: string,
 ): Data {
   return {
     id,
@@ -50,6 +52,7 @@ export function createData(
     manages,
     tags,
     type,
+    email
   };
 }
 

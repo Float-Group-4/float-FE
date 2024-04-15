@@ -1,15 +1,5 @@
 import MiModal from '@base/components/MiModal';
-import {
-  useTheme,
-  Typography,
-  TextField,
-  Box,
-  Tabs,
-  Tab,
-  Button,
-  Stack,
-  Breakpoint,
-} from '@mui/material';
+import { Typography, TextField, Box, Tabs, Tab, Button, Stack } from '@mui/material';
 import React, { useState } from 'react';
 import { ProjectInfo, ProjectMileStone, ProjectTask, ProjectTeam } from './models';
 import InfoSubBody from './components/CreateProjectInfoTab';
@@ -17,11 +7,12 @@ import MilestoneSubBody from './components/CreateProjectMilestoneTab';
 import TeamSubBody from './components/CreateProjectTeamTab';
 import TaskListSubBody from './components/CreateProjectTaskTab';
 import { ProjectType } from '../../../types/enums';
-import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
-import { addProject } from '../../../redux/project/projectSlice';
+import { useAppDispatch } from '@hooks/reduxHooks';
+import { Project, postNewProject, updateSingleProject } from '../../../redux/project/projectSlice';
 import { generateUUID } from '@base/utils/uuid';
+import { useParams } from 'react-router-dom';
 
-
+const baseUrl = import.meta.env.VITE_FRONTEND_BASE_URL;
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -55,17 +46,45 @@ function a11yProps(index: number) {
   };
 }
 interface ModalFooterProps {
+  isUpdate: boolean;
   handleSave: (e: any) => void;
   handleClose: (e: any) => void;
+  handleUpdate: (e: any) => void;
 }
 
-const ModalFooter: React.FC<ModalFooterProps> = ({ handleSave, handleClose }) => {
+const ModalFooter: React.FC<ModalFooterProps> = ({
+  handleSave,
+  handleClose,
+  handleUpdate,
+  isUpdate,
+}) => {
   return (
-    <Stack direction='row' spacing={1} paddingY={3} alignItems={'left'} justifyItems={'left'}>
-      <Button onClick={handleSave} variant='contained'>
-        Create project
-      </Button>
-      <Button onClick={handleClose} sx={{ backgroundColor: '#F5F5F5 !important', color: 'black', '&:hover' :{bgcolor: '#E1E5F3 !important', color: 'black !important'} }}>
+    <Stack
+      direction='row'
+      spacing={1}
+      paddingY={3}
+      alignItems={'left'}
+      justifyItems={'left'}
+      sx={{ flexGrow: 1 }}
+    >
+      {!isUpdate ? (
+        <Button onClick={handleSave} variant='contained'>
+          Create project
+        </Button>
+      ) : (
+        <Button onClick={handleUpdate} variant='contained'>
+          Update project
+        </Button>
+      )}
+
+      <Button
+        onClick={handleClose}
+        sx={{
+          backgroundColor: '#F5F5F5 !important',
+          color: 'black',
+          '&:hover': { bgcolor: '#E1E5F3 !important', color: 'black !important' },
+        }}
+      >
         Cancel
       </Button>
     </Stack>
@@ -74,13 +93,13 @@ const ModalFooter: React.FC<ModalFooterProps> = ({ handleSave, handleClose }) =>
 
 interface ModalBodyProps {
   info: ProjectInfo;
-  team: ProjectTeam[] | null;
-  mileStone: ProjectMileStone[] | null;
-  task: ProjectTask[] | null;
+  team: ProjectTeam[];
+  mileStone: ProjectMileStone[];
+  task: ProjectTask[];
   setInfo: (info: ProjectInfo) => void;
-  setTeam: (team: ProjectTeam[] | null) => void;
-  setMileStone: (mileStone: ProjectMileStone[] | null) => void;
-  setTask: (task: ProjectTask[] | null) => void;
+  setTeam: (team: ProjectTeam[]) => void;
+  setMileStone: (mileStone: ProjectMileStone[]) => void;
+  setTask: (task: ProjectTask[]) => void;
 }
 
 const ModalBody: React.FC<ModalBodyProps> = ({
@@ -172,54 +191,118 @@ const ModalBody: React.FC<ModalBodyProps> = ({
     </Box>
   );
 };
-
 interface CreateProjectModalProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  data?: Project;
   sx?: any;
 }
 
 const CreateProjectModal = (props: CreateProjectModalProps) => {
-  const theme = useTheme();
-
-  const { sx, isOpen, setIsOpen } = props;
+  const { sx, isOpen, setIsOpen, data } = props;
   const dispatch = useAppDispatch();
 
+  let isUpdate = data != null;
 
   const defaultColor = '#3451b2';
-  const defaultProjectInfo: ProjectInfo = {
-    id: "1",
-    color: defaultColor,
-    budget: 0,
-    type: ProjectType.billable,
-    isTentative: false,
-    note: '',
-    client: '',
-    name: "",
-  };
 
-  const demoForTasks: ProjectTask[] = [
-    {
-      id: 1,
-      name: 'milestone 1',
-      isBillable: true,
-    },
-  ];
+  const name = data?.project.name ?? '';
+  
+  const params = useParams();
+  const teamId = params.teamId;
 
-  const [projectName, setProjectName] = useState<string>('');
+  let defaultProjectInfo: ProjectInfo;
+
+  if (data != null) {
+    defaultProjectInfo = data.project;
+  } else {
+    defaultProjectInfo = {
+      id: '1',
+      color: defaultColor,
+      budget: 0,
+      type: ProjectType.billable,
+      isTentative: false,
+      note: '',
+      client: '',
+      name: '',
+      owner: '9d080daa-3929-4601-83a3-93a7aa86d372',
+      teamId: teamId ?? 'ad53cc61-a3dd-469f-98aa-ace14809239d',
+    };
+  }
+
+  let demoForTasks: ProjectTask[];
+
+  if (data != null) {
+    if (data.tasks != null) {
+      demoForTasks = data.tasks;
+    } else {
+      demoForTasks = [];
+    }
+  } else {
+    demoForTasks = [
+      // {
+      //   id: 1,
+      //   name: 'milestone 1',
+      //   isBillable: true,
+      // },
+    ];
+  }
+
+  let defaultTeamData: ProjectTeam[];
+
+  if (data != null) {
+    if (data.members != null) {
+      defaultTeamData = data.members;
+    } else {
+      defaultTeamData = [];
+    }
+  } else {
+    defaultTeamData = [];
+  }
+
+  let defaultMileStone: ProjectMileStone[] = [];
+  if (data != null) {
+    if (data.milestones != null) {
+      defaultMileStone = data.milestones;
+    }
+  }
+
+  const [projectName, setProjectName] = useState<string>(name);
   const [infoData, setInfoData] = useState<ProjectInfo>(defaultProjectInfo);
-  const [teamData, setTeamData] = useState<ProjectTeam[] | null>(null);
-  const [mileStoneData, setMileStoneData] = useState<ProjectMileStone[] | null>(null);
-  const [taskData, setTaskData] = useState<ProjectTask[] | null>(demoForTasks);
+  const [teamData, setTeamData] = useState<ProjectTeam[]>(defaultTeamData);
+  const [mileStoneData, setMileStoneData] = useState<ProjectMileStone[]>(defaultMileStone);
+  const [taskData, setTaskData] = useState<ProjectTask[]>(demoForTasks);
 
   const handleSave = () => {
-    var p ={project: {...infoData, name: projectName, id: generateUUID(),}, members: teamData ?? [], milestones: mileStoneData ?? [], tasks: taskData ?? [],};
-    console.log(p);
-    dispatch(addProject(p));
+    let p = {
+      project: { ...infoData, name: projectName, id: generateUUID() },
+      members: teamData ?? [],
+      milestones: mileStoneData ?? [],
+      tasks: taskData ?? [],
+    };
+    
+    p.project.owner = '9d080daa-3929-4601-83a3-93a7aa86d372';
+    p.project.teamId = 'ad53cc61-a3dd-469f-98aa-ace14809239d';
+    dispatch(postNewProject(p));
+
     setIsOpen(false);
   };
 
   const handleOnClose = () => {
+    setIsOpen(false);
+  };
+
+  const handleUpdate = () => {
+    let p = {
+      project: { ...infoData, name: projectName },
+      members: teamData ?? [],
+      milestones: mileStoneData ?? [],
+      tasks: taskData ?? [],
+    };
+    console.log(infoData.id);
+    p.project.owner = '9d080daa-3929-4601-83a3-93a7aa86d372';
+    p.project.teamId = 'ad53cc61-a3dd-469f-98aa-ace14809239d';
+    dispatch(updateSingleProject(p));
     setIsOpen(false);
   };
 
@@ -253,7 +336,14 @@ const CreateProjectModal = (props: CreateProjectModalProps) => {
         size={'sm'}
         isOpen={isOpen}
         onClose={handleOnClose}
-        footer={<ModalFooter handleSave={handleSave} handleClose={handleOnClose} />}
+        footer={
+          <ModalFooter
+            isUpdate={isUpdate}
+            handleSave={handleSave}
+            handleClose={handleOnClose}
+            handleUpdate={handleUpdate}
+          />
+        }
         isCloseByBackdrop={false}
       >
         <ModalBody
