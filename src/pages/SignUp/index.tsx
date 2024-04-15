@@ -20,7 +20,6 @@ import { useNavigate } from 'react-router-dom';
 interface SignUpProps {}
 
 const SignUp = (props: SignUpProps) => {
-  const navigate = useNavigate();
   const theme = useTheme();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
