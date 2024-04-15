@@ -27,7 +27,7 @@ export default function TutorialPage() {
     try {
       const endpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/team/${teamId}`;
       const res = await axios.get(endpoint);
-      console.log(res);
+
       if (res.data.teamOwnerId) setTeamMemberId(res.data.teamOwnerId);
     } catch (err: any) {
       console.log('ERROR: ', err.message);

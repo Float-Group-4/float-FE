@@ -29,8 +29,6 @@ const InfoSubBody: React.FC<InfoProp> = ({ info, setInfo }) => {
     }));
   };
 
-  console.log(info?.type);
-
   return (
     <Box paddingX={3}>
       <FormControl fullWidth>

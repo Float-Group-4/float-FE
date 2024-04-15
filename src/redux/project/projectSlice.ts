@@ -75,17 +75,6 @@ export const postNewProject = createAsyncThunk(
         teamId: projectData.project.teamId,
         projectOwnerId: projectData.project.owner,
       };
-      console.log(projectData);
-      // const response = await axiosApi.post(`${baseUrl}/projects`, data);
-      // if (
-      //   response.status == HttpStatusCode.Accepted ||
-      //   response.status == HttpStatusCode.Ok ||
-      //   response.status == HttpStatusCode.Created
-      // ) {
-      //   return projectData;
-      // } else {
-      //   return null;
-      // }
     } catch (e) {
       console.log(e);
     }
@@ -270,9 +259,7 @@ const projectSlice = createSlice({
       }>,
     ) => {
       const { project, members, milestones, tasks } = action.payload;
-      console.log(action.payload);
       state.project = [{ project, members, milestones, tasks }, ...state.project];
-      console.log(state.project);
     },
     updateProject: (
       state,

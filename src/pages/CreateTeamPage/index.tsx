@@ -50,11 +50,9 @@ const CreateTeam = (props: CreateTeamProps) => {
       const params = getParams(formData);
       const userId = '84803dd9-a9f7-4d00-9580-bb0c07043700';
       const userName = 'Quang Nguyen';
-      console.log('Params: ', params, import.meta.env.VITE_FRONTEND_BASE_URL);
       //   Create new team
       const createTeamEndpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/team`;
       const resultCreateTeam = await axios.post(createTeamEndpoint, formData);
-      console.log('Result Create Team: ', resultCreateTeam);
       const teamId = resultCreateTeam.data.id;
       //   Create team member for owner
       const createOwnerTeamMemberEndpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/team-members`;
@@ -68,18 +66,12 @@ const CreateTeam = (props: CreateTeamProps) => {
         email: '',
       };
       const resultOwnerTeamMember = await axios.post(createOwnerTeamMemberEndpoint, teamOwnerData);
-      console.log(
-        'Create Owner Id Result: ',
-        resultOwnerTeamMember,
-        import.meta.env.VITE_FRONTEND_BASE_URL,
-      );
       const ownerTeamMemberId = resultOwnerTeamMember.data.id;
       //   Update Ownder Team Member ID To Created Team
       const addTeamOwnerEndpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/team/${teamId}`;
       const updateTeamOwnerResult = await axios.patch(addTeamOwnerEndpoint, {
         teamOwnerId: ownerTeamMemberId,
       });
-      console.log('Update Owner Result: ', updateTeamOwnerResult);
       enqueueSuccessBar('Create team successfully');
       navigate(`/team/${teamId}/tutorial`);
     } catch (err: any) {

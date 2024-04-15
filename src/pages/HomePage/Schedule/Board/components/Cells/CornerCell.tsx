@@ -59,7 +59,6 @@ const CornerCell = () => {
   };
   const handleSelectTimeRangeOption = (_e: React.MouseEvent<HTMLElement>, index: number) => {
     setSelectedIndex(index);
-    console.log(index);
     timeRangeJump(timeRangeOptions[index].value);
     setTimeRangeAnchorEl(null);
   };

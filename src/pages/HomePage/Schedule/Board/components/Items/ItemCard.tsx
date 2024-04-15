@@ -14,9 +14,12 @@ import {
   getContrastColor,
 } from '../../../../../../../src/utilities/helper';
 import { getHeightByItem, getHorizontalDimensions, roundToQuarter } from '../../common/helper';
+import axios from 'axios';
+import { useSnackBar } from '@base/hooks/useSnackbar';
 
 export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
   const dispatch = useAppDispatch();
+  const { enqueueErrorBar } = useSnackBar();
   const { setDragItem, mousePositionRef, autoscroller, dragItem, scrollRef } = useScheduleContext();
   const item = useAppSelector((state) => state.general.itemsById[id]);
   const cellWidth = useAppSelector((state) => state.scheduleMeasurement.cellWidth);
@@ -33,6 +36,20 @@ export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
 
   const textColor = getContrastColor(TASK_DEFAULT_COLOR);
 
+  const updateItemToDatabase = async (itemId: string, itemType: string, data: any) => {
+    try {
+      const endpoint =
+        itemType == 'item'
+          ? `${import.meta.env.VITE_FRONTEND_BASE_URL}/allocation/${itemId}`
+          : `${import.meta.env.VITE_FRONTEND_BASE_URL}/time-offs/${itemId}`;
+
+      const response = await axios.patch(endpoint, data);
+    } catch (err: any) {
+      console.log('ERROR: ', err.message);
+      enqueueErrorBar(err.message || '');
+    }
+  };
+
   const handleMouseDown = (e: React.MouseEvent) => {
     const mp = mousePositionRef.current;
     e.stopPropagation();
@@ -41,7 +58,6 @@ export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
     const rect = e.currentTarget!.getBoundingClientRect();
     const px = rect.left - e.clientX;
     const py = rect.top - e.clientY;
-    console.log('Set Drag Item: ', item);
 
     setDragItem({
       item: item,
@@ -132,14 +148,56 @@ export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
     }
     const upHandler = () => {
       setIsResizing(false);
+      let newTimeRangeValue = { from: item.startDate, to: item.endDate };
+      let deltaDay = 0;
+      //@ts-ignore
+      deltaDay = mousePositionRef.current.dayIndex - mouseDownRef.current.dayIndex;
       if (edge === ResizeDirection.right || edge === ResizeDirection.left) {
         //@ts-ignore
         if (mousePositionRef.current.dayIndex - mouseDownRef.current.dayIndex != 0) {
           // Update timeline to API
+          switch (edge) {
+            case ResizeDirection.left:
+              {
+                const dayAdded = w - deltaDay > 0 ? deltaDay : w - 1;
+                const newFrom = dayjs(newTimeRangeValue.from, ITEM_DATE_FORMAT)
+                  .clone()
+                  .add(dayAdded, 'day');
+                newTimeRangeValue = {
+                  ...newTimeRangeValue,
+                  from: newFrom.format(ITEM_DATE_FORMAT),
+                };
+              }
+              break;
+
+            case ResizeDirection.right:
+              {
+                const dayAdded = deltaDay + w > 0 ? deltaDay : 1 - w;
+                const newTo = dayjs(newTimeRangeValue.to, ITEM_DATE_FORMAT)
+                  .clone()
+                  .add(dayAdded, 'day');
+                newTimeRangeValue = {
+                  ...newTimeRangeValue,
+                  to: newTo.format(ITEM_DATE_FORMAT),
+                };
+              }
+              break;
+
+            default:
+              break;
+          }
+          updateItemToDatabase(item.id, 'item', {
+            startDate: dayjs(newTimeRangeValue.from).toISOString() || '',
+            endDate: dayjs(newTimeRangeValue.to).toISOString() || '',
+          });
         }
       }
       if (edge === ResizeDirection.bottom) {
         // Update hour to API
+        if (mouseDownRef.current?.hour)
+          updateItemToDatabase(item.id, 'item', {
+            workHours: mouseDownRef.current.hour,
+          });
       }
 
       autoscroller?.current.disable();
@@ -165,7 +223,6 @@ export const ItemCard = ({ id, rowId }: { id: string; rowId: string }) => {
                 ...newTimeRangeValue,
                 from: newFrom.format(ITEM_DATE_FORMAT),
               };
-              console.log(newFrom);
             }
             break;
 

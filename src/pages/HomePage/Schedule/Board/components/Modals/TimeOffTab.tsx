@@ -57,7 +57,6 @@ const TimeOffTab = () => {
       const differenceMs = Math.abs(endDateObj.diff(startDateObj, 'millisecond'));
       const differenceDays = Math.ceil(differenceMs / (1000 * 60 * 60 * 24));
       setDiffDay(differenceDays);
-      console.log(differenceDays);
     }
   }, [timeOff?.startDate, timeOff?.endDate]);
 

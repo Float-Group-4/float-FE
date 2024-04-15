@@ -47,7 +47,6 @@ export const fetchPeople = createAsyncThunk('people/fetchTeamMembers', async (te
   try {
     let id = teamId ?? 'ad53cc61-a3dd-469f-98aa-ace14809239d';
     const response = await axiosApi.get(`${baseUrl}/team-members/team/${id}`);
-    // console.log(response.data);
     return [...response.data];
   } catch (e: any) {
     return e.message;
@@ -228,7 +227,6 @@ const peopleSlice = createSlice({
       }>,
     ) => {
       const { person } = action.payload;
-      console.log(person);
       state.people = [person, ...state.people];
     },
     updatePeople: (

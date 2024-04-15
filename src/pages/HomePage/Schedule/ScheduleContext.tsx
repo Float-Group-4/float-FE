@@ -30,6 +30,7 @@ import { getNewDateByDayIndex } from './Board/common/helper';
 import { buildRows, calculateScheduledTime } from '../../../redux/schedule/thunk';
 import { setItemActivity } from '../../../redux/activity/activitySlice';
 import { useSnackBar } from '@base/hooks/useSnackbar';
+import axios from 'axios';
 
 export const ScheduleContext = createContext<ScheduleContextType>({
   autoscroller: null,
@@ -86,6 +87,7 @@ export const useScheduleContext = () => {
 
 export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) => {
   const dispatch = useAppDispatch();
+  const { enqueueErrorBar } = useSnackBar();
   const usersById = useAppSelector((state) => state.general.usersById);
   const itemsById = useAppSelector((state) => state.general.itemsById);
   const timeOffItemsById = useAppSelector((state) => state.general.timeOffItemsById);
@@ -243,7 +245,6 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
   /* -------------------------- Dragging Item Actions ------------------------- */
 
   const onItemDragStart = (dragItem: DragItem) => {
-    console.log(dragItem.item.type);
     switch (dragItem.item.type) {
       case 'item':
         dispatch(setItemPlaceHolder({ id: dragItem.item.id, isPlaceHolder: true }));
@@ -339,19 +340,50 @@ export const ScheduleContextWrapper = ({ children }: { children: ReactNode }) =>
     autoscroller.current!.disable();
     scrollRef.current.style.cursor = 'auto';
     const originalItem = dragInfo.current!.originalItem;
+    const itemType = dragItem?.item.type || '';
     dispatch(setItemPlaceHolder({ id: originalItem!.id, isPlaceHolder: false }));
     dragInfo.current = null;
     dispatch(setItemActivity(null));
-    const item = itemsById[originalItem!.id];
-    const userId = item.userIds[0] || {};
+    const item =
+      itemType == 'item' ? itemsById[originalItem!.id] : timeOffItemsById[originalItem!.id];
+    const userId = item?.userIds[0] || {};
     const { from, to } =
       {
-        from: item.startDate,
-        to: item.endDate,
+        from: dayjs(item.startDate).toISOString() || '',
+        to: dayjs(item.endDate).toISOString() || '',
       } || {};
     const hour = item.hour ? item.hour : 0;
     if (timeRange) {
       dispatch(calculateScheduledTime([...Object.keys(usersById)]));
+    }
+    const data =
+      itemType == 'item'
+        ? {
+            teamMemberId: userId || '',
+            startDate: from,
+            endDate: to,
+            workHours: hour,
+          }
+        : {
+            teamMemberId: userId || '',
+            startDate: from,
+            endDate: to,
+          };
+    const itemId = item?.id || '';
+    updateItemToDatabase(itemId, itemType, data);
+  };
+
+  const updateItemToDatabase = async (itemId: string, itemType: string, data: any) => {
+    try {
+      const endpoint =
+        itemType == 'item'
+          ? `${import.meta.env.VITE_FRONTEND_BASE_URL}/allocation/${itemId}`
+          : `${import.meta.env.VITE_FRONTEND_BASE_URL}/time-offs/${itemId}`;
+
+      const response = await axios.patch(endpoint, data);
+    } catch (err: any) {
+      console.log('ERROR: ', err.message);
+      enqueueErrorBar(err.message || '');
     }
   };
 

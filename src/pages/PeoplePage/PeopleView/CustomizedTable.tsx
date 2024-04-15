@@ -20,7 +20,6 @@ import AddPeopleModal from '@pages/HomePage/AddPeople';
 import { PersonInfo } from '@pages/HomePage/AddPeople/models';
 
 export default function CustomizedTables(personList: PersonInfo[], rows: Data[]) {
-  console.log(rows);
   const [order, setOrder] = React.useState<Order>('asc');
   const [orderBy, setOrderBy] = React.useState<keyof Data>('name');
   const [selected, setSelected] = React.useState<readonly string[]>([]);
@@ -70,9 +69,6 @@ export default function CustomizedTables(personList: PersonInfo[], rows: Data[])
         selected.slice(selectedIndex + 1),
       );
     }
-
-    console.log('selectedIndex' + selectedIndex);
-    console.log('id' + id);
 
     setSelected(newSelected);
   };

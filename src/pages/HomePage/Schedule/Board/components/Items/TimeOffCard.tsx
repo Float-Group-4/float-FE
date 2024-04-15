@@ -37,7 +37,6 @@ export const TimeOffItemCard = ({ id, rowId }: { id: string; rowId: string }) =>
     const rect = e.currentTarget!.getBoundingClientRect();
     const px = rect.left - e.clientX;
     const py = rect.top - e.clientY;
-    console.log('Set Drag Item: ', item);
 
     setDragItem({
       item: item,

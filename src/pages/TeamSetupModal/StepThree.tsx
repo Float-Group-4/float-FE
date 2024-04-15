@@ -16,8 +16,6 @@ const StepThree: React.FC<StepThreeProps> = ({
   setCheck1,
   setLastCheck,
 }) => {
-  console.log(members);
-
   return (
     <div>
       <Typography variant='h4' gutterBottom sx={{ marginLeft: '10px', marginTop: '10%' }}>
@@ -40,7 +38,6 @@ const StepThree: React.FC<StepThreeProps> = ({
               if (members[index].length > 0) setCheck1(Math.min(check1 + 1, 3));
               else setCheck1(Math.max(0, check1 - 1));
               localStorage.setItem('teamMembers', JSON.stringify(members));
-              console.log(members);
             }}
             placeholder='E.g., Razor'
             fullWidth

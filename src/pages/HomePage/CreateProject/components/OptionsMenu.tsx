@@ -6,7 +6,7 @@ interface Option {
   label: string;
   icon?: ReactNode;
   action?: () => void;
-  color?: string; 
+  color?: string;
 }
 
 interface OptionMenuProps {
@@ -17,7 +17,7 @@ interface OptionMenuProps {
 
 const ITEM_HEIGHT = 60;
 
-function OptionMenu({ options = [], actionIcon, onClick}: Readonly<OptionMenuProps>) {
+function OptionMenu({ options = [], actionIcon, onClick }: Readonly<OptionMenuProps>) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -66,8 +66,11 @@ function OptionMenu({ options = [], actionIcon, onClick}: Readonly<OptionMenuPro
         }}
       >
         {options.map((option) => (
-          <MenuItem key={option.label} onClick={() => handleClose(option)}
-            sx={{'&:hover' :{backgroundColor: option?.color}}}>
+          <MenuItem
+            key={option.label}
+            onClick={() => handleClose(option)}
+            sx={{ '&:hover': { backgroundColor: option?.color } }}
+          >
             {option.icon && <ListItemIcon>{option.icon}</ListItemIcon>}
             <ListItemText>{option.label}</ListItemText>
           </MenuItem>
@@ -78,10 +81,7 @@ function OptionMenu({ options = [], actionIcon, onClick}: Readonly<OptionMenuPro
 }
 
 OptionMenu.defaultProps = {
-  onClick: () => {
-    // Default action when onClick is not provided
-    // console.log("Default clicked")
-  },
+  onClick: () => {},
   options: [],
 };
 

@@ -63,13 +63,6 @@ const HomePage = () => {
         axios.get(teamStatusEndpoint),
         axios.get(teamStatusTypesEndpoint),
       ]);
-      console.log('TEAM ALLOCATION: ', allocationResult);
-      console.log('TEAM MEMBERS: ', teamMemberResult);
-      console.log('TEAM PROJECT: ', teamProjectResult);
-      console.log('TEAM TIME OFFS: ', teamTimeoffResult);
-      console.log('TEAM TIME OFF TYPES: ', teamTimeoffTypesResult);
-      console.log('TEAM STATUSES: ', teamStatusResult);
-      console.log('TEAM STATUS TYPES: ', teamStatusTypesResult);
       // Convert to view data
       const teamMemberObj = (teamMemberResult.data || []).reduce(function (acc: any, curr: any) {
         acc[curr.id] = curr;

@@ -75,7 +75,6 @@ export default memo(function Row({ userId, className }: { userId: string; classN
         setIsCreating(false);
         // Open Add Item Modal
         //addItemModalRef.current.openAddItemModal({ dragInfo: dragInfo.current });
-        console.log(dragInfo.current);
         mainModalRef.current.openMainModal({ dragInfo: dragInfo.current });
         dragInfo.current = {};
         document.body.removeEventListener('mouseup', handleMouseUp);

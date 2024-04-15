@@ -54,7 +54,6 @@ export const BoardContainer = () => {
   }, [order, rowDisplayType, usersById]);
 
   const rowIds: string[] = useMemo(() => {
-    console.log(usersById);
     const ids = Object.keys(usersById);
     return ids;
   }, [data, usersById]);
@@ -95,7 +94,6 @@ export const BoardContainer = () => {
   //-------------- Calculate Scheduled time ------------
   useEffect(() => {
     if (timeRange) {
-      console.log('Change Time Range');
       dispatch(calculateScheduledTime([...Object.keys(usersById)]));
     }
   }, [timeRange, displayItems, isOffWeekend]);
@@ -140,9 +138,7 @@ export const BoardContainer = () => {
     amountDayInWeek,
     usersById,
   ]);
-  useEffect(() => {
-    console.log('USERS BY ID CHANGED: ', usersById);
-  }, [usersById]);
+  useEffect(() => {}, [usersById]);
 
   // ----- TimeRange Color ------
   const timeRangeBoard = useMemo(() => {

@@ -34,11 +34,6 @@ export default function ChooseTeamPage() {
           const fetchTeamProjectEndpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/projects/team/${team.id}`;
           const teamMemberRes = await axios.get(fetchTeamMemberEndpoint);
           const teamProjectRes = await axios.get(fetchTeamProjectEndpoint);
-          console.log({
-            ...team,
-            totalPeople: teamMemberRes.data.length,
-            totalProject: teamProjectRes.data.length,
-          });
           return {
             ...team,
             totalPeople: teamMemberRes.data.length,
@@ -61,7 +56,6 @@ export default function ChooseTeamPage() {
   }, []);
 
   const handleClickTeam = (team: Team) => {
-    console.log(team);
     navigate(`/team/${team.id}/home`);
   };
 

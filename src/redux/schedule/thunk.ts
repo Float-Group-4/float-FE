@@ -234,67 +234,6 @@ export const buildRows = createAsyncThunk(
       row.itemPosition = itemPosition;
 
       const timeOffPosition: Record<string, number> = {};
-      // row.statusItems.forEach((tid: number, idx: number, items: any) => {
-      //   const item = statusItemsById[tid];
-      //   const { x, w } = getHorizontalDimensions({ from: item.startDate, to: item.endDate });
-      //   console.log(x, w);
-      //   /* ---------------------------- Calculate height ---------------------------- */
-      //   for (let i = x; i < x + w; i++) {
-      //     const hour = standardizeHour(item, item.hour ?? defaultHour, 1);
-      //     dayCell[i] ??= { dayCapacity: 0, firstOTItem: item, isStable: false, overTimeDisplay: 0 };
-      //     dayCell[i].dayCapacity += item.hour / 1 || defaultHour;
-      //     if (dayCell[i].dayCapacity > defaultHour && !dayCell[i].isStable) {
-      //       dayCell[i].firstOTItem = item;
-      //       dayCell[i].isStable = true;
-      //       dayCell[i].overTimeDisplay = Math.max(
-      //         defaultHour - dayCell[i].dayCapacity,
-      //         ITEM_MIN_HEIGHT,
-      //       );
-      //     }
-
-      //     cellHeight[i] ??= 0;
-
-      //     cellHeight[i] += hour;
-      //     row.height = Math.max(cellHeight[i], row.height);
-      //   }
-
-      //   row.dayCell = dayCell;
-
-      //   /* ------------------------------- Calculate y ------------------------------ */
-      //   itemPosition[tid] ??= 0;
-      //   const itemHour = Math.max(defaultHour, item.hour / 1 ?? defaultHour);
-
-      //   for (let i = 0; i < idx; i++) {
-      //     const otherItem = itemsById[items[i]];
-
-      //     const otherItemHours = standardizeHour(otherItem, defaultHour, 1);
-      //     const otherItemTimeline = otherItem.startDate && otherItem.endDate;
-      //     if (!otherItemTimeline) continue;
-
-      //     if (
-      //       isDayOverlapped(
-      //         {
-      //           from: moment(item.startDate, 'YYYY-MM-DD').toDate(),
-      //           to: moment(item.endDate, 'YYYY-MM-DD').toDate(),
-      //         },
-      //         {
-      //           from: moment(otherItem.startDate, 'YYYY-MM-DD').toDate(),
-      //           to: moment(otherItem.endDate, 'YYYY-MM-DD').toDate(),
-      //         },
-      //       )
-      //     ) {
-      //       itemPosition[tid] = Math.max(
-      //         itemPosition[tid],
-      //         itemPosition[otherItem.id] + otherItemHours + GAP_BETWEEN_ITEM,
-      //       );
-      //     }
-      //     row.height = Math.max(
-      //       itemPosition[tid] + Math.max(itemHour, ITEM_MIN_HEIGHT),
-      //       row.height,
-      //     );
-      //     row.height = Math.max(row.height, itemPosition[otherItem.id] + otherItemHours);
-      //   }
-      // });
 
       return row;
     });

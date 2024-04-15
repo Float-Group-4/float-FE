@@ -108,7 +108,6 @@ const AddItemModal = (props: AddItemModalProps) => {
           isPlaceHolder: false,
           type: 'item',
         };
-        console.log(newItem);
         dispatch(
           setItemsById({
             ...itemsById,

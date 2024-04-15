@@ -53,9 +53,8 @@ const generalSlice = createSlice({
       }>,
     ) => {
       const { id, isPlaceHolder } = action.payload;
-      console.log('state');
-      console.log(state);
-      Object.assign(state.itemsById[id], { ...state.itemsById[id], isPlaceHolder });
+      if (state.itemsById[id])
+        Object.assign(state.itemsById[id], { ...state.itemsById[id], isPlaceHolder });
     },
     addNewItem: (state, action) => {
       const { items, mappedFieldBoards } = action.payload;
@@ -93,7 +92,6 @@ const generalSlice = createSlice({
       state.fetchedWeekIndexes = action.payload;
     },
     setItemsById: (state, action) => {
-      console.log(action.payload);
       state.itemsById = action.payload;
     },
     setUsersById: (state, action) => {
@@ -146,7 +144,6 @@ const generalSlice = createSlice({
       state.timeOffItemsById = { ...state.timeOffItemsById, ...action.payload };
     },
     setTimeOffItemsById: (state, action) => {
-      console.log(action.payload);
       state.timeOffItemsById = action.payload;
     },
 
@@ -194,7 +191,6 @@ const generalSlice = createSlice({
       state.statusItemsById = { ...state.statusItemsById, ...action.payload };
     },
     setStatusItemsById: (state, action) => {
-      console.log(action.payload);
       state.statusItemsById = action.payload;
     },
 
