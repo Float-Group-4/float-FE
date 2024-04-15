@@ -1,16 +1,12 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { BudgetValue, RowDisplayType, UserFilterType } from '../../types/enums';
-import { INITIAL_WEEK_INDEX } from '../../pages/HomePage/Schedule/Board/common/constant';
-import { mergeListsOrder } from '../../pages/HomePage/Schedule/Board/common/helper';
+import { axiosApi } from '@base/utils/axios/api';
 import {
   AccountType,
   ContractType,
   PersonInfo,
   WorkingType,
 } from '@pages/HomePage/AddPeople/models';
-import axios, { HttpStatusCode } from 'axios';
-import { axiosApi } from '@base/utils/axios/api';
-import { generateUUID } from '@base/utils/uuid';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { HttpStatusCode } from 'axios';
 
 export interface UserFilterValue {
   id: number;
@@ -333,15 +329,14 @@ const peopleSlice = createSlice({
       .addCase(deleteTeamMember.fulfilled, (state, action) => {
         state.state = 'succeeded';
         const deletedPerson = action.payload;
-        if(deletedPerson != null){
-          state.people = state.people.filter(person => person.id !== deletedPerson.id);
+        if (deletedPerson != null) {
+          state.people = state.people.filter((person) => person.id !== deletedPerson.id);
         }
       })
       .addCase(deleteTeamMember.rejected, (state, action) => {
         state.state = 'failed';
         state.error = action.error.message;
-      })
-      ;
+      });
   },
 });
 

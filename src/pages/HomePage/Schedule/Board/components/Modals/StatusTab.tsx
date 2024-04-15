@@ -15,23 +15,34 @@ import {
 } from '@mui/material';
 import { useScheduleContext } from '@pages/HomePage/Schedule/ScheduleContext';
 import dayjs from 'dayjs';
-import { useState, useEffect, ChangeEvent } from 'react';
+import { useState, useEffect, ChangeEvent, useMemo } from 'react';
 import { Status } from '../../common/type';
 import { useAppSelector } from '@hooks/reduxHooks';
 import DatePicker from '@base/components/DatePicker';
 import { isWeekend } from '../../../../../../utilities/date';
 
-const statusTypes = [
-  { title: 'Home', icon: <Flag sx={{ color: 'orange' }} /> },
-  { title: 'Travel', icon: <Flag sx={{ color: 'violet' }} /> },
-  { title: 'Office', icon: <Flag sx={{ color: 'green' }} /> },
-];
-
 const StatusTab = () => {
   const { status, setStatus } = useScheduleContext();
+  const statusTypesDB = useAppSelector((state) => state.general.statusTypes);
   const usersByIds = useAppSelector((state) => state.general.usersById);
+  const userOptions = useMemo(() => {
+    const optionsObj = (Object.values(usersByIds) || []).map((user: any) => {
+      return { label: user.name, id: user.id };
+    });
+    return optionsObj;
+  }, [usersByIds]);
 
-  console.log(status?.name);
+  const statusTypes = useMemo(() => {
+    const result = (Object.values(statusTypesDB) || []).map((type) => {
+      return {
+        label: type.name,
+        id: type.id,
+        color: type.color,
+      };
+    });
+    return result;
+  }, [statusTypesDB]);
+
   const setValue = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setStatus((prev: Status | null) => ({
@@ -67,7 +78,6 @@ const StatusTab = () => {
       const differenceMs = Math.abs(endDateObj.diff(startDateObj, 'millisecond'));
       const differenceDays = Math.ceil(differenceMs / (1000 * 60 * 60 * 24));
       setDiffDay(differenceDays);
-      console.log(differenceDays);
     }
   }, [status?.startDate, status?.endDate]);
 
@@ -104,7 +114,7 @@ const StatusTab = () => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position='start' sx={{ padding: 0, margin: 0 }}>
-                  <Flag style={{ color: 'blue' }} />
+                  <Flag style={{ color: status?.color || 'blue' }} />
                 </InputAdornment>
               ),
             }}
@@ -114,27 +124,33 @@ const StatusTab = () => {
           />
           {(status?.name == '' || status?.name == null) && (
             <List>
-              {statusTypes.map((t) => (
-                <ListItem
-                  sx={{
-                    cursor: 'pointer',
-                    bgcolor: '#E2E5E7',
-                    borderRadius: '5px',
-                    marginY: 0.3,
-                    '&:hover': { bgcolor: '#E3E9EC' },
-                  }}
-                  key={t.title}
-                  onClick={() =>
-                    setStatus((prev: Status | null) => ({
-                      ...prev,
-                      ['name']: t.title,
-                    }))
-                  }
-                >
-                  <ListItemIcon>{t.icon}</ListItemIcon>
-                  <ListItemText>{t.title}</ListItemText>
-                </ListItem>
-              ))}
+              {statusTypes.map((t: any) => {
+                return (
+                  <ListItem
+                    sx={{
+                      cursor: 'pointer',
+                      bgcolor: '#F2F2F2',
+                      borderRadius: '5px',
+                      marginY: 0.3,
+                      '&:hover': { bgcolor: '#E3E9EC' },
+                    }}
+                    key={t.id}
+                    onClick={() =>
+                      setStatus((prev: Status | null) => ({
+                        ...prev,
+                        ['name']: t.label,
+                        ['color']: t.color,
+                        ['type']: t.id,
+                      }))
+                    }
+                  >
+                    <ListItemIcon className='me-4'>
+                      <Flag sx={{ color: t.color }} />
+                    </ListItemIcon>
+                    <ListItemText>{t.label}</ListItemText>
+                  </ListItem>
+                );
+              })}
             </List>
           )}
         </FormControl>
@@ -143,14 +159,17 @@ const StatusTab = () => {
           <Typography>Assigned to</Typography>
           <Autocomplete
             clearIcon={false}
-            options={[]}
+            options={userOptions}
             value={status?.assignee}
-            onChange={(_, value) =>
+            isOptionEqualToValue={(option, value) => {
+              return option.id === value.id;
+            }}
+            onChange={(_, value) => {
               setStatus((prev: Status | null) => ({
                 ...prev,
                 ['assignee']: value,
-              }))
-            }
+              }));
+            }}
             renderInput={(params) => <TextField {...params} variant='outlined' fullWidth />}
           />
         </FormControl>

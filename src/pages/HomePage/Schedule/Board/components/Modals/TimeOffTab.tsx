@@ -1,40 +1,36 @@
-import { ArrowRight } from '@mui/icons-material';
-import {
-  Box,
-  Grid,
-  FormControl,
-  Typography,
-  Stack,
-  Button,
-  TextField,
-  Autocomplete,
-  ToggleButtonGroup,
-  ToggleButton,
-  Chip,
-  AutocompleteRenderInputParams,
-} from '@mui/material';
-import { LocalizationProvider, TimeField } from '@mui/x-date-pickers';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { useState, SetStateAction, ChangeEvent, useEffect, ReactNode } from 'react';
-import { TimeOff } from '../../common/type';
-import { useScheduleContext } from '@pages/HomePage/Schedule/ScheduleContext';
-import dayjs from 'dayjs';
 import DatePicker from '@base/components/DatePicker';
 import { useAppSelector } from '@hooks/reduxHooks';
+import { ArrowRight } from '@mui/icons-material';
+import {
+  Autocomplete,
+  Box,
+  Chip,
+  FormControl,
+  Grid,
+  Stack,
+  TextField,
+  ToggleButton,
+  Typography,
+} from '@mui/material';
+import { useScheduleContext } from '@pages/HomePage/Schedule/ScheduleContext';
+import dayjs from 'dayjs';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 import { isWeekend } from '../../../../../../utilities/date';
+import { TimeOff } from '../../common/type';
 
-const timeOffReasons = [
-  'Annual Leave',
-  'Compassionate Leave',
-  'Paid Time Off',
-  'Parental Leave',
-  'Public Holiday',
-  'Sick Leave',
-  'Unpaid Time Off',
-];
+// const timeOffReasons = [
+//   'Annual Leave',
+//   'Compassionate Leave',
+//   'Paid Time Off',
+//   'Parental Leave',
+//   'Public Holiday',
+//   'Sick Leave',
+//   'Unpaid Time Off',
+// ];
 
 const TimeOffTab = () => {
   const { timeOff, setTimeOff } = useScheduleContext();
+  const timeOffTypes = useAppSelector((state) => state.general.timeOffTypes);
 
   const [isSpecificTime, setIsSpecificTime] = useState<boolean>(
     timeOff?.endTime != null && timeOff?.startTime != null,
@@ -42,6 +38,17 @@ const TimeOffTab = () => {
 
   const usersByIds = useAppSelector((state) => state.general.usersById);
   const [diffDay, setDiffDay] = useState(0);
+
+  const timeOffReasons = useMemo(() => {
+    const result = (Object.values(timeOffTypes) || []).map((type) => {
+      return {
+        label: type.name,
+        id: type.id,
+        color: type.color,
+      };
+    });
+    return result;
+  }, [timeOffTypes]);
 
   useEffect(() => {
     if (timeOff?.startDate && timeOff?.endDate) {
@@ -120,50 +127,6 @@ const TimeOffTab = () => {
     <>
       <Box sx={{ backgroundColor: '#F6F6F6', m: 1, p: 2, borderRadius: '5px' }}>
         <Grid container columnGap={1} spacing={2}>
-          <Grid item xs={4}>
-            {isSpecificTime ? (
-              <div>
-                <Box display='flex' flexDirection='column'>
-                  <FormControl>
-                    <Typography>Time</Typography>
-                    <Stack direction='row' spacing={1}>
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <TimeField
-                          value={timeOff?.startTime ?? 8}
-                          onChange={(e) => setTime(e, 'startTime')}
-                        />
-                        <TimeField
-                          value={timeOff?.endTime ?? 18}
-                          onChange={(e) => setTime(e, 'endTime')}
-                        />
-                      </LocalizationProvider>
-                    </Stack>
-                  </FormControl>
-                </Box>
-                <Button size='small' onClick={() => setIsSpecificTime(false)}>
-                  Total hours
-                </Button>
-              </div>
-            ) : (
-              <div>
-                <Stack direction='row' justifyItems='left' spacing={1}>
-                  <FormControl>
-                    <Typography>Hours/day</Typography>
-                    <TextField variant='standard' value={timeOff?.hourEachDay} name='time' onChange={handleTime} />
-                  </FormControl>
-                  {diffDay > 1 && (
-                    <FormControl>
-                      <Typography>Total hours</Typography>
-                      <TextField variant='standard' value={(timeOff?.hourEachDay ?? 8) * diffDay} />
-                    </FormControl>
-                  )}
-                </Stack>
-                <Button size='small' onClick={() => setIsSpecificTime(true)}>
-                  Specific time
-                </Button>
-              </div>
-            )}
-          </Grid>
           <Grid item xs={7}>
             <FormControl>
               <Typography>Duration {diffDay > 1 && `: ${diffDay} days`}</Typography>
@@ -192,13 +155,16 @@ const TimeOffTab = () => {
             clearIcon=''
             options={timeOffReasons}
             value={timeOff?.reason}
-            onChange={(e, newValue) => {
+            freeSolo
+            isOptionEqualToValue={(option, value) => {
+              return option.id === value.id;
+            }}
+            onChange={(_, newValue) => {
               setTimeOff((prev: any) => ({
                 ...prev,
                 reason: newValue,
               }));
             }}
-            isOptionEqualToValue={(option, value) => option == value}
             renderInput={(params) => (
               <TextField {...params} value={timeOff?.reason} name='reason' />
             )}
@@ -250,9 +216,6 @@ const TimeOffTab = () => {
           <Autocomplete
             clearIcon={false}
             options={[]}
-            freeSolo
-            multiple
-            value={timeOff?.assignees}
             onChange={(_, value) =>
               setTimeOff((prev: TimeOff | null) => ({
                 ...prev,

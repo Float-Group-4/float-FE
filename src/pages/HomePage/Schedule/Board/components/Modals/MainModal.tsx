@@ -19,6 +19,8 @@ import { AllocationItem } from '../../../../../../types/primitive/item.interface
 import CustomMiModal from './CustomMiModal';
 import { TimeOffItem } from 'src/types/primitive/timeOffItem.interface';
 import { StatusItem } from 'src/types/primitive/statusItem.interface';
+import axios from 'axios';
+import { useSnackBar } from '@base/hooks/useSnackbar';
 
 interface StyledTabProps {
   label: string;
@@ -156,7 +158,9 @@ const Footer = (props: FooterProps) => {
 };
 
 const MainModal = (props: MainModalProps) => {
+  const { enqueueErrorBar } = useSnackBar();
   const [isOpen, setIsOpen] = useState(false);
+  const usersById = useAppSelector((state) => state.general.usersById);
 
   const dispatch = useAppDispatch();
   const [currentTab, setCurrentTab] = useState(0);
@@ -208,20 +212,20 @@ const MainModal = (props: MainModalProps) => {
     return {
       openMainModal(data) {
         const dragInfo: DragInfo = data.dragInfo;
+        const user = usersById[dragInfo.userId];
         if (dragInfo) {
           const { from, to } = getRangeDate(dragInfo.smp?.dayIndex, dragInfo.emp?.dayIndex);
           const start = from.format('YYYY-MM-DD');
           const end = to.format('YYYY-MM-DD');
-          console.log(dragInfo.userId);
           defaultAllocation.startDate = start;
           defaultAllocation.endDate = end;
           defaultStatus.startDate = start;
           defaultStatus.endDate = end;
           defaultTimeOff.startDate = start;
           defaultTimeOff.endDate = end;
-          defaultAllocation.assignees = [dragInfo.userId];
-          defaultTimeOff.assignees = [dragInfo.userId];
-          defaultStatus.assignee = dragInfo.userId;
+          defaultAllocation.assignees = { label: user.name, id: user.id };
+          defaultTimeOff.assignees = { label: user.name, id: user.id };
+          defaultStatus.assignee = { label: user.name, id: user.id };
           setAllocation(defaultAllocation);
           setStatus(defaultStatus);
           setTimeOff(defaultTimeOff);
@@ -234,21 +238,38 @@ const MainModal = (props: MainModalProps) => {
   const submitText =
     currentTab == 0 ? 'Create allocation' : currentTab == 1 ? 'Create time off' : 'Create status';
 
-  const handleSave = () => {
-    if (currentTab == 0) {
-      const newItem: AllocationItem = {
+  const createAllocation = async () => {
+    try {
+      let newItem: AllocationItem = {
         id: generateUUID(),
-        name: '',
+        name: allocation?.taskId?.label || '',
         startDate: allocation?.startDate!,
         endDate: allocation?.endDate!,
-        userIds: allocation?.assignees!,
+        userIds: [allocation?.assignees.id],
         hour: allocation?.hourEachDay ?? 0,
         isPlaceHolder: false,
-        projectId: allocation?.projectId!,
+        projectId: allocation?.projectId?.id || '',
+        taskId: allocation?.taskId?.id || '',
         taskType: allocation?.type!,
         note: allocation?.note,
         type: 'item',
       };
+      const endpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/allocation/`;
+      const data = {
+        taskId: newItem.taskId || '',
+        teamMemberId: newItem.userIds[0] || '',
+        startDate: dayjs(newItem.startDate || '').toISOString(),
+        endDate: dayjs(newItem.endDate || '').toISOString(),
+        workHours: newItem.hour || 0,
+        status: 0,
+        description: newItem.note || '',
+      };
+      const response = await axios.post(endpoint, data);
+      if (response?.data?.id)
+        newItem = {
+          ...newItem,
+          id: response?.data?.id,
+        };
       dispatch(
         setItemsById({
           ...itemsById,
@@ -256,38 +277,38 @@ const MainModal = (props: MainModalProps) => {
         }),
       );
       dispatch(buildRows(newItem.userIds));
-    } else if (currentTab == 1) {
-      const newItem: TimeOffItem = {
-        id: generateUUID(),
-        name: '',
-        startDate: timeOff?.startDate!,
-        endDate: timeOff?.endDate!,
-        userIds: timeOff?.assignees!,
-        hour: timeOff?.hourEachDay ?? 0,
-        isPlaceHolder: false,
-        reason: timeOff?.reason!,
-        note: allocation?.note,
-        isTentative: timeOff?.isTentative!,
-        type: 'timeOffItem',
-      };
-      dispatch(
-        setTimeOffItemsById({
-          ...timeOffItemsById,
-          [`${newItem.id}`]: newItem,
-        }),
-      );
-      dispatch(buildRows(newItem.userIds));
-    } else {
-      const newItem: StatusItem = {
+    } catch (err: any) {
+      console.log('ERROR: ', err.message);
+      enqueueErrorBar(err.message || '');
+    }
+  };
+
+  const createStatus = async () => {
+    try {
+      let newItem: StatusItem = {
         id: generateUUID(),
         name: status ? status.name : '',
         startDate: status?.startDate!,
         endDate: status?.endDate!,
-        userIds: [status?.assignee!],
+        userIds: [status?.assignee.id],
+        statusTypeId: status?.type,
         hour: 0,
         isPlaceHolder: true,
         type: 'statusItem',
       };
+      const endpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/status`;
+      const data = {
+        typeId: newItem.statusTypeId || '',
+        teamMemberId: newItem.userIds[0] || '',
+        startDate: dayjs(newItem.startDate || '').toISOString(),
+        endDate: dayjs(newItem.endDate || '').toISOString(),
+      };
+      const response = await axios.post(endpoint, data);
+      if (response?.data?.id)
+        newItem = {
+          ...newItem,
+          id: response?.data?.id,
+        };
       dispatch(
         setStatusItemsById({
           ...statusItemsById,
@@ -295,8 +316,63 @@ const MainModal = (props: MainModalProps) => {
         }),
       );
       dispatch(buildRows(newItem.userIds));
+    } catch (err: any) {
+      console.log('ERROR: ', err.message);
+      enqueueErrorBar(err.message || '');
     }
+  };
 
+  const createTimeOff = async () => {
+    try {
+      let newItem: TimeOffItem = {
+        id: generateUUID(),
+        name: '',
+        startDate: timeOff?.startDate!,
+        endDate: timeOff?.endDate!,
+        userIds: [timeOff?.assignees.id],
+        hour: timeOff?.hourEachDay ?? 0,
+        isPlaceHolder: false,
+        reason: timeOff?.reason!,
+        note: allocation?.note,
+        isTentative: timeOff?.isTentative!,
+        type: 'timeOffItem',
+      };
+      const endpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/time-offs`;
+      const data = {
+        typeId: newItem.reason?.id || '',
+        teamMemberId: newItem.userIds[0] || '',
+        startDate: dayjs(newItem.startDate || '').toISOString(),
+        endDate: dayjs(newItem.endDate || '').toISOString(),
+      };
+      const response = await axios.post(endpoint, data);
+      if (response?.data?.id) {
+        newItem = {
+          ...newItem,
+          id: response?.data?.id,
+          reason: newItem.reason?.label || '',
+        };
+      }
+      dispatch(
+        setTimeOffItemsById({
+          ...timeOffItemsById,
+          [`${newItem.id}`]: newItem,
+        }),
+      );
+      dispatch(buildRows(newItem.userIds));
+    } catch (err: any) {
+      console.log('ERROR: ', err.message);
+      enqueueErrorBar(err.message || '');
+    }
+  };
+
+  const handleSave = () => {
+    if (currentTab == 0) {
+      createAllocation();
+    } else if (currentTab == 1) {
+      createTimeOff();
+    } else {
+      createStatus();
+    }
     setIsOpen(false);
     reset();
   };

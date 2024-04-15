@@ -38,7 +38,6 @@ export const buildRows = createAsyncThunk(
   'schedule/buildRow',
   (rowIds: string[], { getState, dispatch }) => {
     const state: RootState = getState() as RootState;
-
     const { itemsById, timeOffItemsById, statusItemsById, rowMap, usersById } = state.general;
     const displayingWeeks = state.schedule.displayingWeeks;
     const isHiddenWeekend = state.settings.isHiddenWeekend;

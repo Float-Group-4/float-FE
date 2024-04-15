@@ -1,13 +1,13 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ProjectType } from '../../types/enums';
+import { axiosApi } from '@base/utils/axios/api';
 import {
   ProjectInfo,
   ProjectMileStone,
   ProjectTask,
   ProjectTeam,
 } from '@pages/HomePage/CreateProject/models';
-import { axiosApi } from '@base/utils/axios/api';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { HttpStatusCode } from 'axios';
+import { ProjectType } from '../../types/enums';
 
 export interface UserFilterValue {
   id: number;

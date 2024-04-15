@@ -9,7 +9,9 @@ import { StatusItem } from 'src/types/primitive/statusItem.interface';
 interface GeneralState {
   itemsById: Record<string, Item>;
   timeOffItemsById: Record<string, TimeOffItem>;
+  timeOffTypes: Record<string, any>;
   statusItemsById: Record<string, StatusItem>;
+  statusTypes: Record<string, any>;
   itemIdsByWeekIndex: Record<number, number[]>;
   usersById: Record<string, any>;
   rowMap: Record<string, any>;
@@ -24,55 +26,13 @@ interface GeneralState {
 }
 
 const initialState: GeneralState = {
-  itemsById: {
-    // item1: {
-    //   id: 'item1',
-    //   userIds: ['userId1'],
-    //   name: 'Item 1',
-    //   startDate: '2024-03-10',
-    //   endDate: '2024-03-12',
-    //   hour: 8,
-    //   isPlaceHolder: false,
-    //   type: 'item',
-    // },
-    // item2: {
-    //   id: 'item2',
-    //   userIds: ['userId2'],
-    //   name: 'Item 2',
-    //   startDate: '2024-03-25',
-    //   endDate: '2024-03-28',
-    //   hour: 10,
-    //   isPlaceHolder: false,
-    //   type: 'item',
-    // },
-    // item3: {
-    //   id: 'item3',
-    //   userIds: ['userId3'],
-    //   name: 'Item 3',
-    //   startDate: '2024-03-11',
-    //   endDate: '2024-03-14',
-    //   hour: 4,
-    //   isPlaceHolder: false,
-    //   type: 'item',
-    // },
-  },
+  itemsById: {},
   timeOffItemsById: {},
+  timeOffTypes: {},
   statusItemsById: {},
+  statusTypes: {},
   itemIdsByWeekIndex: {},
-  usersById: {
-    // userId1: {
-    //   id: 'userId1',
-    //   name: 'Nguyen Ngoc Quang',
-    // },
-    // userId2: {
-    //   id: 'userId2',
-    //   name: 'Ha Tuan Lam',
-    // },
-    // userId3: {
-    //   id: 'userId3',
-    //   name: 'Truong Gia Huy',
-    // },
-  },
+  usersById: {},
   rowMap: {},
   teamProjects: {},
   teamProjectTasks: {},
@@ -244,6 +204,15 @@ const generalSlice = createSlice({
     setTeamProjectTasks: (state, action) => {
       state.teamProjectTasks = action.payload;
     },
+
+    setTimeOffTypes: (state, action) => {
+      state.timeOffTypes = action.payload;
+    },
+
+    setStatusTypes: (state, action) => {
+      state.statusTypes = action.payload;
+    },
+
     resetData: (state) => {
       state = initialState;
     },
@@ -274,6 +243,8 @@ export const {
   setStatusItemsById,
   setTeamProjects,
   setTeamProjectTasks,
+  setTimeOffTypes,
+  setStatusTypes,
   resetData,
 } = generalSlice.actions;
 

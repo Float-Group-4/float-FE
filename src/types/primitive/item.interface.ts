@@ -22,6 +22,7 @@ export interface AllocationItem extends Item {
   endTime?: Date | number;
   id: string;
   projectId: string;
+  taskId?: string;
   taskType: string; // tentative, completed
   note?: string;
 }

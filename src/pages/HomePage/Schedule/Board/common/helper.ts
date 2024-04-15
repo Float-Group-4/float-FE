@@ -94,20 +94,15 @@ export const getHorizontalDimensions = (range?: any) => {
 
   const start = dayjs(from).diff(STARTING_POINT, 'days');
   const end = dayjs(to).diff(STARTING_POINT, 'days');
-  console.log(start, end);
-  const w = Math.abs(end - start) + 1;
 
-  console.log({
-    x: Math.min(start, end),
-    w: w,
-  });
+  const w = Math.abs(end - start) + 1;
 
   const dimension = {
     x: Math.min(start, end),
     w: w,
   };
   dimensionCache[key] = { ...dimension };
-  console.log(dimension);
+
   return dimension;
 };
 

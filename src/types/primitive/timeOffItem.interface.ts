@@ -18,7 +18,7 @@ export interface TimeOffItem extends Item {
   type: string;
   startTime?: Date | number;
   endTime?: Date | number;
-  reason: string; // reason for type off
+  reason: any; // reason for type off
   isTentative: boolean;
   note?: string;
 }
