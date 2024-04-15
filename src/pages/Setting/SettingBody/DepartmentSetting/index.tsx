@@ -28,21 +28,21 @@ interface Department {
   id: string;
   name: string;
   teamId: string;
+  isSubDepart: boolean;
 }
 
 const DepartmentSetting = () => {
+  const teamId = 'a12c6faa-13d4-444c-8231-ef10182f9258';
   const [isEmpty, setIsEmpty] = useState<boolean>(true);
   const [newDepartmentName, setNewDepartmentName] = useState<string>('');
-  const [data, setData] = useState<Department[] | null>([]);
+  const [data, setData] = useState<Department[]>([]);
   const [hoveredRowIndex, setHoveredRowIndex] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
   const [editModeDepart, setEditModeDepart] = useState<number[]>([]);
-
-  const teamId: string = '679f3ed5-2546-4e7e-b7ce-5755562a6b61';
+  const [editingDepart, setEditingDepart] = useState<Department[]>([]);
 
   useEffect(() => {
     fetchData();
-    console.log(data);
   }, [data]);
 
   const handleClose = (event: React.SyntheticEvent | Event, reason?: string) => {
@@ -68,11 +68,10 @@ const DepartmentSetting = () => {
 
   const isUniqueName = async (name: string): Promise<boolean> => {
     try {
-      // Fetch data
-      const response = await axios.get('http://localhost:4000/departments');
+      const response = await axios.get(`http://localhost:4000/departments/team/${teamId}`);
       const fetchedData: Department[] = response.data;
-
-      // Check uniqueness
+      console.log(fetchedData);
+      console.log(name);
       return fetchedData.every((item) => item.name !== name);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -90,7 +89,7 @@ const DepartmentSetting = () => {
       var newData: Department = {
         id: generateUUID(),
         name: newDepartmentName,
-
+        isSubDepart: true,
         teamId: teamId,
       };
       const response = await axios.post('http://localhost:4000/departments', newData);
@@ -111,7 +110,10 @@ const DepartmentSetting = () => {
   const fetchData = async () => {
     try {
       const response = await axios.get('http://localhost:4000/departments');
-      setData(response.data);
+      const newData: Department[] = response.data;
+      setData(newData);
+
+      if (editingDepart.length == 0) setEditingDepart(newData);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -132,11 +134,15 @@ const DepartmentSetting = () => {
 
   const handleSaveClick = async (index: number, newName: string) => {
     try {
+      if (!(await isUniqueName(newName))) {
+        setOpen(true);
+        return;
+      }
       const updatedData = data ? [...data] : [];
       const departmentToUpdate = updatedData[index];
       departmentToUpdate.name = newName;
 
-      const response = await axios.put(
+      const response = await axios.patch(
         `http://localhost:4000/departments/${departmentToUpdate.id}`,
         departmentToUpdate,
       );
@@ -215,9 +221,12 @@ const DepartmentSetting = () => {
                         <TableCell>
                           <TextField
                             fullWidth
-                            value={item.name}
+                            value={editingDepart[index].name}
                             onChange={(e) =>
-                              setData({ ...data, [index]: { ...item, name: e.target.value } })
+                              setEditingDepart({
+                                ...editingDepart,
+                                [index]: { ...editingDepart[index], name: e.target.value },
+                              })
                             }
                           ></TextField>
                         </TableCell>
@@ -225,7 +234,7 @@ const DepartmentSetting = () => {
                         <TableCell align='right' component='th' scope='row'>
                           <IconButton
                             aria-label='save'
-                            onClick={() => handleSaveClick(index, item.name)}
+                            onClick={() => handleSaveClick(index, editingDepart[index].name)}
                           >
                             <CheckIcon />
                           </IconButton>
