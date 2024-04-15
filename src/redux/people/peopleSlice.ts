@@ -7,6 +7,7 @@ import {
 } from '@pages/HomePage/AddPeople/models';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { HttpStatusCode } from 'axios';
+import { useParams } from 'react-router-dom';
 
 export interface UserFilterValue {
   id: number;
@@ -42,9 +43,11 @@ const initialState: PeopleState = {
   error: null,
 };
 
-export const fetchPeople = createAsyncThunk('people/fetchTeamMembers', async () => {
+export const fetchPeople = createAsyncThunk('people/fetchTeamMembers', async (teamId: String) => {
   try {
-    const response = await axiosApi.get(`${baseUrl}/team-members`);
+    let id = teamId ?? 'ad53cc61-a3dd-469f-98aa-ace14809239d';
+    const response = await axiosApi.get(`${baseUrl}/team-members/team/${id}`);
+    // console.log(response.data);
     return [...response.data];
   } catch (e: any) {
     return e.message;
@@ -117,17 +120,6 @@ export const deleteTeamMember = createAsyncThunk(
   'people/deleteTeamMember',
   async (personInfo: PersonInfo) => {
     try {
-      const data: PersonPostData = {
-        teamId: personInfo.teamId,
-        // access: personInfo.accountType,
-        email: personInfo.email ?? '',
-        hourlyRate: personInfo.hourlyRate ?? 0,
-        // roleId: personInfo.role ?? '',
-        // userId: personInfo.id,
-        name: personInfo.name,
-        // departmentId: personInfo.department ?? '',
-        type: personInfo.accountType.toLowerCase(),
-      };
       const response = await axiosApi.delete(`${baseUrl}/team-members/${personInfo.id}`);
       if (
         response.status == HttpStatusCode.Accepted ||
@@ -246,7 +238,7 @@ const peopleSlice = createSlice({
       }>,
     ) => {
       const { person } = action.payload;
-      var i = state.people.findIndex((e) => {
+      let i = state.people.findIndex((e) => {
         e.id == person.id;
       });
 
@@ -263,7 +255,6 @@ const peopleSlice = createSlice({
       .addCase(fetchPeople.fulfilled, (state, action) => {
         state.state = 'succeeded';
         const loadedTeamMembers = action.payload.map((teamMember: any) => {
-          // console.log(teamMember);
           const t: PersonInfo = {
             //department: teamMember.departmentId,
             department: 'it',

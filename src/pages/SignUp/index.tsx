@@ -13,7 +13,7 @@ import { SET_TIMEOUT } from '@base/config/constants';
 import MiModal from '@base/components/MiModal';
 import LoadingButton from '@base/components/LoadingButton';
 import { useAuthMutation } from '@hooks/useAuthMutation';
-import { queryKeys } from '@base/config/queryKeys';
+
 import signInBackgroundUrl from '@base/assets/imgs/signIn-background.svg';
 import { useNavigate } from 'react-router-dom';
 
@@ -23,8 +23,10 @@ const SignUp = (props: SignUpProps) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const layoutFields: string[] = [
-    keyNames.KEY_NAME_SIGN_UP_NAME,
+    keyNames.KEY_NAME_SIGN_UP_FIRST_NAME,
+    keyNames.KEY_NAME_SIGN_UP_LAST_NAME,
     keyNames.KEY_NAME_SIGN_UP_EMAIL,
     keyNames.KEY_NAME_SIGN_UP_PASSWORD,
   ];
@@ -46,7 +48,7 @@ const SignUp = (props: SignUpProps) => {
     mode: 'onChange',
   });
 
-  const { mSignIn } = useAuthMutation();
+  const { mSignUp } = useAuthMutation();
 
   //when submit error, call this
   const onError = (errors: any, e: any) => {
@@ -58,7 +60,7 @@ const SignUp = (props: SignUpProps) => {
     const params = getParams(formData);
     const parsedParams = finalizeParams(params); // define add or update here
 
-    mSignIn.mutate(parsedParams, {
+    mSignUp.mutate(parsedParams, {
       onSuccess(data, variables: any, context) {
         // setTimeout(() => {
         //   queryClient.invalidateQueries([queryKeys.requests]);
@@ -66,6 +68,7 @@ const SignUp = (props: SignUpProps) => {
 
         // onClose && onClose();
         reset && reset();
+        navigate('/sign-in');
       },
     });
   };
@@ -78,7 +81,7 @@ const SignUp = (props: SignUpProps) => {
         <LoadingButton
           size='large'
           variant='contained'
-          loading={mSignIn.isPending}
+          loading={mSignUp.isPending}
           onClick={() => {
             handleSubmit((data) => onSubmit(data), onError)();
           }}

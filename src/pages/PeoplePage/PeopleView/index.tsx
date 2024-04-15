@@ -23,6 +23,7 @@ import {
   selectAllPeople,
 } from '../../../redux/people/peopleSlice';
 import { PersonInfo } from '@pages/HomePage/AddPeople/models';
+import { useParams } from 'react-router-dom';
 
 // const CheckboxGroup = Checkbox.Group;
 
@@ -163,14 +164,16 @@ export default function PeopleView() {
   const peopleList = useAppSelector(selectAllPeople);
   const peopleStatus = useAppSelector(getPeopleStatus);
   const error = useAppSelector(getPeopleError);
+  const params = useParams();
+  const id = params.teamId ?? 'ad53cc61-a3dd-469f-98aa-ace14809239d';
 
   console.log(peopleList);
   console.log(peopleStatus);
   useEffect(() => {
     if (peopleStatus === 'idle') {
-      dispatch(fetchPeople());
+      dispatch(fetchPeople(id));
     }
-  }, [peopleStatus, dispatch]);
+  }, [peopleStatus, dispatch, id]);
 
   return (
     <div className='bg-white flex-1 h-full px-9 py-3'>

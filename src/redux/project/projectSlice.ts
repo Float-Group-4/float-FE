@@ -8,6 +8,7 @@ import {
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { HttpStatusCode } from 'axios';
 import { ProjectType } from '../../types/enums';
+import { useParams } from 'react-router-dom';
 
 export interface UserFilterValue {
   id: number;
@@ -46,9 +47,11 @@ interface ProjectApi {
   teamId: string;
 }
 
-export const fetchProjects = createAsyncThunk('project/fetchProjects', async () => {
+export const fetchProjects = createAsyncThunk('project/fetchProjects', async (teamId: String) => {
   try {
-    const response = await axiosApi.get(`${baseUrl}/projects`);
+    let id = teamId ?? 'ad53cc61-a3dd-469f-98aa-ace14809239d';
+
+    const response = await axiosApi.get(`${baseUrl}/projects/team/${id}`);
     return [...response.data];
   } catch (e: any) {
     return e.message;
@@ -281,7 +284,7 @@ const projectSlice = createSlice({
       }>,
     ) => {
       const { project, members, milestones, tasks } = action.payload;
-      var i = state.project.findIndex((e) => {
+      let i = state.project.findIndex((e) => {
         e.project.id == project.id;
       });
 

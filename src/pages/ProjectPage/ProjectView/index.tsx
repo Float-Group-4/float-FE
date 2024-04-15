@@ -22,6 +22,7 @@ import {
   getFetchProjectsStatus,
 } from '../../../redux/project/projectSlice';
 import { Edit, MarkunreadMailbox, Person } from '@mui/icons-material';
+import { useParams } from 'react-router-dom';
 
 const plainOptions = ['Active', 'Archived', 'My projects'];
 
@@ -160,11 +161,14 @@ export default function ProjectView() {
 
   const [selectedProject, setSelectedProject] = useState<Project[]>([]);
 
+  const params = useParams();
+  const id = params.teamId ?? 'ad53cc61-a3dd-469f-98aa-ace14809239d';
+
   useEffect(() => {
     if (projectState === 'idle') {
-      dispatch(fetchProjects());
+      dispatch(fetchProjects(id));
     }
-  }, [projectState, dispatch]);
+  }, [projectState, dispatch, id]);
 
   return (
     <div className='bg-white flex-1 h-full px-9 py-3'>

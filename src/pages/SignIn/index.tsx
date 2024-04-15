@@ -15,6 +15,11 @@ import { useNavigate } from 'react-router-dom';
 import { indigo } from '@mui/material/colors';
 import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
 import { clientId } from '@constants/oAuth2';
+import {
+  LOCAL_STORAGE_KEY_ACCESS_TOKEN,
+  LOCAL_STORAGE_KEY_REFRESH_TOKEN,
+} from '@configs/localStorage';
+import { useSnackBar } from '@base/hooks/useSnackbar';
 
 interface LoginProps {}
 
@@ -22,8 +27,9 @@ const Login = (props: LoginProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { enqueueSuccessBar, enqueueErrorBar } = useSnackBar();
   const layoutFields: string[] = [
-    keyNames.KEY_NAME_SIGN_IN_USERNAME,
+    keyNames.KEY_NAME_SIGN_IN_EMAIL,
     keyNames.KEY_NAME_SIGN_IN_PASSWORD,
   ];
 
@@ -44,7 +50,7 @@ const Login = (props: LoginProps) => {
     mode: 'onChange',
   });
 
-  const { mSignIn } = useAuthMutation();
+  const { mSignIn, mGoogleSignIn } = useAuthMutation();
 
   //when submit error, call this
   const onError = (errors: any, e: any) => {
@@ -55,17 +61,17 @@ const Login = (props: LoginProps) => {
   const onSubmit = async (formData: any) => {
     const params = getParams(formData);
     const parsedParams = finalizeParams(params); // define add or update here
-    navigate('/team');
-    mSignIn.mutate(parsedParams, {
-      onSuccess(data, variables: any, context) {
-        // setTimeout(() => {
-        //   queryClient.invalidateQueries([queryKeys.requests]);
-        // }, SET_TIMEOUT);
+    const res = await mSignIn.mutateAsync(parsedParams);
+    if (typeof res?.access_token == 'string' && typeof res?.refresh_token == 'string') {
+      enqueueSuccessBar('Sign in successfully');
 
-        // onClose && onClose();
-        reset && reset();
-      },
-    });
+      localStorage.setItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN, res?.access_token);
+      localStorage.setItem(LOCAL_STORAGE_KEY_REFRESH_TOKEN, res?.refresh_token);
+      navigate('/home');
+      reset && reset();
+    } else if (res?.error_description) {
+      enqueueErrorBar(res?.error_description);
+    }
   };
 
   const border = `1px solid ${theme.palette.divider}`;
@@ -119,25 +125,31 @@ const Login = (props: LoginProps) => {
           Continue with Google
         </button>
 
-        {/* <LoadingButton
-          size='large'
-          variant='contained'
-          loading={false}
-          color='error'
-          onClick={() => {
-            // handleSubmit((data) => onSubmit(data), onError)();
-          }}
-          sx={{ width: '100%', fontWeight: 500 }}
-        >
-          Login with google
-        </LoadingButton> */}
-
         <GoogleLogin
           clientId={clientId}
-          onSuccess={(response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-            console.log('🚀 ~ response:', response);
+          onSuccess={async (response: any) => {
+            if (response?.accessToken) {
+              const res: any = await mGoogleSignIn.mutateAsync({
+                token: response?.accessToken,
+              });
+              if (typeof res?.access_token == 'string' || typeof res?.refresh_token == 'string') {
+                localStorage.setItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN, res?.access_token);
+                localStorage.setItem(LOCAL_STORAGE_KEY_REFRESH_TOKEN, res?.refresh_token);
+                navigate('/home');
+                reset && reset();
+              }
+            }
           }}
           isSignedIn={true}
+          // render={(renderProps) => (
+          //   <Button
+          //     variant='outlined'
+          //     onClick={renderProps.onClick}
+          //     disabled={renderProps.disabled}
+          //   >
+          //     Sign in with google
+          //   </Button>
+          // )}
         />
 
         <Stack direction='row' spacing={1} mt={3}>
