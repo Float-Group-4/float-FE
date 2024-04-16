@@ -52,7 +52,7 @@ function NavBar() {
                   fontSize: '30px',
                 }}
               >
-                Float
+                Proma
               </Typography>
             </div>
 

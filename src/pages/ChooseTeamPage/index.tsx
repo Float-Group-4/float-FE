@@ -74,12 +74,7 @@ export default function ChooseTeamPage() {
       <nav className='flex-1 flex w-full relative items-center pt-2 px-4'>
         <div className='flex justify-between'>
           <div onClick={() => navigate('/')}>
-            <img
-              src='https://www.floatui.com/logo.svg'
-              width={120}
-              height={50}
-              alt='Float UI logo'
-            />
+            <h1 className='text-lg font-semibold'>Proma</h1>
           </div>
         </div>
         <ul className={`flex-1 gap-8 justify-end mt-12 md:text-md md:font-medium md:flex md:mt-0`}>

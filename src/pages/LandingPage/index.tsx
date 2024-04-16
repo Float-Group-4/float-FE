@@ -278,12 +278,7 @@ const LandingPage = () => {
         <div className='items-center px-4 max-w-screen-xl mx-auto md:flex md:px-8'>
           <div className='flex items-center justify-between py-3 md:py-5 md:block'>
             <div onClick={() => navigate('/')} className='hover:cursor-pointer'>
-              <img
-                src='https://www.floatui.com/logo.svg'
-                width={120}
-                height={50}
-                alt='Float UI logo'
-              />
+              <h1 className='text-lg font-semibold'>Proma</h1>
             </div>
             <div className='md:hidden'>
               <button
@@ -572,7 +567,7 @@ const LandingPage = () => {
         <div className='gap-6 justify-between md:flex'>
           <div className='flex-1'>
             <div className='max-w-xs'>
-              <img src='https://www.floatui.com/logo.svg' className='w-32' />
+              <h1 className='text-lg font-semibold'>Proma</h1>
               <p className='leading-relaxed mt-2 text-sm'>
                 Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
               </p>
