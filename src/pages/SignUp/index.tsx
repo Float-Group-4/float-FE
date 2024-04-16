@@ -56,7 +56,17 @@ const SignUp = (props: SignUpProps) => {
   //submit form
   const onSubmit = async (formData: any) => {
     const params = getParams(formData);
-    const parsedParams = finalizeParams(params); // define add or update here
+    let parsedParams: any = finalizeParams(params); // define add or update here
+    console.log(parsedParams);
+    const name: string = (parsedParams.name || '').split(' ');
+    const firstName = name[name.length - 1];
+    const lastName = name[0];
+    parsedParams = {
+      ...parsedParams,
+      firstName: firstName,
+      lastName: lastName,
+    };
+    console.log(parsedParams);
 
     mSignUp.mutate(parsedParams, {
       onSuccess(data, variables: any, context) {

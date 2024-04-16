@@ -56,43 +56,7 @@ export const routes: RouteObject[] = [
         element: <TutorialPage />,
       },
       {
-        path: 'home',
-        element: <HomePage />,
-      },
-      {
-        path: 'people',
-        element: <PeoplePage />,
-      },
-      {
-        path: 'project',
-        element: <ProjectPage />,
-      },
-      {
-        path: 'report',
-        element: <Report />,
-      },
-      {
-        path: 'sign-in',
-        element: <SignIn />,
-      },
-      {
-        path: 'sign-up',
-        element: <SignUp />,
-      },
-      {
-        path: 'recover-password',
-        element: <RecoverPassword />,
-      },
-      {
-        path: 'create-team',
-        element: <CreateTeamPage />,
-      },
-      {
-        path: 'team-setup',
-        element: <TeamSetup />,
-      },
-      {
-        path: 'admin',
+        path: '/team/:teamId/admin',
         element: <SettingsPage />,
         children: [
           {
@@ -132,6 +96,42 @@ export const routes: RouteObject[] = [
             element: <TagSetting />,
           },
         ],
+      },
+      {
+        path: 'home',
+        element: <HomePage />,
+      },
+      {
+        path: 'people',
+        element: <PeoplePage />,
+      },
+      {
+        path: 'project',
+        element: <ProjectPage />,
+      },
+      {
+        path: 'report',
+        element: <Report />,
+      },
+      {
+        path: 'sign-in',
+        element: <SignIn />,
+      },
+      {
+        path: 'sign-up',
+        element: <SignUp />,
+      },
+      {
+        path: 'recover-password',
+        element: <RecoverPassword />,
+      },
+      {
+        path: 'create-team',
+        element: <CreateTeamPage />,
+      },
+      {
+        path: 'team-setup',
+        element: <TeamSetup />,
       },
     ],
   },

@@ -1,4 +1,5 @@
 import { useSnackBar } from '@base/hooks/useSnackbar';
+import { LOCAL_STORAGE_KEY_ACCESS_TOKEN } from '@configs/localStorage';
 import { AddOutlined, KeyboardArrowDown, SettingsOutlined } from '@mui/icons-material';
 import {
   Button,
@@ -44,7 +45,16 @@ const SettingButton = (props: SettingButtonProps) => {
 
   const fetchTeams = async () => {
     // Get UserId
-    const userId = '84803dd9-a9f7-4d00-9580-bb0c07043700';
+    const token = localStorage.getItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN);
+    if (!token) return enqueueErrorBar('Token not found');
+    const userInfoEndpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/auth/user-info`;
+    const userInfoRes = await axios.get(userInfoEndpoint, {
+      params: {
+        token: token,
+      },
+    });
+    const userInfo = userInfoRes.data;
+    const userId = userInfo.id;
     // Fetch Init Team Data
     try {
       const endpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/team/user/${userId}`;
@@ -100,7 +110,7 @@ const SettingButton = (props: SettingButtonProps) => {
         }}
       >
         <MenuList sx={{ px: 1 }}>
-          <MenuItem onClick={() => navigate('/admin/general')}>
+          <MenuItem onClick={() => navigate(`team/${teamId}/admin/general`)}>
             <ListItemIcon>
               <SettingsOutlined fontSize='small' />
             </ListItemIcon>

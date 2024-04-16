@@ -65,7 +65,7 @@ const Login = (props: LoginProps) => {
     if (typeof res?.access_token == 'string' && typeof res?.refresh_token == 'string') {
       localStorage.setItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN, res?.access_token);
       localStorage.setItem(LOCAL_STORAGE_KEY_REFRESH_TOKEN, res?.refresh_token);
-      navigate('/home');
+      navigate('/team');
       reset && reset();
     }
   };

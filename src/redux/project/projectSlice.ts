@@ -8,7 +8,6 @@ import {
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { HttpStatusCode } from 'axios';
 import { ProjectType } from '../../types/enums';
-import { useParams } from 'react-router-dom';
 
 export interface UserFilterValue {
   id: number;

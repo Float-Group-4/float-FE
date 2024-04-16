@@ -1,4 +1,5 @@
 import { useSnackBar } from '@base/hooks/useSnackbar';
+import { LOCAL_STORAGE_KEY_ACCESS_TOKEN } from '@configs/localStorage';
 import GroupAddOutlinedIcon from '@mui/icons-material/GroupAddOutlined';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -21,10 +22,19 @@ export default function ChooseTeamPage() {
   const [inactiveTeams, setInactiveTeams] = useState<Team[]>([]);
 
   const fetchTeams = async () => {
-    // Get UserId
-    const userId = '84803dd9-a9f7-4d00-9580-bb0c07043700';
-    // Fetch Init Team Data
     try {
+      // Get UserId
+      const token = localStorage.getItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN);
+      if (!token) return enqueueErrorBar('Token not found');
+      const userInfoEndpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/auth/user-info`;
+      const userInfoRes = await axios.get(userInfoEndpoint, {
+        params: {
+          token: token,
+        },
+      });
+      const userInfo = userInfoRes.data;
+      const userId = userInfo.id;
+      // Fetch Init Team Data
       const endpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/team/user/${userId}`;
       const res = await axios.get(endpoint);
       const teams = res.data;
@@ -121,7 +131,7 @@ export default function ChooseTeamPage() {
               flexBasis: 'calc(33.33333% - 1rem)',
             }}
             onClick={() => {
-              navigate('/sign-up');
+              navigate('/create-team');
             }}
           >
             <GroupAddOutlinedIcon className='text-6xl m-2' />

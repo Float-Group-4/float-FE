@@ -119,6 +119,7 @@ export const deleteTeamMember = createAsyncThunk(
   'people/deleteTeamMember',
   async (personInfo: PersonInfo) => {
     try {
+      console.log(personInfo.id);
       const response = await axiosApi.delete(`${baseUrl}/team-members/${personInfo.id}`);
       if (
         response.status == HttpStatusCode.Accepted ||
@@ -253,6 +254,7 @@ const peopleSlice = createSlice({
       .addCase(fetchPeople.fulfilled, (state, action) => {
         state.state = 'succeeded';
         const loadedTeamMembers = action.payload.map((teamMember: any) => {
+          console.log(teamMember);
           const t: PersonInfo = {
             //department: teamMember.departmentId,
             department: 'it',
@@ -271,7 +273,7 @@ const peopleSlice = createSlice({
               endDate: new Date().toDateString(),
               workingType: WorkingType.fullTime,
               publicHoliday: 'Summer',
-              note: 'I am a w hihihi',
+              note: 'Note',
             },
           };
           return t;

@@ -23,6 +23,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import { generateUUID } from '@base/utils/uuid';
+import { useParams } from 'react-router-dom';
 
 interface Department {
   id: string;
@@ -32,7 +33,8 @@ interface Department {
 }
 
 const DepartmentSetting = () => {
-  const teamId = 'a12c6faa-13d4-444c-8231-ef10182f9258';
+  const params = useParams();
+  const teamId = params.teamId || '';
   const [isEmpty, setIsEmpty] = useState<boolean>(true);
   const [newDepartmentName, setNewDepartmentName] = useState<string>('');
   const [data, setData] = useState<Department[]>([]);
@@ -68,7 +70,9 @@ const DepartmentSetting = () => {
 
   const isUniqueName = async (name: string): Promise<boolean> => {
     try {
-      const response = await axios.get(`http://localhost:4000/departments/team/${teamId}`);
+      const response = await axios.get(
+        `${import.meta.env.VITE_FRONTEND_BASE_URL}/departments/team/${teamId}`,
+      );
       const fetchedData: Department[] = response.data;
       console.log(fetchedData);
       console.log(name);
@@ -92,7 +96,10 @@ const DepartmentSetting = () => {
         isSubDepart: true,
         teamId: teamId,
       };
-      const response = await axios.post('http://localhost:4000/departments', newData);
+      const response = await axios.post(
+        `${import.meta.env.VITE_FRONTEND_BASE_URL}/departments`,
+        newData,
+      );
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -101,7 +108,9 @@ const DepartmentSetting = () => {
   const handleDeleteClick = async (item: Department) => {
     try {
       var itemId = item.id;
-      const response = await axios.delete(`http://localhost:4000/departments/${itemId}`);
+      const response = await axios.delete(
+        `${import.meta.env.VITE_FRONTEND_BASE_URL}/departments/${itemId}`,
+      );
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -109,7 +118,7 @@ const DepartmentSetting = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get('http://localhost:4000/departments');
+      const response = await axios.get(`${import.meta.env.VITE_FRONTEND_BASE_URL}/departments`);
       const newData: Department[] = response.data;
       setData(newData);
 
@@ -143,7 +152,7 @@ const DepartmentSetting = () => {
       departmentToUpdate.name = newName;
 
       const response = await axios.patch(
-        `http://localhost:4000/departments/${departmentToUpdate.id}`,
+        `${import.meta.env.VITE_FRONTEND_BASE_URL}/departments/${departmentToUpdate.id}`,
         departmentToUpdate,
       );
       updatedData[index] = response.data;

@@ -1,4 +1,4 @@
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { Box, Button, Stack, Typography, useTheme } from '@mui/material';
@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import WriteFields from './WriteFields';
 import writeConfig from './config';
 import * as keyNames from './config/keyNames';
+import { LOCAL_STORAGE_KEY_ACCESS_TOKEN } from '@configs/localStorage';
 
 interface CreateTeamProps {}
 
@@ -21,6 +22,30 @@ const CreateTeam = (props: CreateTeamProps) => {
   const navigate = useNavigate();
   const { enqueueSuccessBar, enqueueErrorBar } = useSnackBar();
   const layoutFields: string[] = [keyNames.KEY_NAME_TEAMNAME];
+  const [userInfo, setUserInfo] = useState<any>({});
+
+  const getUserInfo = async () => {
+    try {
+      // Get UserId
+      const token = localStorage.getItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN);
+      if (!token) return enqueueErrorBar('Token not found');
+      const userInfoEndpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/auth/user-info`;
+      const userInfoRes = await axios.get(userInfoEndpoint, {
+        params: {
+          token: token,
+        },
+      });
+      const userInfo = userInfoRes.data;
+      setUserInfo(userInfo);
+    } catch (err: any) {
+      console.log('ERROR: ', err.message);
+      enqueueErrorBar(err.message || '');
+    }
+  };
+
+  useEffect(() => {
+    getUserInfo();
+  }, []);
 
   const { fields, defaultValues, getParams } = getWriteForm(layoutFields, writeConfig);
 
@@ -47,9 +72,11 @@ const CreateTeam = (props: CreateTeamProps) => {
   //submit form
   const onSubmit = async (formData: any) => {
     try {
-      const params = getParams(formData);
-      const userId = '84803dd9-a9f7-4d00-9580-bb0c07043700';
-      const userName = 'Quang Nguyen';
+      // Get UserId
+
+      const userId = userInfo.id;
+      const userName = userInfo.name;
+
       //   Create new team
       const createTeamEndpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/team`;
       const resultCreateTeam = await axios.post(createTeamEndpoint, formData);
@@ -99,10 +126,10 @@ const CreateTeam = (props: CreateTeamProps) => {
 
           <Stack direction='row' alignItems='center' spacing={2}>
             <Typography sx={{ fontSize: 14, fontWeight: 500 }}>
-              Signing up as Quang Nguyen
+              {`Signing up as ${userInfo.name || ''}`}
             </Typography>
             <button
-              onClick={() => navigate('/sign-up')}
+              onClick={() => navigate('/sign-in')}
               className='px-4 py-2 text-blue-600 font-medium bg-blue-100 rounded-lg duration-150 hover:bg-blue-600 hover:text-white active:bg-blue-700'
             >
               Start Over
