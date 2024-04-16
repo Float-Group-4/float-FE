@@ -9,10 +9,10 @@ const StepOne = () => {
   const teamSizeOptions = ['1-9', '10-24', '24-49', '50+'];
 
   const userTypeOptions = [
-    { primary: 'New to Float', secondary: 'Guide my setup' },
+    { primary: 'New to Proma', secondary: 'Guide my setup' },
     { primary: 'Need an expert', secondary: 'A team member will email you' },
     {
-      primary: 'Already use Float',
+      primary: 'Already use Proma',
       secondary: "I know what i'm doing",
     },
   ];
@@ -41,7 +41,7 @@ const StepOne = () => {
         How many people are you scheduling?
       </Typography>
       <RadioGroup defaultValue={teamSizeOptions[0]} value={teamSizeBorder} onChange={handleChange1}>
-        <List  
+        <List
           sx={{
             display: 'flex',
             flexDirection: 'row',

@@ -1,9 +1,5 @@
-import {
-  TextField,
-} from '@mui/material';
-import {
-  Typography,
-} from '@mui/material';
+import { TextField } from '@mui/material';
+import { Typography } from '@mui/material';
 
 interface StepTwoProps {
   projectName: string;
@@ -16,7 +12,7 @@ const StepTwo: React.FC<StepTwoProps> = ({ projectName, setProjectName }) => {
         Add your first project
       </Typography>
       <Typography variant='body1' gutterBottom sx={{ marginLeft: '10px', marginBottom: '6%' }}>
-        Use this project to learn how Float works. You can add more details later.{' '}
+        Use this project to learn how Proma works. You can add more details later.{' '}
       </Typography>
       <Typography sx={{ marginLeft: '10px' }} variant='body2'>
         Project Name

@@ -25,7 +25,7 @@ const Header = (props: HeaderProps) => {
 
       {isSignIn ? (
         <Stack direction='row' alignItems='center' spacing={2}>
-          <Typography sx={{ fontSize: 14, fontWeight: 500 }}>New to Float?</Typography>
+          <Typography sx={{ fontSize: 14, fontWeight: 500 }}>New to Proma?</Typography>
           <Button onClick={() => navigate('sign-up')} variant='outlined' sx={{ fontWeight: 500 }}>
             Sign Up
           </Button>
@@ -33,7 +33,7 @@ const Header = (props: HeaderProps) => {
       ) : (
         <Stack direction='row' alignItems='center' spacing={2}>
           <Typography sx={{ fontSize: 14, fontWeight: 500 }}>
-            Already have a Float account?
+            Already have a Proma account?
           </Typography>
           <Button onClick={() => navigate('sign-in')} variant='outlined' sx={{ fontWeight: 500 }}>
             Sign In
