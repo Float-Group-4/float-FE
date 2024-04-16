@@ -169,11 +169,12 @@ export interface Allocation {
   startTime?: Date | number;
   endTime?: Date | number;
   id: string;
-  projectId: string;
+  projectId: any;
+  taskId?: any;
   userId: string;
   type: string; // tentative, completed
   note: string;
-  assignees: string[];
+  assignees: any;
 }
 
 export interface TimeOff {
@@ -185,10 +186,10 @@ export interface TimeOff {
   id: string;
   userId: string;
   isTentative: boolean;
-  reason: string;
+  reason: any;
   note: string;
   name: string;
-  assignees: string[];
+  assignees: any;
 }
 
 export interface Status {
@@ -196,5 +197,6 @@ export interface Status {
   endDate: string;
   type: string;
   name: string;
-  assignee: string;
+  color?: string;
+  assignee: any;
 }

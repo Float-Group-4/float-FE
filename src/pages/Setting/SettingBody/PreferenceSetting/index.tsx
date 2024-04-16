@@ -44,7 +44,7 @@ interface Preference {
 
 const PreferenceSetting = () => {
   const userId = 'cf428502-1658-4fd1-b402-d06251d2a38d';
-  const baseURL = 'http://localhost:4000';
+  const baseURL = import.meta.env.VITE_FRONTEND_BASE_URL;
   const [data, setData] = useState<Preference>();
   const [timeZone, setTimeZone] = useState('');
   const [startOfWeek, setStartOfWeek] = useState('Monday');
@@ -251,6 +251,7 @@ const PreferenceSetting = () => {
           <List>
             {dayOfWeek.map((value, index) => (
               <ListItem
+                key={index}
                 sx={{
                   bgcolor: index % 2 == 0 ? '#EFEFEF' : 'inherit',
                   display: 'flex',

@@ -1,12 +1,12 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { axiosApi } from '@base/utils/axios/api';
 import {
   AccountType,
   ContractType,
   PersonInfo,
   WorkingType,
 } from '@pages/HomePage/AddPeople/models';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { HttpStatusCode } from 'axios';
-import { axiosApi } from '@base/utils/axios/api';
 import { useParams } from 'react-router-dom';
 
 export interface UserFilterValue {
@@ -47,7 +47,6 @@ export const fetchPeople = createAsyncThunk('people/fetchTeamMembers', async (te
   try {
     let id = teamId ?? 'ad53cc61-a3dd-469f-98aa-ace14809239d';
     const response = await axiosApi.get(`${baseUrl}/team-members/team/${id}`);
-    // console.log(response.data);
     return [...response.data];
   } catch (e: any) {
     return e.message;
@@ -120,6 +119,7 @@ export const deleteTeamMember = createAsyncThunk(
   'people/deleteTeamMember',
   async (personInfo: PersonInfo) => {
     try {
+      console.log(personInfo.id);
       const response = await axiosApi.delete(`${baseUrl}/team-members/${personInfo.id}`);
       if (
         response.status == HttpStatusCode.Accepted ||
@@ -228,7 +228,6 @@ const peopleSlice = createSlice({
       }>,
     ) => {
       const { person } = action.payload;
-      console.log(person);
       state.people = [person, ...state.people];
     },
     updatePeople: (
@@ -255,6 +254,7 @@ const peopleSlice = createSlice({
       .addCase(fetchPeople.fulfilled, (state, action) => {
         state.state = 'succeeded';
         const loadedTeamMembers = action.payload.map((teamMember: any) => {
+          console.log(teamMember);
           const t: PersonInfo = {
             //department: teamMember.departmentId,
             department: 'it',
@@ -273,7 +273,7 @@ const peopleSlice = createSlice({
               endDate: new Date().toDateString(),
               workingType: WorkingType.fullTime,
               publicHoliday: 'Summer',
-              note: 'I am a w hihihi',
+              note: 'Note',
             },
           };
           return t;
@@ -320,15 +320,14 @@ const peopleSlice = createSlice({
       .addCase(deleteTeamMember.fulfilled, (state, action) => {
         state.state = 'succeeded';
         const deletedPerson = action.payload;
-        if(deletedPerson != null){
-          state.people = state.people.filter(person => person.id !== deletedPerson.id);
+        if (deletedPerson != null) {
+          state.people = state.people.filter((person) => person.id !== deletedPerson.id);
         }
       })
       .addCase(deleteTeamMember.rejected, (state, action) => {
         state.state = 'failed';
         state.error = action.error.message;
-      })
-      ;
+      });
   },
 });
 

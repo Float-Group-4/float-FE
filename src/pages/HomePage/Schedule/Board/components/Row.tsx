@@ -23,7 +23,7 @@ export default memo(function Row({ userId, className }: { userId: string; classN
     hoverRef,
     rowHoverId,
     addItemModalRef,
-    mainModalRef
+    mainModalRef,
   } = useScheduleContext();
   const rowRef = useRef<HTMLDivElement>(null);
   const itemActivity = useAppSelector((state) => state.activity.itemActivity);
@@ -73,11 +73,9 @@ export default memo(function Row({ userId, className }: { userId: string; classN
       setIsCreating(true);
       const handleMouseUp = () => {
         setIsCreating(false);
-        console.log('Up');
         // Open Add Item Modal
         //addItemModalRef.current.openAddItemModal({ dragInfo: dragInfo.current });
-
-        mainModalRef.current.openMainModal({dragInfo: dragInfo.current});
+        mainModalRef.current.openMainModal({ dragInfo: dragInfo.current });
         dragInfo.current = {};
         document.body.removeEventListener('mouseup', handleMouseUp);
         document.body.removeEventListener('mouseleave', handleMouseUp);
@@ -88,8 +86,6 @@ export default memo(function Row({ userId, className }: { userId: string; classN
     }
   };
 
-  useEffect(() => console.log(rowMap), [null]);
-  console.log(useAppSelector((state) => state.general));
   return (
     <VisibilitySensor partialVisibility>
       {({ isVisible }: { isVisible: boolean }) => {
@@ -149,21 +145,21 @@ export default memo(function Row({ userId, className }: { userId: string; classN
                       height: `${rowHeight + 1 - (isWorkloadMode ? WORKLOAD_ROW_HEIGHT : 0)}px`,
                     }}
                   >
-                    {rowMap.timeOffItems.map((id: string) => {
+                    {rowMap.timeOffItems?.map((id: string) => {
                       return (
                         <div key={id} className='timeoff'>
                           <TimeOffItemCard id={id} rowId={id} />
                         </div>
                       );
                     })}
-                    {rowMap.statusItems.map((id: string) => {
+                    {rowMap.statusItems?.map((id: string) => {
                       return (
-                        <div className='status'>
+                        <div key={id} className='status'>
                           <StatusMark key={id} id={id} />
                         </div>
                       );
                     })}
-                    {rowMap.items.map((id: string) => {
+                    {rowMap.items?.map((id: string) => {
                       return <ItemCard key={id} id={id} rowId={rowMap.id} />;
                     })}
                     {rowMap.dayCell &&

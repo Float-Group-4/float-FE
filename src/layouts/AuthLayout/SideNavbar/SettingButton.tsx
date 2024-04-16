@@ -1,3 +1,5 @@
+import { useSnackBar } from '@base/hooks/useSnackbar';
+import { LOCAL_STORAGE_KEY_ACCESS_TOKEN } from '@configs/localStorage';
 import { AddOutlined, KeyboardArrowDown, SettingsOutlined } from '@mui/icons-material';
 import {
   Button,
@@ -11,17 +13,24 @@ import {
   useTheme,
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
+import { Team } from '@pages/ChooseTeamPage';
 import TeamSetupModal from '@pages/TeamSetupModal';
-import React, { useState } from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useParams } from 'react-router-dom';
 
 interface SettingButtonProps {}
 
 const SettingButton = (props: SettingButtonProps) => {
   const theme = useTheme();
+  const params = useParams();
+  const teamId = params.teamId;
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null);
   const [openCreateTeam, setOpenCreateTeam] = useState<boolean>(false);
+  const [teams, setTeams] = useState<Team[]>([]);
+  const { enqueueErrorBar } = useSnackBar();
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -33,6 +42,49 @@ const SettingButton = (props: SettingButtonProps) => {
 
   const open = Boolean(anchorEl);
   const id = open ? 'simple-popover' : undefined;
+
+  const fetchTeams = async () => {
+    // Get UserId
+    const token = localStorage.getItem(LOCAL_STORAGE_KEY_ACCESS_TOKEN);
+    if (!token) return enqueueErrorBar('Token not found');
+    const userInfoEndpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/auth/user-info`;
+    const userInfoRes = await axios.get(userInfoEndpoint, {
+      params: {
+        token: token,
+      },
+    });
+    const userInfo = userInfoRes.data;
+    const userId = userInfo.id;
+    // Fetch Init Team Data
+    try {
+      const endpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/team/user/${userId}`;
+      const res = await axios.get(endpoint);
+      const teams = res.data;
+      const result = await Promise.all(
+        teams.map(async (team: any) => {
+          const fetchTeamMemberEndpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/team-members/team/${team.id}`;
+          const fetchTeamProjectEndpoint = `${import.meta.env.VITE_FRONTEND_BASE_URL}/projects/team/${team.id}`;
+          const teamMemberRes = await axios.get(fetchTeamMemberEndpoint);
+          const teamProjectRes = await axios.get(fetchTeamProjectEndpoint);
+          return {
+            ...team,
+            totalPeople: teamMemberRes.data.length,
+            totalProject: teamProjectRes.data.length,
+          };
+        }),
+      );
+      const activeTeams: any[] = result.filter((team) => !team.archived);
+      setTeams(activeTeams);
+    } catch (err: any) {
+      console.log('ERROR: ', err.message);
+      enqueueErrorBar(err.message || '');
+    }
+  };
+
+  useEffect(() => {
+    if (!open) return;
+    fetchTeams();
+  }, [open]);
 
   return (
     <>
@@ -58,7 +110,7 @@ const SettingButton = (props: SettingButtonProps) => {
         }}
       >
         <MenuList sx={{ px: 1 }}>
-          <MenuItem onClick={() => navigate('/admin/general')}>
+          <MenuItem onClick={() => navigate(`team/${teamId}/admin/general`)}>
             <ListItemIcon>
               <SettingsOutlined fontSize='small' />
             </ListItemIcon>
@@ -66,6 +118,18 @@ const SettingButton = (props: SettingButtonProps) => {
               Team Setting
             </Typography>
           </MenuItem>
+          <Divider />
+          {teams.map((team: any) => {
+            return (
+              <a href={`/team/${team.id}/home`}>
+                <MenuItem selected={team.id == teamId}>
+                  <Typography variant='inherit' noWrap>
+                    {team.name}
+                  </Typography>
+                </MenuItem>
+              </a>
+            );
+          })}
           <Divider />
           <MenuItem onClick={() => setOpenCreateTeam(true)}>
             <ListItemIcon>
@@ -82,8 +146,6 @@ const SettingButton = (props: SettingButtonProps) => {
         <TeamSetupModal
           isOpen={openCreateTeam}
           onClose={() => {
-            console.log('Click!');
-
             setOpenCreateTeam(false);
           }}
         />

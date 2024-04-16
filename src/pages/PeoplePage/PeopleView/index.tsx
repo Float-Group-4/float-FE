@@ -50,7 +50,6 @@ function CheckboxGroup() {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const onChange = (checked: boolean, index: number) => {
-    console.log('checkedList', checkedList);
     checkedList[index] = checked;
     setFilterString(
       plainOptions
@@ -167,8 +166,6 @@ export default function PeopleView() {
   const params = useParams();
   const id = params.teamId ?? 'ad53cc61-a3dd-469f-98aa-ace14809239d';
 
-  console.log(peopleList);
-  console.log(peopleStatus);
   useEffect(() => {
     if (peopleStatus === 'idle') {
       dispatch(fetchPeople(id));

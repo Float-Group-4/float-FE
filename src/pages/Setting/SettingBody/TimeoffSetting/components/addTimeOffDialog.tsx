@@ -44,7 +44,7 @@ interface MyDialogProps {
 }
 
 const AddTimeOffDialog = ({ teamId, open, onClose }: MyDialogProps) => {
-  const baseURL = 'http://localhost:4000';
+  const baseURL = import.meta.env.VITE_FRONTEND_BASE_URL;
   const [data, setData] = useState<TimeOffTypeSetting>();
   const [name, setName] = useState<string>('');
   const [color, setColor] = useState<string>('#FF0000');

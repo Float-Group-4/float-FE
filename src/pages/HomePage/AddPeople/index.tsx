@@ -235,7 +235,7 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
     workingType: WorkingType.partTime,
   };
   let isUpdate = info != null;
-  
+
   const params = useParams();
   const teamId = params.teamId;
 
@@ -277,7 +277,8 @@ const AddPeopleModal = (props: AddPeopleModalProps) => {
   const [personInfoData, setPersonInfoData] = useState<PersonInfo>(sampleData);
 
   const handleSave = () => {
-    dispatch(postNewPeople({ ...personInfoData, id: generateUUID() }));
+    // dispatch(addPeople({ person: { ...personInfoData, id: generateUUID() } }));
+    dispatch(postNewPeople({ ...personInfoData }));
     setIsOpen(false);
   };
 

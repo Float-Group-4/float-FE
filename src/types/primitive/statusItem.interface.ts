@@ -2,6 +2,7 @@ import { Item } from './item.interface';
 
 export interface StatusItem extends Item {
   id: string;
+  statusTypeId?: string;
   name: string;
   userIds: string[];
   startDate: string;

@@ -14,8 +14,22 @@ const Layouts = (props: LayoutsProps) => {
   const isSignIn = useMatch('sign-in');
   const isSignUp = useMatch('sign-up');
   const isLanding = useMatch('');
+  const isChooseTeam = useMatch('team');
+  const isRecoverPassword = useMatch('recover-password');
+  const isCreateTeam = useMatch('create-team');
+  const isTutorial = useMatch('team/:teamId/tutorial');
 
-  return <>{isSignIn || isSignUp || isLanding ? <NotAuthLayout /> : <AuthLayout />}</>;
+  return (
+    <>
+      {isLanding || isChooseTeam || isCreateTeam || isTutorial ? (
+        <Outlet />
+      ) : isSignIn || isSignUp || isRecoverPassword ? (
+        <NotAuthLayout />
+      ) : (
+        <AuthLayout />
+      )}
+    </>
+  );
 };
 
 export default Layouts;

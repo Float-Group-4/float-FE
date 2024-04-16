@@ -15,9 +15,10 @@ import {
   Select,
   MenuItem,
   OutlinedInput,
+  Tooltip,
 } from '@mui/material';
 import { LocalizationProvider, TimeField } from '@mui/x-date-pickers';
-import { ChangeEvent, SetStateAction, useEffect, useState } from 'react';
+import { ChangeEvent, SetStateAction, useEffect, useMemo, useState } from 'react';
 import { Allocation } from '../../common/type';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useScheduleContext } from '@pages/HomePage/Schedule/ScheduleContext';
@@ -28,8 +29,35 @@ import { isWeekend } from '../../../../../../utilities/date';
 const AllocationTab = () => {
   const { allocation, setAllocation } = useScheduleContext();
   const usersByIds = useAppSelector((state) => state.general.usersById);
+  const teamProjects = useAppSelector((state) => state.general.teamProjects);
+  const teamProjectTasks = useAppSelector((state) => state.general.teamProjectTasks);
 
-  const projects = ['project1', 'project2']
+  const projects = useMemo(() => {
+    const result = (Object.values(teamProjects) || []).map((project) => {
+      return {
+        label: project.name,
+        id: project.id,
+      };
+    });
+    return result;
+  }, [teamProjects]);
+
+  const userOptions = useMemo(() => {
+    const optionsObj = (Object.values(usersByIds) || []).map((user: any) => {
+      return { label: user.name, id: user.id };
+    });
+    return optionsObj;
+  }, [usersByIds]);
+
+  const projectTasks = useMemo(() => {
+    if (!allocation?.projectId?.id || !teamProjectTasks[`${allocation?.projectId?.id}`]) return [];
+    const result = teamProjectTasks[`${allocation.projectId.id}`].map(
+      (task: { id: string; name: string; projectId: string }) => {
+        return { label: task.name, id: task.id };
+      },
+    );
+    return result;
+  }, [allocation?.projectId]);
 
   const [isSpecificTime, setIsSpecificTime] = useState<boolean>(
     allocation?.endTime != null && allocation?.startTime != null,
@@ -44,7 +72,6 @@ const AllocationTab = () => {
       const differenceMs = Math.abs(endDateObj.diff(startDateObj, 'millisecond'));
       const differenceDays = Math.ceil(differenceMs / (1000 * 60 * 60 * 24));
       setDiffDay(differenceDays);
-      console.log(differenceDays);
     }
   }, [allocation?.startDate, allocation?.endDate]);
 
@@ -52,11 +79,11 @@ const AllocationTab = () => {
     const inputValue = e.target.value.trim();
     let value: number;
     if (inputValue === '') {
-      value = 0.1;
+      value = 1;
     } else {
       value = parseFloat(inputValue);
       if (isNaN(value) || value <= 0 || value > 24) {
-        value = 0.1;
+        value = 1;
       }
     }
 
@@ -153,12 +180,20 @@ const AllocationTab = () => {
                 <Stack direction='row' justifyItems='left' spacing={2}>
                   <FormControl>
                     <Typography>Hours/day</Typography>
-                    <TextField variant='standard' value={allocation?.hourEachDay} name='time' onChange={handleTime} />
+                    <TextField
+                      variant='standard'
+                      value={allocation?.hourEachDay}
+                      name='time'
+                      onChange={handleTime}
+                    />
                   </FormControl>
                   {diffDay > 1 && (
                     <FormControl>
                       <Typography>Total hours</Typography>
-                      <TextField variant='standard' value={(allocation?.hourEachDay ?? 8) * diffDay} />
+                      <TextField
+                        variant='standard'
+                        value={(allocation?.hourEachDay ?? 8) * diffDay}
+                      />
                     </FormControl>
                   )}
                 </Stack>
@@ -207,7 +242,10 @@ const AllocationTab = () => {
           <Autocomplete
             clearIcon={true}
             options={projects}
-            value={allocation?.projectId}
+            freeSolo
+            isOptionEqualToValue={(option, value) => {
+              return option?.id === value?.id;
+            }}
             onChange={(_, value) => {
               setAllocation((prev: Allocation | null) => ({
                 ...prev,
@@ -218,14 +256,27 @@ const AllocationTab = () => {
               <TextField {...params} variant='outlined' fullWidth value={allocation?.projectId} />
             )}
           />
-          <Stack direction='row' justifyContent='space-between'>
-            <Button size='small' sx={{ py: 0, mb: 0, mt: 1 }}>
-              Add task
-            </Button>
-            <Button size='small' sx={{ py: 0, mb: 0, mt: 1 }}>
-              Edit project
-            </Button>
-          </Stack>
+          <Typography>Task</Typography>
+          <Tooltip
+            title={!allocation?.projectId ? 'Please choose project first' : ''}
+            arrow
+            placement='top'
+          >
+            <Autocomplete
+              clearIcon={true}
+              options={projectTasks}
+              disabled={!allocation?.projectId}
+              onChange={(_, value) => {
+                setAllocation((prev: Allocation | null) => ({
+                  ...prev,
+                  ['taskId']: value,
+                }));
+              }}
+              renderInput={(params) => (
+                <TextField {...params} variant='outlined' fullWidth value={allocation?.projectId} />
+              )}
+            />
+          </Tooltip>
         </FormControl>
 
         <ToggleButtonGroup
@@ -259,18 +310,18 @@ const AllocationTab = () => {
           <Typography>Assigned to</Typography>
           <Autocomplete
             clearIcon={false}
-            options={['hello', 'hii']}
-            multiple
+            options={userOptions}
             value={allocation?.assignees}
+            freeSolo
+            isOptionEqualToValue={(option, value) => {
+              return option?.id === value?.id;
+            }}
             onChange={(_, value) => {
               setAllocation((prev: Allocation | null) => ({
                 ...prev,
                 ['assignees']: value,
               }));
             }}
-            renderTags={(value, props) =>
-              value.map((option, index) => <Chip label={option} {...props({ index })} />)
-            }
             renderInput={(params) => <TextField {...params} variant='outlined' fullWidth />}
           />
         </FormControl>

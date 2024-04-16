@@ -73,7 +73,7 @@ const MuiRadioGroup = (props: RadioGroupProps) => {
   };
 
   return (
-    <FormControl component="fieldset" sx={{ ...sx }}>
+    <FormControl component='fieldset' sx={{ ...sx }}>
       <RadioGroup
         aria-label={name}
         name={name}

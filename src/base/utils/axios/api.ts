@@ -33,7 +33,7 @@ export const axiosNoInterceptors = axios.create({
     Accept: 'application/json',
     'Access-Control-Allow-Origin': '*',
   },
-  baseURL: 'http://localhost:4000',
+  baseURL: import.meta.env.VITE_FRONTEND_BASE_URL,
 });
 
 axiosApi.interceptors.request.use(

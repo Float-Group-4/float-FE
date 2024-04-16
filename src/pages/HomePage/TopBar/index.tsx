@@ -233,7 +233,7 @@ export default function TopBar() {
             </div>
             <Divider className='mb-2' />
             {filterOptions.map((option, index) => (
-              <div>
+              <div key={index}>
                 <MenuItem className='h-8 w-60 px-3 py-3 mx-2 rounded-lg my-1'>
                   <ListItemIcon>{option.icon}</ListItemIcon>
                   <ListItemText>{option.label}</ListItemText>
@@ -268,7 +268,6 @@ export default function TopBar() {
               className='rounded-md'
               sx={{ borderColor: grey[300], color: grey[800] }}
               onClick={() => {
-                console.log('Click');
                 fastForwardDate(dayjs());
               }}
             >
@@ -376,14 +375,6 @@ export default function TopBar() {
               <ShareOutlinedIcon fontSize='small' />
             </IconButton>
             <AddButtonMultiplePurpose />
-            {/* <Button
-              variant='outlined'
-              className='rounded-md flex items-center h-9 aspect-square p-0 bg-blue-600 text-white'
-              sx={{ border: 0, padding: 0, minWidth: 0 }}
-              onClick={() => console.log('')}
-            >
-              <AddOutlinedIcon fontSize='small' />
-            </Button> */}
           </div>
         </div>
       </div>

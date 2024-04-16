@@ -22,6 +22,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import axios from 'axios';
 import zIndex from '@mui/material/styles/zIndex';
 import { SketchPicker } from 'react-color';
+import { useParams } from 'react-router-dom';
 
 interface StatusType {
   color: string;
@@ -42,8 +43,9 @@ const defaultColors = [
 ];
 
 const StatusSetting = () => {
-  const baseURL = 'http://localhost:4000';
-  const teamID = '87cbe9dc-1b26-4519-a546-30563a9687d4';
+  const params = useParams();
+  const teamID = params.teamId;
+  const baseURL = import.meta.env.VITE_FRONTEND_BASE_URL;
   const [hoveredRowIndex, setHoveredRowIndex] = useState<number | null>(null);
   const [data, setData] = useState<StatusType[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -95,7 +97,7 @@ const StatusSetting = () => {
 
   const fetchData = async () => {
     try {
-      const response = await axios.get(`${baseURL}/status-types/team/${teamID}`);
+      const response = await axios.get(`${import.meta}}/status-types/team/${teamID}`);
       setData(response.data);
     } catch (e) {
       console.log('error:' + e);

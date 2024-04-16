@@ -31,7 +31,6 @@ const TaskListSubBody: React.FC<TaskProp> = ({ tasks, setTasks }) => {
     if (tasks === null) return;
     if (index == null || index < 0 || index >= tasks.length) return;
 
-    console.log(true);
     const updatedTasks = [...tasks];
     updatedTasks[index] = {
       ...updatedTasks[index],

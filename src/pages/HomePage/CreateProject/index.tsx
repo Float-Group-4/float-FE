@@ -7,8 +7,13 @@ import MilestoneSubBody from './components/CreateProjectMilestoneTab';
 import TeamSubBody from './components/CreateProjectTeamTab';
 import TaskListSubBody from './components/CreateProjectTaskTab';
 import { ProjectType } from '../../../types/enums';
-import { useAppDispatch } from '@hooks/reduxHooks';
-import { Project, postNewProject, updateSingleProject } from '../../../redux/project/projectSlice';
+import { useAppDispatch, useAppSelector } from '@hooks/reduxHooks';
+import {
+  Project,
+  postNewProject,
+  updateProject,
+  updateSingleProject,
+} from '../../../redux/project/projectSlice';
 import { generateUUID } from '@base/utils/uuid';
 import { useParams } from 'react-router-dom';
 
@@ -207,7 +212,7 @@ const CreateProjectModal = (props: CreateProjectModalProps) => {
   const defaultColor = '#3451b2';
 
   const name = data?.project.name ?? '';
-  
+
   const params = useParams();
   const teamId = params.teamId;
 
@@ -225,8 +230,8 @@ const CreateProjectModal = (props: CreateProjectModalProps) => {
       note: '',
       client: '',
       name: '',
-      owner: '9d080daa-3929-4601-83a3-93a7aa86d372',
-      teamId: teamId ?? 'ad53cc61-a3dd-469f-98aa-ace14809239d',
+      owner: '',
+      teamId: teamId || '',
     };
   }
 
@@ -280,9 +285,10 @@ const CreateProjectModal = (props: CreateProjectModalProps) => {
       milestones: mileStoneData ?? [],
       tasks: taskData ?? [],
     };
-    
-    p.project.owner = '9d080daa-3929-4601-83a3-93a7aa86d372';
-    p.project.teamId = 'ad53cc61-a3dd-469f-98aa-ace14809239d';
+    // dispatch(addProject(p));
+    console.log(p);
+    p.project.owner = '5859846f-d30d-4cae-b52c-c922d7203f27';
+    p.project.teamId = teamId || '';
     dispatch(postNewProject(p));
 
     setIsOpen(false);
@@ -299,9 +305,8 @@ const CreateProjectModal = (props: CreateProjectModalProps) => {
       milestones: mileStoneData ?? [],
       tasks: taskData ?? [],
     };
-    console.log(infoData.id);
     p.project.owner = '9d080daa-3929-4601-83a3-93a7aa86d372';
-    p.project.teamId = 'ad53cc61-a3dd-469f-98aa-ace14809239d';
+    p.project.teamId = teamId || '';
     dispatch(updateSingleProject(p));
     setIsOpen(false);
   };

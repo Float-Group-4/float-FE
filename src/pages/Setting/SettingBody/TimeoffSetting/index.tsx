@@ -32,6 +32,7 @@ import { TimeOffTypeSetting } from './types/type.interface';
 import EditTimeOffDialog from './components/editTimeOffDialog';
 import dayjs, { Dayjs } from 'dayjs';
 import AddTimeOffDialog from './components/addTimeOffDialog';
+import { useParams } from 'react-router-dom';
 
 const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
   [`& .${toggleButtonGroupClasses.grouped}`]: {
@@ -49,8 +50,9 @@ const StyledToggleButtonGroup = styled(ToggleButtonGroup)(({ theme }) => ({
 }));
 
 const TimeoffSetting = () => {
-  const teamId = '87cbe9dc-1b26-4519-a546-30563a9687d4';
-  const baseURL = 'http://localhost:4000';
+  const params = useParams();
+  const teamId = params.teamId || '';
+  const baseURL = import.meta.env.VITE_FRONTEND_BASE_URL;
   const [isTimeOffApproval, setIsTimeOffApproval] = useState<boolean>(true);
   const [hoveredRowIndex, setHoveredRowIndex] = useState<number | null>(null);
   const [data, setData] = useState<TimeOffTypeSetting[]>([]);

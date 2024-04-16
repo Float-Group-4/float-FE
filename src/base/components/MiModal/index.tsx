@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 
-import {
-  Close,
-  Fullscreen,
-  FullscreenExit,
-} from '@mui/icons-material';
+import { Close, Fullscreen, FullscreenExit } from '@mui/icons-material';
 import {
   Breakpoint,
   Dialog,

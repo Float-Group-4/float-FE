@@ -1,14 +1,13 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ProjectType } from '../../types/enums';
+import { axiosApi } from '@base/utils/axios/api';
 import {
   ProjectInfo,
   ProjectMileStone,
   ProjectTask,
   ProjectTeam,
 } from '@pages/HomePage/CreateProject/models';
-import { axiosApi } from '@base/utils/axios/api';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { HttpStatusCode } from 'axios';
-import { useParams } from 'react-router-dom';
+import { ProjectType } from '../../types/enums';
 
 export interface UserFilterValue {
   id: number;
@@ -50,7 +49,7 @@ interface ProjectApi {
 export const fetchProjects = createAsyncThunk('project/fetchProjects', async (teamId: String) => {
   try {
     let id = teamId ?? 'ad53cc61-a3dd-469f-98aa-ace14809239d';
-  
+
     const response = await axiosApi.get(`${baseUrl}/projects/team/${id}`);
     return [...response.data];
   } catch (e: any) {
@@ -75,16 +74,6 @@ export const postNewProject = createAsyncThunk(
         teamId: projectData.project.teamId,
         projectOwnerId: projectData.project.owner,
       };
-      const response = await axiosApi.post(`${baseUrl}/projects`, data);
-      if (
-        response.status == HttpStatusCode.Accepted ||
-        response.status == HttpStatusCode.Ok ||
-        response.status == HttpStatusCode.Created
-      ) {
-        return projectData;
-      } else {
-        return null;
-      }
     } catch (e) {
       console.log(e);
     }
@@ -269,9 +258,7 @@ const projectSlice = createSlice({
       }>,
     ) => {
       const { project, members, milestones, tasks } = action.payload;
-      console.log(action.payload);
       state.project = [{ project, members, milestones, tasks }, ...state.project];
-      console.log(state.project);
     },
     updateProject: (
       state,
@@ -336,7 +323,8 @@ const projectSlice = createSlice({
         if (newProject != null) {
           state.project.push(newProject);
         }
-      }).addCase(postNewProject.rejected, (state, action) => {
+      })
+      .addCase(postNewProject.rejected, (state, action) => {
         state.state = 'failed';
         state.error = action.error.message;
       })
@@ -350,7 +338,8 @@ const projectSlice = createSlice({
         if (index !== -1) {
           state.project[index] = updateProject!;
         }
-      }).addCase(updateSingleProject.rejected, (state, action) => {
+      })
+      .addCase(updateSingleProject.rejected, (state, action) => {
         state.state = 'failed';
         state.error = action.error.message;
       });

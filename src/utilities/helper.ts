@@ -65,40 +65,6 @@ export const isNonWorkingDay = (dayIndex: number) => {
   else return false;
 };
 
-// export const isNonWorkingDayWithUserId = (dayIndex: number, userId: number) => {
-//   const _day = dayIndexToDay(dayIndex).format('ddd');
-//   const userWorkCapacities = store.getState().accountSetting.userWorkCapacities;
-//   const defaultWorkCapacity = store.getState().accountSetting.defaultWorkCapacity;
-//   const enableWorkCapacityScheme = store.getState().settings.enableWorkCapacityScheme;
-//   const isOffWeekend = store.getState().settings.isOffWeekend;
-//   const userNonWorkingDay = !enableWorkCapacityScheme // Is Manual Work Capacity ?
-//     ? isOffWeekend
-//       ? { ['Sun']: true, ['Sat']: true }
-//       : {} // Is Off Weekend Or Not
-//     : userWorkCapacities[`${userId}`] && userWorkCapacities[`${userId}`].daysOff != undefined // Have custom scheme or not ?
-//       ? userWorkCapacities[`${userId}`].daysOff
-//       : defaultWorkCapacity.daysOff;
-//   const isNonWorkingDay = userNonWorkingDay[`${_day}`] != undefined;
-//   return isNonWorkingDay || isUserHolidayWithUserId(dayIndex, userId);
-// };
-
-// export const isUserHolidayWithUserId = (dayIndex: number, userId: number) => {
-//   const date = dayIndexToDay(dayIndex);
-//   const defaultHolidays = store.getState().accountSetting.defaultHolidays;
-//   const userHolidays = store.getState().accountSetting.userHolidays;
-//   if (userHolidays[`${userId}`] == undefined) {
-//     return (
-//       !!defaultHolidays?.[`${date.format('DDMM')}`] ||
-//       !!defaultHolidays?.[`${date.format('DDMMYYYY')}`]
-//     );
-//   } else {
-//     return (
-//       !!userHolidays[`${userId}`]?.[`${date.format('DDMM')}`] ||
-//       !!userHolidays[`${userId}`]?.[`${date.format('DDMMYYYY')}`]
-//     );
-//   }
-// };
-
 export const convertMinuteToHHmm = (min: number) => {
   const hour = Math.floor(min / 60);
   const minute = min % 60;
