@@ -13,6 +13,10 @@ import ErrorPage from '@pages/ErrorPage';
 import RecoverPassword from '@pages/RecoverPassword';
 import CreateTeamPage from '@pages/CreateTeamPage';
 import TutorialPage from '@pages/TutorialPage';
+import DepartmentSetting from '@pages/Setting/SettingBody/DepartmentSetting';
+import StatusSetting from '@pages/Setting/SettingBody/StatusSetting';
+import TagSetting from '@pages/Setting/SettingBody/TagSetting';
+import TimeoffSetting from '@pages/Setting/SettingBody/TimeoffSetting';
 const Layouts = lazy(() => import('@layouts/index'));
 const Report = lazy(() => import('@pages/Report'));
 const SignIn = lazy(() => import('@pages/SignIn'));
@@ -98,6 +102,34 @@ export const routes: RouteObject[] = [
           {
             path: 'preferences',
             element: <PreferenceSetting />,
+          },
+          {
+            path: 'departments',
+            element: <DepartmentSetting />,
+          },
+          {
+            path: 'statuses',
+            element: <StatusSetting />,
+          },
+          {
+            path: 'guests',
+            element: <StatusSetting />,
+          },
+          {
+            path: 'timeoffs',
+            element: <TimeoffSetting />,
+          },
+          {
+            path: 'notifications',
+            element: <StatusSetting />,
+          },
+          {
+            path: 'time-tracking',
+            element: <StatusSetting />,
+          },
+          {
+            path: 'tags',
+            element: <TagSetting />,
           },
         ],
       },

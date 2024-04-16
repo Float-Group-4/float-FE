@@ -24,8 +24,7 @@ const SignUp = (props: SignUpProps) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const layoutFields: string[] = [
-    keyNames.KEY_NAME_SIGN_UP_FIRST_NAME,
-    keyNames.KEY_NAME_SIGN_UP_LAST_NAME,
+    keyNames.KEY_NAME_SIGN_UP_NAME,
     keyNames.KEY_NAME_SIGN_UP_EMAIL,
     keyNames.KEY_NAME_SIGN_UP_PASSWORD,
   ];

@@ -30,10 +30,10 @@ export const axiosNoInterceptors = axios.create({
     // Origin: 'http://localhost:4005',
     // Referer: 'http://localhost:4005/swagger/index.html',
     'Content-Type': 'application/json',
-    Accept: '*/*',
+    Accept: 'application/json',
     'Access-Control-Allow-Origin': '*',
   },
-  baseURL: 'http://localhost:4005',
+  baseURL: 'http://localhost:4000',
 });
 
 axiosApi.interceptors.request.use(

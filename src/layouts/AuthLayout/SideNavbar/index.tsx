@@ -10,6 +10,7 @@ import { Avatar } from '@mui/material';
 import { deepOrange, grey } from '@mui/material/colors';
 import { useNavigate, useParams } from 'react-router-dom';
 import SettingButton from './SettingButton';
+import PersonalButton from './PersonalButton';
 
 export default function SideNavbar() {
   const navigate = useNavigate();
@@ -105,9 +106,7 @@ export default function SideNavbar() {
           <NotificationsOutlinedIcon sx={{ color: grey[800] }} />
         </IconButton>
         {/* Personal Button */}
-        <Avatar sx={{ bgcolor: deepOrange[500], fontSize: 16 }} className='w-8 h-8'>
-          Q
-        </Avatar>
+        <PersonalButton />
       </div>
     </div>
   );

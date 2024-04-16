@@ -9,12 +9,18 @@ export const useAuthMutation = () => {
 
   const mSignIn = useMutationCustom(
     [queryKeys.auth_signIn],
-    '/api/user-login',
+    '/auth/user-login',
     'POST',
     {
-      onSuccess: (data: any, variables: any, context: any) => {},
+      onSuccess: (data: any, variables: any, context: any) => {
+        enqueueSuccessBar('Sign in Successfully');
+      },
       onError: (error: any, variables: any, context: any) => {
-        enqueueErrorBar('Sign in Fail');
+        if (error?.response?.data?.message) {
+          enqueueErrorBar(error?.response?.data?.message);
+        } else {
+          enqueueErrorBar('Sign in Fail');
+        }
       },
     },
     undefined,
@@ -25,7 +31,7 @@ export const useAuthMutation = () => {
 
   const mSignUp = useMutationCustom(
     [queryKeys.auth_signUp],
-    '/api/register',
+    '/auth/register',
     'POST',
     {
       onSuccess: (data: any, variables: any, context: any) => {
@@ -45,7 +51,7 @@ export const useAuthMutation = () => {
     mutationKey: [queryKeys.auth_googleSignIn],
     mutationFn: (payload: any) => {
       return axiosAPI(
-        `/api/google-login?token=${payload?.token}`,
+        `/auth/google-login?token=${payload?.token}`,
         'POST',
         undefined,
         undefined,
@@ -62,11 +68,11 @@ export const useAuthMutation = () => {
     },
   });
 
-  const mLogout = useMutation({
+  const mSignOut = useMutation({
     mutationKey: [queryKeys.auth_googleSignIn],
     mutationFn: (payload: any) => {
       return axiosAPI(
-        `/api/logout?RefreshToken=${payload?.token}`,
+        `/auth/logout?token=${payload?.token}`,
         'POST',
         undefined,
         undefined,
@@ -76,12 +82,12 @@ export const useAuthMutation = () => {
       );
     },
     onSuccess: (data: any, variables: any, context: any) => {
-      enqueueSuccessBar('Sign in be google successfully');
+      // enqueueSuccessBar('Sign out successfully');
     },
     onError: (error: any, variables: any, context: any) => {
-      enqueueErrorBar('Sign in by google fail');
+      // enqueueErrorBar('Sign out fail');
     },
   });
 
-  return { mSignIn, mSignUp, mGoogleSignIn, mLogout };
+  return { mSignIn, mSignUp, mGoogleSignIn, mSignOut };
 };

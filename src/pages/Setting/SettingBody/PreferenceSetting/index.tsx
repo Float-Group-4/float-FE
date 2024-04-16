@@ -1,4 +1,5 @@
 import {
+  Autocomplete,
   Button,
   Card,
   Checkbox,
@@ -15,28 +16,110 @@ import {
   MenuItem,
   OutlinedInput,
   Select,
+  SelectChangeEvent,
   Stack,
   TextField,
+  ToggleButton,
+  ToggleButtonGroup,
   Typography,
 } from '@mui/material';
 import { Box } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import days, { DayOfWeek } from '../models';
+import axios from 'axios';
+import moment from 'moment-timezone';
+import CurrencyList from 'currency-list';
+import { log } from 'console';
+
+interface Preference {
+  workDay: string;
+  id: string;
+  teamId: string;
+  currency: string;
+  timeZone: string;
+  startWeek: string;
+  timeFormat: string;
+  isShowWeekend: boolean;
+}
 
 const PreferenceSetting = () => {
-  const [timeZone, setTimeZone] = useState(0);
-  const [startOfWeek, setStartOfWeek] = useState(0);
-
+  const userId = 'cf428502-1658-4fd1-b402-d06251d2a38d';
+  const baseURL = 'http://localhost:4000';
+  const [data, setData] = useState<Preference>();
+  const [timeZone, setTimeZone] = useState('');
+  const [startOfWeek, setStartOfWeek] = useState('Monday');
   const [dayOfWeek, setDayOfWeek] = useState(days);
-  const [timeFormat, setTimeFormat] = useState(0);
+  const [timeFormat, setTimeFormat] = useState('12');
+  const [timeZoneList, setTimeZoneList] = useState<string[]>([]);
+  const [selectedCurrency, setSelectedCurrency] = useState<string>('');
+  const [currencyList, setCurrencyList] = useState<string[]>([]);
+  const [isShowWeekend, setIsShowWeekend] = useState<boolean>(true);
+
+  useEffect(() => {
+    fetchData();
+    fetchTimeZoneList();
+    const formattedCurrencyList = formatCurrencyList();
+    setCurrencyList([...formattedCurrencyList, 'No Currency']);
+  }, []);
+
+  useEffect(() => {
+    if (data) {
+      setTimeFormat(data.timeFormat);
+      setTimeZone(data.timeZone);
+      setStartOfWeek(data.startWeek);
+      setSelectedCurrency(data.currency);
+      setIsShowWeekend(data.isShowWeekend);
+      const workDays = data.workDay;
+      const initialDayOfWeek = days.map((day) => ({
+        name: day.name,
+        included: workDays.includes(day.name),
+        hourPerDay: 8,
+      }));
+
+      setDayOfWeek(initialDayOfWeek);
+    }
+  }, [data]);
+
+  const fetchTimeZoneList = () => {
+    const list = moment.tz.names();
+    setTimeZoneList(list);
+  };
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get(`${baseURL}/settings/${userId}`);
+      const newData = response.data;
+      var result: Preference = {
+        workDay: newData.workDay.split(', '),
+        id: newData.id,
+        teamId: newData.teamId,
+        startWeek: newData.startWeek,
+        currency: newData.currency,
+        timeZone: newData.timeZone,
+        timeFormat: newData.timeFormat,
+        isShowWeekend: newData.isShowWeekend,
+      };
+      setData(result);
+    } catch (e) {
+      console.log('error: ' + e);
+    }
+  };
+
+  const handleTimeFormatChange = (e: any) => {
+    setTimeFormat(e.target.value as string);
+  };
 
   const handleCheckBox = (dayOfWeekName: string, event: React.ChangeEvent<HTMLInputElement>) => {
     setDayOfWeek((prevDayOfWeek) => {
-      const tempData = [...prevDayOfWeek];
-      const updatedDayOfWeek = tempData.find((day) => day.name === dayOfWeekName);
-      if (!updatedDayOfWeek) return tempData;
-      updatedDayOfWeek.included = event.target.checked;
-      return [...tempData];
+      return prevDayOfWeek.map((day) => {
+        if (day.name === dayOfWeekName) {
+          return {
+            ...day,
+            included: event.target.checked,
+          };
+        }
+        return day;
+      });
     });
   };
 
@@ -53,7 +136,59 @@ const PreferenceSetting = () => {
     });
   };
 
-  const numOfDay = dayOfWeek.length;
+  const formatCurrencyList = () => {
+    const currencies = CurrencyList.getAll().en;
+    const formattedCurrencies: { [code: string]: { name: string; code: string } } = {};
+
+    for (let currencyCode in currencies) {
+      const currencyName = CurrencyList.get(currencyCode).name;
+      formattedCurrencies[currencyCode] = { name: currencyName, code: currencyCode };
+    }
+
+    return Object.values(formattedCurrencies).map(
+      (currency) => `${currency.code} - ${currency.name}`,
+    );
+  };
+
+  const handleCurrencyChange = (event: React.ChangeEvent<{}>, newValue: string | null) => {
+    setSelectedCurrency(newValue ? newValue : '');
+  };
+
+  const handleTimeZoneChange = (event: React.ChangeEvent<{}>, newValue: string | null) => {
+    setTimeZone(newValue ? newValue : '');
+  };
+
+  const handleShowWeekendChange = (
+    event: React.MouseEvent<HTMLElement>,
+    newShowWeekend: boolean,
+  ) => {
+    setIsShowWeekend(newShowWeekend);
+  };
+
+  const handleUpdate = async () => {
+    try {
+      const workDay = dayOfWeek
+        .filter((day) => day.included)
+        .map((day) => day.name)
+        .join(', ');
+      const updatePreference: Preference = {
+        workDay: workDay,
+        id: data ? data.id : '1',
+        teamId: data ? data.teamId : '1',
+        currency: selectedCurrency,
+        timeZone: timeZone,
+        startWeek: startOfWeek,
+        timeFormat: timeFormat,
+        isShowWeekend: isShowWeekend,
+      };
+      console.log(updatePreference);
+
+      const response = await axios.patch(`${baseURL}/settings/${userId}`, updatePreference);
+      console.log('response' + response);
+    } catch (e) {
+      console.log('error: ' + e);
+    }
+  };
 
   return (
     <Box marginBottom={3}>
@@ -77,23 +212,24 @@ const PreferenceSetting = () => {
         </Typography>
         <Stack direction='row' spacing={2} paddingY={2}>
           <FormControl fullWidth size='medium'>
+            {/* Time Zone */}
             <Typography variant='caption' fontWeight={450}>
               Timezone
             </Typography>
-            <Select
+            <Autocomplete
               sx={{ my: 1 }}
+              options={timeZoneList}
+              renderInput={(params) => <TextField {...params} />}
               value={timeZone}
-              onChange={(e) => setTimeZone(e.target.value as number)}
+              onChange={handleTimeZoneChange}
               fullWidth
-            >
-              <MenuItem value={0}>(GMT-05:00) Eastern Time (US & Canada)</MenuItem>
-              <MenuItem value={1}>(GMT-06:00) Central Time (US & Canada)</MenuItem>
-              <MenuItem value={2}>(GMT-07:00) Mountain Time (US & Canada)</MenuItem>
-            </Select>
+              disableClearable
+            />
             <FormHelperText sx={{ m: 0 }}>
               The time zone setting is used for notifications by default.
             </FormHelperText>
           </FormControl>
+          {/* Start Week Day */}
           <FormControl fullWidth size='medium'>
             <Typography variant='caption' fontWeight={450}>
               Start week on
@@ -101,14 +237,15 @@ const PreferenceSetting = () => {
             <Select
               sx={{ my: 1 }}
               value={startOfWeek}
-              onChange={(e) => setStartOfWeek(e.target.value as number)}
+              onChange={(e) => setStartOfWeek(e.target.value)}
               fullWidth
             >
-              <MenuItem value={0}>Sunday</MenuItem>
-              <MenuItem value={1}>Monday</MenuItem>
+              <MenuItem value={'Sunday'}>Sunday</MenuItem>
+              <MenuItem value={'Monday'}>Monday</MenuItem>
             </Select>
           </FormControl>
         </Stack>
+        {/* Work days */}
         <FormControl fullWidth sx={{ py: 2 }}>
           <Typography>Work days</Typography>
           <List>
@@ -140,7 +277,7 @@ const PreferenceSetting = () => {
                     <OutlinedInput
                       size='small'
                       sx={{ bgcolor: '#FAFAFA' }}
-                      value={value.hourPerDay}
+                      value={8}
                       onChange={(e) => handleHourInput(value.name, e)}
                       inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
                       endAdornment={<InputAdornment position='end'>h</InputAdornment>}
@@ -151,6 +288,19 @@ const PreferenceSetting = () => {
             ))}
           </List>
         </FormControl>
+        {/* Display Weekend */}
+        <ToggleButtonGroup
+          color='primary'
+          value={isShowWeekend}
+          exclusive
+          onChange={handleShowWeekendChange}
+          aria-label='Platform'
+        >
+          <ToggleButton value={true}>Show Weekend</ToggleButton>
+          <ToggleButton value={false}>Don't show Weekend</ToggleButton>
+        </ToggleButtonGroup>
+
+        {/* Time Format */}
         <FormControl sx={{ py: 2 }}>
           <Typography variant='body2' fontWeight='500'>
             Time format
@@ -159,11 +309,25 @@ const PreferenceSetting = () => {
             size='medium'
             sx={{ mt: 1 }}
             value={timeFormat}
-            onChange={(e) => setTimeFormat(e.target.value as number)}
+            onChange={(e) => handleTimeFormatChange(e)}
           >
-            <MenuItem value={0}>12-hour clock</MenuItem>
-            <MenuItem value={1}>24-hour clock</MenuItem>
+            <MenuItem value={'12'}>12-hour clock</MenuItem>
+            <MenuItem value={'24'}>24-hour clock</MenuItem>
           </Select>
+        </FormControl>
+        <FormControl fullWidth sx={{ py: 2 }}>
+          <Typography variant='body2' fontWeight='500'>
+            Currency
+          </Typography>
+          <Autocomplete
+            size='medium'
+            options={currencyList}
+            renderInput={(params) => <TextField {...params} />}
+            sx={{ mt: 1 }}
+            value={selectedCurrency}
+            onChange={handleCurrencyChange}
+            disableClearable
+          />
         </FormControl>
         <Button
           variant='contained'
@@ -174,6 +338,7 @@ const PreferenceSetting = () => {
             whiteSpace: 'nowrap',
           }}
           size='medium'
+          onClick={handleUpdate}
         >
           Update
         </Button>
