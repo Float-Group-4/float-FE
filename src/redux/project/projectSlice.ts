@@ -74,6 +74,16 @@ export const postNewProject = createAsyncThunk(
         teamId: projectData.project.teamId,
         projectOwnerId: projectData.project.owner,
       };
+      const response = await axiosApi.post(`${baseUrl}/projects`, data);
+      if (
+        response.status == HttpStatusCode.Accepted ||
+        response.status == HttpStatusCode.Ok ||
+        response.status == HttpStatusCode.Created
+      ) {
+        return projectData;
+      } else {
+        return null;
+      }
     } catch (e) {
       console.log(e);
     }
