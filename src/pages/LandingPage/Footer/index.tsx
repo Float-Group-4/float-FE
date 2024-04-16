@@ -238,7 +238,7 @@ export default () => {
             justifyContent: 'space-between',
           }}
         >
-          <p style={{ color: '#4B5563' }}>© 2022 Float UI Inc. All rights reserved.</p>
+          <p style={{ color: '#4B5563' }}>© 2024 Proma UI Inc. All rights reserved.</p>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '1.5rem' }}>
             <a href='javascript:void()'>
               <svg
