@@ -25,7 +25,7 @@ const Header = (props: HeaderProps) => {
 
       {isSignIn || isRecoverPassword ? (
         <Stack direction='row' alignItems='center' spacing={2}>
-          <Typography sx={{ fontSize: 14, fontWeight: 500 }}>New to Float?</Typography>
+          <Typography sx={{ fontSize: 14, fontWeight: 500 }}>New to Proma?</Typography>
           <button
             onClick={() => navigate('/sign-up')}
             className='px-4 py-2 text-blue-600 font-medium bg-blue-100 rounded-lg duration-150 hover:bg-blue-600 hover:text-white active:bg-blue-700'
@@ -36,7 +36,7 @@ const Header = (props: HeaderProps) => {
       ) : (
         <Stack direction='row' alignItems='center' spacing={2}>
           <Typography sx={{ fontSize: 14, fontWeight: 500 }}>
-            Already have a Float account?
+            Already have a Proma account?
           </Typography>
           <button
             onClick={() => navigate('/sign-in')}
